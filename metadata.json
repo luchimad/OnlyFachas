@@ -1,0 +1,7 @@
+{
+  "name": "OnlyFachas WEB",
+  "description": "Una IA con onda que mide tu nivel de facha. Subí una foto o usá tu webcam para ver si la detonás. Te damos un puntaje del 1 al 10 y un comentario bien picante. Todo con una estética de neón re piola.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

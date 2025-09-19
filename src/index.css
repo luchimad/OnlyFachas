@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #1a0f2b;
+        background-image:
+          linear-gradient(rgba(139, 92, 246, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(139, 92, 246, 0.08) 1px, transparent 1px);
+        background-size: 40px 40px;
+        animation: bg-pan 20s linear infinite;
+    }
+}
+
+@layer utilities {
+    .font-orbitron {
+        font-family: 'Orbitron', sans-serif;
+    }
+    .font-caveat {
+        font-family: 'Caveat', cursive;
+    }
+    .font-hurricane {
+        font-family: 'Hurricane', cursive;
+    }
+    .font-montserrat {
+        font-family: 'Montserrat', sans-serif;
+    }
+    .font-arizonia {
+        font-family: 'Arizonia', cursive;
+    }
+    .neon-shadow-purple {
+        box-shadow: 0 0 5px theme('colors.violet.500'), 0 0 10px theme('colors.violet.500'), 0 0 20px theme('colors.violet.700');
+    }
+    .neon-text-fuchsia {
+        text-shadow: 0 0 5px theme('colors.fuchsia.400'), 0 0 10px theme('colors.fuchsia.500'), 0 0 20px theme('colors.fuchsia.600'), 0 0 30px theme('colors.fuchsia.700');
+    }
+    .neon-shadow-fuchsia {
+        box-shadow: 0 0 5px theme('colors.fuchsia.500'), 0 0 10px theme('colors.fuchsia.500'), 0 0 20px theme('colors.fuchsia.700');
+    }
+    .animated-gradient {
+        background-size: 200% 200%;
+        animation: gradient-animation 10s ease infinite;
+    }
+    .spark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        background-color: theme('colors.yellow.300');
+        border-radius: 50%;
+        opacity: 0;
+        animation: sparkle 0.8s ease-out forwards;
+        animation-delay: var(--spark-delay);
+        transform-origin: center;
+        box-shadow: 0 0 5px theme('colors.yellow.300'), 0 0 10px theme('colors.yellow.300');
+        pointer-events: none;
+    }
+    .fade-in {
+        animation: fade-in-animation 0.7s ease-in-out forwards;
+    }
+}
+
+@keyframes sparkle {
+    0% {
+        transform: translate(-50%, -50%) rotate(var(--spark-angle)) translateY(0) scale(0);
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(var(--spark-angle)) translateY(-80px) scale(1.2);
+        opacity: 0;
+    }
+}
+@keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes bg-pan {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+@keyframes fade-in-animation {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
