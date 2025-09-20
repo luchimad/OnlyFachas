@@ -6,17 +6,6 @@ interface WebcamCaptureProps {
   onCancel: () => void;
 }
 
-// --- Sound Effect ---
-const shutterSoundData = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjQ1LjEwMAAAAAAAAAAAAAAA//tAmAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIwARTR4AAAAAAAAAAAAAADh4ZUVsY25IajdnLzVUSmJHSnZlRzZ6eWJWVzZaVlR0ZlA4PQBCbGF6ZXIgdjAuOS4yAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7QJgAAMPgZn6BSwAABOAAANIAAAEGVVGljTg091aishgQAACAgIABARiQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7QJgAE0B2b4KscgAARCAAABgAAAARFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/9k=';
-const playSound = (audioSrc: string) => {
-  try {
-    const audio = new Audio(audioSrc);
-    audio.volume = 0.5;
-    audio.play().catch(e => console.error("Audio playback failed:", e));
-  } catch (e) {
-    console.error("Could not play audio:", e);
-  }
-};
 
 
 const WebcamCapture: React.FC<WebcamCaptureProps> = ({ onCapture, onCancel }) => {
@@ -48,7 +37,6 @@ const WebcamCapture: React.FC<WebcamCaptureProps> = ({ onCapture, onCancel }) =>
   }, [onCancel]);
 
   const capture = useCallback(() => {
-    playSound(shutterSoundData);
     const canvas = document.createElement('canvas');
     if (videoRef.current) {
       canvas.width = videoRef.current.videoWidth;
@@ -68,9 +56,9 @@ const WebcamCapture: React.FC<WebcamCaptureProps> = ({ onCapture, onCancel }) =>
   const NeonButton: React.FC<{onClick: () => void, children: React.ReactNode}> = ({ onClick, children }) => (
     <button
       onClick={onClick}
-      className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
+      className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-purple-200"
     >
-      <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 flex items-center gap-2">
+      <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0 flex items-center gap-2">
         {children}
       </span>
     </button>

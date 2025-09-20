@@ -32,34 +32,42 @@ PASO 1: Primero identifica si es hombre o mujer para adaptar el lenguaje.
 
 PASO 2: Sé optimista y generoso con las notas, pero no regales. Busca lo positivo en cada persona. Si alguien tiene buena actitud, estilo interesante, o algo que lo destaque, dale una nota alta (7-9). Solo da notas bajas (1-4) si realmente hay problemas serios de presentación. La mayoría de personas deberían estar entre 6-8.5.
 
-PASO 3: Para el comentario, usa jerga argentina y sé picante pero constructivo. Inspírate en estos ejemplos según el puntaje:
+PASO 3: Para el comentario, usa jerga argentina y sé MUY picante y subido de tono. Inspírate en estos ejemplos según el puntaje:
 
 FACHAS BAJAS (1-4):
-- "Tenés menos onda que un renglón. Hay que empezar de cero, papá."
-- "Che, con esa cara de velorio no levantás ni la tapa del inodoro."
-- "Te vestiste a oscuras y con el enemigo, ¿no? No se explica ese rejunte."
-- "Tu facha está más devaluada que el peso, pero con un buen estilista capaz que repunta."
-- "Le ponés la misma onda que un lunes a la mañana. ¡Despertate, rey!"
+- "Che, con esa facha de velorio no levantás ni la tapa del inodoro, papá. Hay que empezar de cero y con ganas de detonar."
+- "Tenés menos onda que un lunes a la mañana y más cara de culo que un mono. ¡Despertate, rey! Las minitas se te cagan de risa."
+- "Te vestiste a oscuras y con el enemigo, ¿no? Con esa cara de culo no vas a levantar ni una mosca, hermano."
+- "Tu facha está más devaluada que el peso y más triste que un funeral. Pero tranqui, con un buen estilista capaz que repuntás y empezás a levantar."
 
 FACHAS PROMEDIO (5-7):
-- "Zafás, eh. No sos Brad Pitt, pero tenés tu no-sé-qué... que tampoco sé bien qué es."
-- "Aprobado, pero con lo justo. Te falta un hervor para detonarla."
-- "Tenés potencial, pero todavía estás en modo demo. Actualizate, crack."
-- "Vas por buen camino, se nota que le metés ganas. No aflojes que casi la rompés."
+- "Zafás, eh. No sos Brad Pitt pero tenés tu no-sé-qué que las minitas notan. Te falta un hervor para detonarla completamente."
+- "Aprobado pero con lo justo, crack. Tenés potencial pero todavía estás en modo demo. Actualizate y vas a empezar a levantar en serio."
+- "Vas por buen camino y se nota que le metés ganas, pero todavía no estás para romper corazones. No aflojes que casi la rompés."
 
 FACHAS ALTAS (8-10):
-- "Uff, ¿sos real o te escapaste de un póster? Estás para romper corazones en serie."
-- "Fa, mi loco, con esa facha hasta tu ex te vuelve a escribir. Estás detonado."
-- "Ayyyy loquitaaa, con esa cara de atrevida seguro que coleccionás DNI en la mesita de luz."
-- "Nivel de facha: ilegal. Deberías pagar un impuesto por caminar por la calle así."
-- "Pará un poco, ¿quién te dio permiso para tanta facha? Dejá algo para los demás, egoísta."
-- "Sos la razón por la que se inventaron los emojis de fueguito. 🔥"
+- "Uff, ¿sos real o te escapaste de un póster? Con esa facha estás para romper corazones en serie y coleccionar DNI en la mesita de luz."
+- "Fa, mi loco, con esa cara de atrevido hasta tu ex te vuelve a escribir y las minitas se pelean por vos. Estás detonado completamente."
+- "Ayyyy loquitaaa, con esa facha de modelo sos la razón por la que se inventaron los emojis de fueguito. Deberías pagar impuesto por caminar así."
+- "Nivel de facha: ilegal. Con esa cara de galán las minitas se vuelven locas y vos sabés que estás para detonar corazones en serie."
+
+PASO 4: Para fortalezas y consejos, cada uno debe tener MÍNIMO 15 palabras y ser bien bardero:
+
+FORTALEZAS (ejemplos - cada una 15+ palabras):
+- "Tenés una mirada que mata y una sonrisa que hace que las minitas se derritan como helado al sol, papá."
+- "Tu estilo tiene esa onda única que hace que te miren en la calle y las pibas se vuelvan locas por vos."
+- "Tu actitud de confianza es tan fuerte que hasta los tipos te envidian y las minitas se pelean por tu atención."
+
+CONSEJOS (ejemplos - cada uno 15+ palabras):
+- "Che, si querés levantar más minitas, empezá a vestirte como si fueras a conquistar el mundo y no como si fueras a comprar pan."
+- "Tu facha tiene potencial pero necesitás más actitud de galán y menos cara de culo para que las pibas se vuelvan locas por vos."
+- "Para detonar en serio, tenés que creerte más el cuento y mostrar esa confianza que hace que las minitas se derritan por vos."
 
 Responde en formato JSON con:
 - rating: número del 1 al 10 (sé optimista pero justo)
-- comment: comentario corto y picante en lunfardo argentino, adaptado al género y puntaje
-- fortalezas: array de 3-5 fortalezas (busca lo bueno)
-- consejos: array de 3-5 consejos para mejorar (motivadores y constructivos)`;
+- comment: comentario MUY picante y subido de tono en lunfardo argentino, adaptado al género y puntaje
+- fortalezas: array de 3-5 fortalezas (cada una MÍNIMO 15 palabras, bien barderas)
+- consejos: array de 3-5 consejos para mejorar (cada uno MÍNIMO 15 palabras, motivadores pero barderos)`;
 
     const result = await model.generateContent([
       prompt,
@@ -117,34 +125,34 @@ export const getFachaBattleResult = async (
             }
         });
 
-        const prompt = `Genera un comentario corto y picante en lunfardo argentino sobre esta batalla de facha. Persona 1 sacó ${result1.rating.toFixed(1)} y Persona 2 sacó ${result2.rating.toFixed(1)}. El ganador es la Persona ${winner}.
+        const prompt = `Genera un comentario MUY picante y subido de tono en lunfardo argentino sobre esta batalla de facha. Persona 1 sacó ${result1.rating.toFixed(1)} y Persona 2 sacó ${result2.rating.toFixed(1)}. El ganador es la Persona ${winner}.
 
 IMPORTANTE: 
 - Primero identifica el género de ambas personas para adaptar el lenguaje
-- Sé bardero pero AMISTOSO, no hiriente
-- Usa jerga argentina divertida (detonar, papi, minusas, papá, loquita, etc.)
+- Sé MUY bardero y subido de tono, pero AMISTOSO, no hiriente
+- Usa jerga argentina picante (detonar, papi, minusas, papá, loquita, levantar, etc.)
 - Haz que el perdedor se ría, no que se sienta mal
-- Mantén el tono de joda entre amigos
-- Máximo 2-3 oraciones
+- Mantén el tono de joda entre amigos pero con más actitud
+- Máximo 2-3 oraciones pero bien picantes
 - Inspírate en estos estilos según la diferencia de puntaje:
 
 DIFERENCIA GRANDE (3+ puntos):
-- "Papi, la Persona ${winner} te pasó por arriba como un tren. Pero tranqui, que con esa sonrisa seguro que levantas igual"
-- "Che, la Persona ${winner} te dio una paliza épica, pero no te hagas drama que tenés onda para rato"
-- "Uy, la Persona ${winner} te dejó en el molde, pero mirá que bien que te ves igual"
+- "Papi, la Persona ${winner} te pasó por arriba como un tren y te dejó en el molde. Pero tranqui, que con esa sonrisa seguro que levantás igual y las minitas se vuelven locas por vos."
+- "Che, la Persona ${winner} te dio una paliza épica y te dejó más seco que un desierto. Pero no te hagas drama que tenés onda para rato y las pibas se derriten por vos."
+- "Uy, la Persona ${winner} te destrozó completamente y te dejó sin argumentos. Pero mirá que bien que te ves igual y seguro que levantás en serio."
 
 DIFERENCIA MEDIA (1-2 puntos):
-- "Fue re parejo, pero la Persona ${winner} te ganó por un pelo. Casi casi la rompés, crack"
-- "Estuvo picante la cosa, pero la Persona ${winner} te sacó ventaja. No aflojes que estás cerca"
-- "Reñido hasta el final, pero la Persona ${winner} se llevó la victoria. Seguí así que vas bien"
+- "Fue re parejo y estuvo picante la cosa, pero la Persona ${winner} te ganó por un pelo y te sacó ventaja. Casi casi la rompés, crack, seguí así que vas bien."
+- "Estuvo reñido hasta el final y la cosa estuvo caliente, pero la Persona ${winner} se llevó la victoria por un pelo. No aflojes que estás cerca de detonar."
+- "Reñido hasta el final y bien picante, pero la Persona ${winner} te sacó ventaja por poquito. Seguí así que vas bien y casi la rompés."
 
 DIFERENCIA PEQUEÑA (0.5 puntos):
-- "Uff, qué batalla! La Persona ${winner} te ganó por poquito, pero estuviste a la altura"
-- "Re parejo todo, pero la Persona ${winner} se llevó el triunfo por detalles. Bien jugado"
-- "Casi empate, pero la Persona ${winner} se impuso. La próxima seguro la ganás"
+- "Uff, qué batalla épica! La Persona ${winner} te ganó por poquito pero estuvo re picante la cosa. Estuviste a la altura y casi la rompés, crack."
+- "Re parejo todo y bien caliente, pero la Persona ${winner} se llevó el triunfo por detalles mínimos. Bien jugado y seguí así que vas a detonar."
+- "Casi empate total y estuvo reñido hasta el final, pero la Persona ${winner} se impuso por un pelo. La próxima seguro la ganás y levantás en serio."
 
 Responde en formato JSON con:
-- comment: comentario corto, picante pero amistoso sobre quién ganó la batalla`;
+- comment: comentario MUY picante y subido de tono pero amistoso sobre quién ganó la batalla`;
 
         const result = await model.generateContent([prompt]);
         const response = await result.response;

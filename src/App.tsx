@@ -9,12 +9,8 @@ import AdBanner from '../components/AdBanner';
 import NotificationToast from '../components/NotificationToast';
 import SkeletonLoader from '../components/SkeletonLoader';
 import ProgressBar from '../components/ProgressBar';
-import SoundToggleButton from '../components/SoundToggleButton';
-import ThemeToggleButton from '../components/ThemeToggleButton';
 import { useApiWithFallback } from './hooks/useApiWithFallback';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
-import { useSoundToggle } from './hooks/useSoundToggle';
-import { useTheme } from './hooks/useTheme';
 import { useEmergencyControls } from './hooks/useEmergencyControls';
 import { getScoreColor, getFachaTier, escapeXml } from './utils/fachaUtils';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
@@ -24,22 +20,6 @@ import { MaintenanceBanner, RateLimitBanner, RequestDelayBanner } from './compon
 type AppMode = 'single' | 'battle' | 'enhance';
 type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms' | 'comingSoon';
 
-// --- Sound Effects ---
-const playSound = (audioSrc: string) => {
-  try {
-    const audio = new Audio(audioSrc);
-    audio.volume = 0.5;
-    audio.play().catch(e => console.error("Audio playback failed:", e));
-  } catch (e) {
-    console.error("Could not play audio:", e);
-  }
-};
-
-// Use a single, valid sound data to prevent playback errors from corrupted base64 strings
-const validSoundData = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjQ1LjEwMAAAAAAAAAAAAAAA//tAmAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIwARTR4AAAAAAAAAAAAAADh4ZUVsY25IajdnLzVUSmJHSnZlRzZ6eWJWVzZaVlR0ZlA4PQBCbGF6ZXIgdjAuOS4yAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7QJgAAMPgZn6BSwAABOAAANIAAAEGVVGljTg091aishgQAACAgIABARiQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7QJgAE0B2b4KscgAARCAAABgAAAARFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/9k=';
-const uploadSoundData = validSoundData;
-const cameraActivateSoundData = validSoundData;
-const resultSoundData = validSoundData;
 
 
 // Helper to convert file to base64
@@ -88,8 +68,6 @@ const App: React.FC = () => {
 
   // QoL hooks
   const haptic = useHapticFeedback();
-  const { isSoundEnabled, toggleSound, playSound: playSoundWithToggle } = useSoundToggle();
-  const { isDark, toggleTheme } = useTheme();
   
   // Emergency controls
   const {
@@ -189,7 +167,6 @@ const App: React.FC = () => {
 
       // Usar el hook con fallback automático
       const result = await callApi(getEnhancedFacha, currentImageData.base64, currentImageData.mimeType);
-      playSound(resultSoundData);
       setEnhancedResult(result);
       setAppState('enhanceResult');
 
@@ -232,7 +209,6 @@ const App: React.FC = () => {
 
         // Haptic feedback al seleccionar imagen
         haptic.buttonPress();
-        playSoundWithToggle(uploadSoundData);
         
         // Mostrar skeleton loading
         setShowSkeleton(true);
@@ -278,7 +254,6 @@ const App: React.FC = () => {
   const handleWebcamCapture = (dataUrl: string) => {
     // Haptic feedback al capturar
     haptic.success();
-    playSoundWithToggle(uploadSoundData);
     
     setError(null);
     const [mimePart, dataPart] = dataUrl.split(';base64,');
@@ -362,9 +337,8 @@ const App: React.FC = () => {
       clearInterval(progressInterval);
       setProgress(100);
       
-      // Haptic feedback y sonido
+      // Haptic feedback
       haptic.success();
-      playSoundWithToggle(resultSoundData);
 
       const dataUrl = `data:${imageData.mimeType};base64,${imageData.base64}`;
       const newEntry: StoredFachaResult = {
@@ -407,7 +381,7 @@ const App: React.FC = () => {
       setIsAnalyzing(false);
       setTimeout(() => setProgress(0), 1000); // Reset progress after delay
     }
-  }, [imageData, aiMode, name, leaderboard, isRateLimited, timeUntilNextRequest, callApi, haptic, playSoundWithToggle]);
+  }, [imageData, aiMode, name, leaderboard, isRateLimited, timeUntilNextRequest, callApi, haptic]);
   
   const analyzeFachaBattle = useCallback(async () => {
     if (!imageData1 || !imageData2) {
@@ -443,7 +417,6 @@ const App: React.FC = () => {
 
         // Usar el hook con fallback automático
         const result = await callApi(getFachaBattleResult, imageData1, imageData2, aiMode);
-        playSound(resultSoundData);
         setBattleResult(result);
         setAppState('battleResult');
 
@@ -529,7 +502,7 @@ const App: React.FC = () => {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 transition-all duration-300 ${disabled ? 'opacity-50 cursor-not-allowed' : 'group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800'} ${className}`}
+      className={`relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 transition-all duration-300 ${disabled ? 'opacity-50 cursor-not-allowed' : 'group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-purple-200'} ${className}`}
     >
       <span className="relative w-full px-5 py-2.5 transition-all ease-in duration-75 bg-slate-900/30 backdrop-blur-sm rounded-md group-hover:bg-opacity-0 flex items-center justify-center gap-2 text-white font-bold group-hover:text-white drop-shadow-lg">
         {children}
@@ -658,7 +631,7 @@ const App: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md mt-6">
         <NeonButton 
           onClick={() => setAppState('leaderboard')}
-          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 dark:focus:ring-yellow-800 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
+          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
         >
           <FiTrendingUp className="w-5 h-5" /> Top Fachas
         </NeonButton>
@@ -715,7 +688,7 @@ const App: React.FC = () => {
         {appMode === 'enhance' ? 'Subí tu mejor foto y dejá que la IA te transforme en una leyenda.' : 'Subí una foto o tirá una selfie para que nuestra IA te diga si tenés pinta. De una, sin vueltas.'}
       </p>
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-        <NeonButton onClick={() => { playSound(cameraActivateSoundData); setAppState('capture'); }}>
+        <NeonButton onClick={() => { setAppState('capture'); }}>
           <CameraIcon /> Activar Cámara
         </NeonButton>
         <NeonButton onClick={() => fileInputRef.current?.click()}>
@@ -881,7 +854,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="flex gap-3 mt-4">
                     <NeonButton 
-                        onClick={() => { playSound(cameraActivateSoundData); setActiveBattleSlot(1); setAppState('capture'); }}
+                        onClick={() => { setActiveBattleSlot(1); setAppState('capture'); }}
                         className="bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500"
                     >
                         <CameraIcon /> Cámara
@@ -926,7 +899,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="flex gap-3 mt-4">
                     <NeonButton 
-                        onClick={() => { playSound(cameraActivateSoundData); setActiveBattleSlot(2); setAppState('capture'); }}
+                        onClick={() => { setActiveBattleSlot(2); setAppState('capture'); }}
                         className="bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500"
                     >
                         <CameraIcon /> Cámara
@@ -1434,19 +1407,6 @@ const App: React.FC = () => {
       <div className="absolute top-0 left-0 w-full h-full bg-grid-violet-500/20 [mask-image:linear-gradient(to_bottom,white_5%,transparent_90%)]"></div>
       <main className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center justify-center">
         <header className="text-center mb-6 sm:mb-10 mobile-header">
-          {/* Control buttons */}
-          <div className="flex justify-center gap-4 mb-4">
-            <SoundToggleButton 
-              isEnabled={isSoundEnabled} 
-              onToggle={toggleSound}
-              className="scale-90 sm:scale-100"
-            />
-            <ThemeToggleButton 
-              isDark={isDark} 
-              onToggle={toggleTheme}
-              className="scale-90 sm:scale-100"
-            />
-          </div>
           
           <div className="cursor-pointer" onClick={reset} title="Ir al inicio">
             <h1 className="neon-text-fuchsia flex items-baseline justify-center gap-x-1 md:gap-x-2 mobile-title">
