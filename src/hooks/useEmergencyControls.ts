@@ -14,20 +14,43 @@ const STORAGE_KEY = 'onlyfachas_requests';
 const HOUR_MS = 60 * 60 * 1000;
 
 export const useEmergencyControls = (): EmergencyControls => {
-  const [isMaintenanceMode] = useState(
-    import.meta.env.VITE_MAINTENANCE_MODE === 'true'
-  );
-  
-  const [maxRequestsPerHour] = useState(
-    parseInt(import.meta.env.VITE_MAX_REQUESTS_PER_HOUR || '10', 10)
-  );
-  
-  const [requestDelay] = useState(
-    parseInt(import.meta.env.VITE_REQUEST_DELAY || '3', 10) * 1000
-  );
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+  const [maxRequestsPerHour, setMaxRequestsPerHour] = useState(10);
+  const [requestDelay, setRequestDelay] = useState(3000);
 
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [remainingRequests, setRemainingRequests] = useState(maxRequestsPerHour);
+
+  // Cargar variables de entorno dinámicamente
+  useEffect(() => {
+    const loadEmergencySettings = async () => {
+      try {
+        // Intentar cargar desde el archivo de configuración
+        const response = await fetch('/emergency-config.json?t=' + Date.now());
+        if (response.ok) {
+          const settings = await response.json();
+          setIsMaintenanceMode(settings.maintenanceMode === true);
+          setMaxRequestsPerHour(parseInt(settings.maxRequestsPerHour || '10', 10));
+          setRequestDelay(parseInt(settings.requestDelay || '3', 10) * 1000);
+          console.log('Configuración de emergencia cargada:', settings);
+          return;
+        }
+      } catch (error) {
+        console.log('No se pudo cargar configuración dinámica, usando valores por defecto');
+      }
+
+      // Fallback: usar variables de build time
+      setIsMaintenanceMode(import.meta.env.VITE_MAINTENANCE_MODE === 'true');
+      setMaxRequestsPerHour(parseInt(import.meta.env.VITE_MAX_REQUESTS_PER_HOUR || '10', 10));
+      setRequestDelay(parseInt(import.meta.env.VITE_REQUEST_DELAY || '3', 10) * 1000);
+    };
+
+    loadEmergencySettings();
+    
+    // Recargar configuración cada 30 segundos
+    const interval = setInterval(loadEmergencySettings, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getRequestData = useCallback(() => {
     try {

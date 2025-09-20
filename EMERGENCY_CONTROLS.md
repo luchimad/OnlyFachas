@@ -24,27 +24,42 @@ Este documento explica cómo usar las variables de entorno para controlar la apl
 
 ## 🛠️ Configuración en Netlify
 
-### Paso 1: Acceder a la Configuración
+### Método 1: Variables de Entorno (Requiere Redeploy)
 1. Ve a tu dashboard de Netlify
 2. Selecciona tu sitio `onlyfachas-web`
 3. Ve a **Site settings** → **Environment variables**
+4. Agrega las variables y haz **Redeploy**
 
-### Paso 2: Agregar Variables
-Haz clic en **Add variable** y agrega cada una:
+### Método 2: Archivo de Configuración (Cambios Inmediatos) ⭐ **RECOMENDADO**
+1. Ve a **Deploys** → **Deploy settings** → **Build hooks**
+2. Crea un build hook para actualizar solo el archivo de configuración
+3. O edita directamente el archivo `public/emergency-config.json`:
 
+```json
+{
+  "maintenanceMode": true,
+  "maxRequestsPerHour": 5,
+  "requestDelay": 10,
+  "lastUpdated": "2025-01-19T12:00:00.000Z"
+}
 ```
-Variable name: VITE_MAINTENANCE_MODE
-Value: false
 
-Variable name: VITE_MAX_REQUESTS_PER_HOUR  
-Value: 10
+### Método 3: Script Automático
+Usa el script incluido para actualizar la configuración:
 
-Variable name: VITE_REQUEST_DELAY
-Value: 3
+```bash
+# Activar modo mantenimiento
+node scripts/update-emergency-config.js --maintenance=true
+
+# Configurar delay de 10 segundos
+node scripts/update-emergency-config.js --delay=10
+
+# Limitar a 3 requests por hora
+node scripts/update-emergency-config.js --max-requests=3
+
+# Combinar configuraciones
+node scripts/update-emergency-config.js --maintenance=false --delay=5 --max-requests=8
 ```
-
-### Paso 3: Redeploy
-Después de agregar las variables, haz un **Redeploy** del sitio para que tomen efecto.
 
 ## 🚨 Casos de Uso de Emergencia
 
