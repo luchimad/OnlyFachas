@@ -95,8 +95,8 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
     if (type === 'enhance') {
       return {
         ...baseResult,
-        newImageBase64: null,
-        newImageMimeType: null,
+        newImageBase64: '', // String vacío en lugar de null
+        newImageMimeType: '', // String vacío en lugar de null
         improvements: consejos
       } as FachaEnhanceResult;
     }
