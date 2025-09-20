@@ -18,16 +18,17 @@ const ThemeToggleButton: React.FC<ThemeToggleButtonProps> = ({
   return (
     <button
       onClick={onToggle}
+      disabled
       className={`
         relative p-3 rounded-lg border-2 transition-all duration-500 ease-out
         ${isDark 
-          ? 'border-violet-500/50 bg-violet-500/20 text-violet-300 hover:border-violet-400 hover:bg-violet-500/30' 
-          : 'border-yellow-500/50 bg-yellow-500/20 text-yellow-300 hover:border-yellow-400 hover:bg-yellow-500/30'
+          ? 'border-violet-500/30 bg-violet-500/10 text-violet-400/50' 
+          : 'border-yellow-500/30 bg-yellow-500/10 text-yellow-400/50'
         }
-        hover:scale-105 active:scale-95
+        cursor-not-allowed opacity-50
         ${className}
       `}
-      title={isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+      title="Cambio de tema deshabilitado"
     >
       <div className="relative overflow-hidden">
         {/* Icon container with smooth transition */}

@@ -3,7 +3,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { FachaResult, FachaBattleResult, FachaEnhanceResult, StoredFachaResult, AiMode } from '../types';
 import { getFachaScore, getFachaBattleResult, getEnhancedFacha } from '../services/geminiService';
 import WebcamCapture from '../components/WebcamCapture';
-import FachaMeter from '../components/FachaMeter';
+import GaugeMeter from '../components/GaugeMeter';
 import FachaStats from '../components/FachaStats';
 import Loader from '../components/Loader';
 import WorkInProgressToast from '../components/WorkInProgressToast';
@@ -756,7 +756,7 @@ const App: React.FC = () => {
                   {isAnalyzing ? (
                     <SkeletonLoader type="meter" className="w-full" />
                   ) : (
-                    <FachaMeter score={result.rating} />
+                    <GaugeMeter score={result.rating} />
                   )}
                 </div>
                 <p className="text-lg md:text-xl text-cyan-300 mt-8 p-4 bg-slate-800/50 border border-cyan-500/30 rounded-lg italic w-full">"{result.comment}"</p>
