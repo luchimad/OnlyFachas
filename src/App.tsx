@@ -5,7 +5,6 @@ import { getFachaScore, getFachaBattleResult, getEnhancedFacha } from '../servic
 import WebcamCapture from '../components/WebcamCapture';
 import FachaStats from '../components/FachaStats';
 import Loader from '../components/Loader';
-import WorkInProgressToast from '../components/WorkInProgressToast';
 import AdBanner from '../components/AdBanner';
 import NotificationToast from '../components/NotificationToast';
 import SkeletonLoader from '../components/SkeletonLoader';
@@ -20,7 +19,7 @@ import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, Chec
 import { FiTrendingUp, FiUsers } from "react-icons/fi";
 
 type AppMode = 'single' | 'battle' | 'enhance';
-type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms';
+type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms' | 'comingSoon';
 
 // --- Sound Effects ---
 const playSound = (audioSrc: string) => {
@@ -63,8 +62,6 @@ const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>('welcome');
   const [aiMode, setAiMode] = useState<AiMode>('rapido');
   const [showSettings, setShowSettings] = useState(false);
-  const [showWipToast, setShowWipToast] = useState(false);
-  const [wipToastContent, setWipToastContent] = useState<{title: string, description: string}>({title: '', description: ''});
 
   // Notification Toast state
   const [showNotification, setShowNotification] = useState(false);
@@ -454,14 +451,6 @@ const App: React.FC = () => {
     }
   };
 
-  const displayWipToast = (title: string, description: string) => {
-    setWipToastContent({ title, description });
-    setShowWipToast(true);
-  };
-
-  const hideWipToast = () => {
-    setShowWipToast(false);
-  };
 
   // Notification functions
   const showNotificationToast = (type: 'error' | 'warning' | 'info' | 'success', title: string, message: string) => {
@@ -649,10 +638,7 @@ const App: React.FC = () => {
         </NeonButton>
         
         <NeonButton 
-          onClick={() => displayWipToast(
-            "Aumentá tu Facha", 
-            "Estamos trabajando en una funcionalidad épica que va a transformar tu foto en una versión GigaChad. La IA está aprendiendo a ser más zarpada que nunca."
-          )}
+          onClick={() => setAppState('comingSoon')}
           className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-gray-500 to-gray-600 group-hover:from-gray-500 group-hover:to-gray-600 hover:shadow-[0_0_25px_theme('colors.gray.500'),0_0_50px_theme('colors.gray.600')]"
         >
           <SparklesIcon /> Aumentá tu facha
@@ -1303,12 +1289,82 @@ const App: React.FC = () => {
     </div>
   );
 
+  const renderComingSoonView = () => (
+    <div className="w-full max-w-4xl mx-auto text-center">
+        <div className="mb-8">
+            <div className="text-8xl mb-6">🚀</div>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-4 neon-text-fuchsia">
+                ¡Próximamente!
+            </h2>
+            <p className="text-xl text-violet-300 mb-8">
+                Estamos cocinando algo épico para vos
+            </p>
+        </div>
+
+        <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-cyan-500/50 rounded-2xl p-8 mb-8">
+            <div className="text-6xl mb-4">✨</div>
+            <h3 className="text-2xl font-bold text-cyan-300 mb-4">
+                Aumentá tu Facha
+            </h3>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-6">
+                Estamos trabajando en una funcionalidad épica que va a transformar tu foto en una versión 
+                <span className="text-cyan-400 font-bold"> GigaChad</span>. 
+                La IA está aprendiendo a ser más zarpada que nunca.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                    <div className="text-2xl mb-2">🎨</div>
+                    <h4 className="font-bold text-cyan-300 mb-2">Transformación Total</h4>
+                    <p className="text-sm text-violet-300/80">Tu foto se convierte en una obra de arte de la facha</p>
+                </div>
+                
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                    <div className="text-2xl mb-2">🤖</div>
+                    <h4 className="font-bold text-cyan-300 mb-2">IA Avanzada</h4>
+                    <p className="text-sm text-violet-300/80">Algoritmos de última generación para resultados épicos</p>
+                </div>
+                
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                    <div className="text-2xl mb-2">🔥</div>
+                    <h4 className="font-bold text-cyan-300 mb-2">Resultados Zarpados</h4>
+                    <p className="text-sm text-violet-300/80">Prepárate para quedar detonado con el resultado</p>
+                </div>
+            </div>
+        </div>
+
+        <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30 mb-8">
+            <h4 className="text-lg font-bold text-violet-200 mb-4">¿Cuándo estará listo?</h4>
+            <p className="text-violet-300/90 mb-4">
+                Estamos trabajando a full para traerte esta funcionalidad lo antes posible. 
+                Mientras tanto, disfrutá del análisis de facha y las batallas épicas.
+            </p>
+            <div className="flex items-center justify-center gap-2 text-cyan-400">
+                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                <span className="ml-2 text-sm">En desarrollo...</span>
+            </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <NeonButton onClick={reset} className="bg-gradient-to-br from-purple-500 to-pink-500">
+                🏠 Volver al Inicio
+            </NeonButton>
+            <NeonButton onClick={() => setAppState('leaderboard')} className="bg-gradient-to-br from-yellow-400 to-orange-500">
+                <FiTrendingUp className="w-5 h-5" /> Ver Top Fachas
+            </NeonButton>
+        </div>
+    </div>
+  );
+
   const renderContent = () => {
     if (isLoading) return <Loader />;
     if (showSettings) return renderSettingsView();
     if (appState === 'leaderboard') return renderLeaderboardView();
     if (appState === 'privacy') return renderPrivacyView();
     if (appState === 'terms') return renderTermsView();
+    if (appState === 'comingSoon') return renderComingSoonView();
     
     if (appMode === 'enhance') {
       switch(appState) {
@@ -1397,13 +1453,6 @@ const App: React.FC = () => {
         </footer>
       </main>
       
-      {/* Work in Progress Toast */}
-      <WorkInProgressToast
-        isVisible={showWipToast}
-        onClose={hideWipToast}
-        title={wipToastContent.title}
-        description={wipToastContent.description}
-      />
 
       {/* Notification Toast */}
       <NotificationToast
