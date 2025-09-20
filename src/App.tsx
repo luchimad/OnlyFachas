@@ -11,7 +11,7 @@ import AdBanner from '../components/AdBanner';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
 
 type AppMode = 'single' | 'battle' | 'enhance';
-type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard';
+type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms';
 
 // --- Sound Effects ---
 const playSound = (audioSrc: string) => {
@@ -767,12 +767,175 @@ const App: React.FC = () => {
     </div>
   );
 
+  const renderPrivacyView = () => (
+    <div className="w-full max-w-4xl mx-auto text-left">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 neon-text-fuchsia text-center">
+            Política de Privacidad
+        </h2>
+        <div className="space-y-6 text-violet-300/90 leading-relaxed">
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">Resumen</h3>
+                <p>
+                    OnlyFachas respeta tu privacidad. Esta aplicación procesa las imágenes que subís únicamente para generar un puntaje de facha en tiempo real. No almacenamos, guardamos ni compartimos las fotos ni los resultados.
+                </p>
+            </div>
 
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">Procesamiento de Imágenes</h3>
+                <p className="mb-4">
+                    Las imágenes se envían de manera temporal a los servicios de inteligencia artificial de Google Gemini para su análisis y luego se descartan inmediatamente. No mantenemos copias de tus fotos en nuestros servidores.
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-violet-300/80">
+                    <li>Las imágenes se procesan únicamente para generar el puntaje de facha</li>
+                    <li>No se almacenan en nuestros servidores</li>
+                    <li>Se eliminan automáticamente después del análisis</li>
+                    <li>No se comparten con terceros</li>
+                </ul>
+            </div>
+
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">Datos Técnicos</h3>
+                <p className="mb-4">
+                    OnlyFachas puede recopilar datos técnicos de uso (por ejemplo cookies, datos de navegador, tiempo en la app) para fines de estadísticas, anuncios y mejora de la experiencia.
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-violet-300/80">
+                    <li>Datos de navegación anónimos</li>
+                    <li>Tiempo de permanencia en la aplicación</li>
+                    <li>Páginas visitadas</li>
+                    <li>Información del dispositivo (tipo, navegador)</li>
+                </ul>
+            </div>
+
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">Servicios de Terceros</h3>
+                <p className="mb-4">
+                    Al usar la aplicación aceptas que tus datos de navegación sean utilizados por Google AdSense y servicios analíticos según sus propias políticas.
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-violet-300/80">
+                    <li><strong>Google Gemini:</strong> Para análisis de imágenes</li>
+                    <li><strong>Google AdSense:</strong> Para mostrar anuncios</li>
+                    <li><strong>Google Analytics:</strong> Para estadísticas de uso</li>
+                </ul>
+            </div>
+
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">Tus Derechos</h3>
+                <p className="mb-4">
+                    Tenés derecho a solicitar información sobre los datos que recopilamos y a solicitar su eliminación.
+                </p>
+                <p className="text-violet-300/80">
+                    Para consultas o solicitudes sobre privacidad podés escribir a: <span className="text-cyan-400">privacy@onlyfachas.com</span>
+                </p>
+            </div>
+
+            <div className="text-center text-violet-400/60 text-sm">
+                <p>Fecha de última actualización: 19 de septiembre de 2024</p>
+            </div>
+        </div>
+
+        <div className="mt-8 flex justify-center">
+            <NeonButton onClick={reset}>
+                Volver al Inicio
+            </NeonButton>
+        </div>
+    </div>
+  );
+
+  const renderTermsView = () => (
+    <div className="w-full max-w-4xl mx-auto text-left">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 neon-text-fuchsia text-center">
+            Términos de Uso
+        </h2>
+        <div className="space-y-6 text-violet-300/90 leading-relaxed">
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">1. Aceptación</h3>
+                <p>
+                    Al acceder o utilizar OnlyFachas aceptás estos términos en su totalidad. Si no estás de acuerdo, no uses la aplicación.
+                </p>
+            </div>
+
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">2. Uso Permitido</h3>
+                <p className="mb-4">
+                    La aplicación es solo para fines de entretenimiento. No debe usarse para acosar, discriminar, difamar o infringir derechos de terceros.
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-violet-300/80">
+                    <li>Uso exclusivamente para entretenimiento</li>
+                    <li>Prohibido el acoso o discriminación</li>
+                    <li>Respeto a los derechos de terceros</li>
+                    <li>Uso responsable y ético</li>
+                </ul>
+            </div>
+
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">3. Contenido del Usuario</h3>
+                <p className="mb-4">
+                    Sos responsable de las fotos que subas. No subas contenido ilegal, violento, explícito, protegido por derechos de autor o que infrinja la ley.
+                </p>
+                <p className="text-violet-300/80">
+                    Aunque las imágenes no se almacenen, Google o los servicios de terceros pueden aplicar filtros automáticos para moderación.
+                </p>
+            </div>
+
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">4. Limitación de Responsabilidad</h3>
+                <p className="mb-4">
+                    OnlyFachas se ofrece tal cual, sin garantías de ningún tipo. El puntaje es generado por algoritmos de IA y no representa un juicio real sobre tu apariencia.
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-violet-300/80">
+                    <li>Los resultados son solo para entretenimiento</li>
+                    <li>No constituyen un juicio real sobre tu apariencia</li>
+                    <li>No nos hacemos responsables por el uso de los resultados</li>
+                    <li>El servicio se ofrece "tal cual"</li>
+                </ul>
+            </div>
+
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">5. Servicios de Terceros</h3>
+                <p className="mb-4">
+                    El análisis de imagen se realiza mediante APIs de Google Gemini y la publicación de anuncios a través de Google AdSense. Al usar la aplicación aceptás las políticas de privacidad y términos de estos servicios.
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-violet-300/80">
+                    <li>Google Gemini para análisis de imágenes</li>
+                    <li>Google AdSense para publicidad</li>
+                    <li>Google Analytics para estadísticas</li>
+                    <li>Aceptación de políticas de terceros</li>
+                </ul>
+            </div>
+
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">6. Cambios</h3>
+                <p>
+                    Podemos actualizar estos términos y la política de privacidad en cualquier momento. El uso continuo de la aplicación después de un cambio implica aceptación.
+                </p>
+            </div>
+
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">7. Contacto</h3>
+                <p>
+                    Para consultas o solicitudes sobre privacidad podés escribir a: <span className="text-cyan-400">contacto@onlyfachas.com</span>
+                </p>
+            </div>
+
+            <div className="text-center text-violet-400/60 text-sm">
+                <p>Fecha de última actualización: 19 de septiembre de 2024</p>
+            </div>
+        </div>
+
+        <div className="mt-8 flex justify-center">
+            <NeonButton onClick={reset}>
+                Volver al Inicio
+            </NeonButton>
+        </div>
+    </div>
+  );
 
   const renderContent = () => {
     if (isLoading) return <Loader />;
     if (showSettings) return renderSettingsView();
     if (appState === 'leaderboard') return renderLeaderboardView();
+    if (appState === 'privacy') return renderPrivacyView();
+    if (appState === 'terms') return renderTermsView();
     
     if (appMode === 'enhance') {
       switch(appState) {
@@ -826,7 +989,22 @@ const App: React.FC = () => {
             {renderContent()}
         </div>
         <footer className="mt-6 sm:mt-10 text-center text-violet-400/60 text-xs sm:text-sm mobile-footer">
-            <p>Hecho con IA y mucho amor. Los resultados son para joder, no te la creas tanto.</p>
+            <p className="mb-2">Hecho con IA y mucho amor. Los resultados son para joder, no te la creas tanto.</p>
+            <div className="flex justify-center gap-4 text-violet-400/80">
+                <button 
+                    onClick={() => setAppState('privacy')}
+                    className="hover:text-violet-300 transition-colors duration-200 underline"
+                >
+                    Privacidad
+                </button>
+                <span className="text-violet-400/40">•</span>
+                <button 
+                    onClick={() => setAppState('terms')}
+                    className="hover:text-violet-300 transition-colors duration-200 underline"
+                >
+                    Términos
+                </button>
+            </div>
         </footer>
       </main>
       
