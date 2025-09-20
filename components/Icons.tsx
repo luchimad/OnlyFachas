@@ -97,3 +97,11 @@ export const ClockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <polyline points="12,6 12,12 16,14" />
   </Icon>
 );
+
+export const InfoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <Icon {...props}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 16v-4" />
+    <path d="M12 8h.01" />
+  </Icon>
+);

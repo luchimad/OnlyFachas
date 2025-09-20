@@ -8,6 +8,8 @@ import FachaStats from '../components/FachaStats';
 import Loader from '../components/Loader';
 import WorkInProgressToast from '../components/WorkInProgressToast';
 import AdBanner from '../components/AdBanner';
+import NotificationToast from '../components/NotificationToast';
+import { useApiWithFallback } from './hooks/useApiWithFallback';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
 
 type AppMode = 'single' | 'battle' | 'enhance';
@@ -56,6 +58,21 @@ const App: React.FC = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [showWipToast, setShowWipToast] = useState(false);
   const [wipToastContent, setWipToastContent] = useState<{title: string, description: string}>({title: '', description: ''});
+
+  // Notification Toast state
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationContent, setNotificationContent] = useState({ 
+    type: 'info' as 'error' | 'warning' | 'info' | 'success',
+    title: '', 
+    message: '' 
+  });
+
+  // API with fallback hook
+  const { 
+    isRateLimited, 
+    timeUntilNextRequest, 
+    callApi
+  } = useApiWithFallback();
   
   // Single/Enhance mode state
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -99,28 +116,65 @@ const App: React.FC = () => {
       setAppState('error');
       return;
     }
+
+    // Verificar rate limiting antes de procesar
+    if (isRateLimited) {
+      showNotificationToast(
+        'warning', 
+        'Esperá un momento', 
+        `Esperá ${timeUntilNextRequest} segundos antes de enviar otra foto`
+      );
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setEnhancedResult(null);
     setAppState('enhancing');
     try {
-      const result = await getEnhancedFacha(currentImageData.base64, currentImageData.mimeType);
+      // Usar el hook con fallback automático
+      const result = await callApi(getEnhancedFacha, currentImageData.base64, currentImageData.mimeType);
       playSound(resultSoundData);
       setEnhancedResult(result);
       setAppState('enhanceResult');
-    } catch (err) {
+
+      // Mostrar notificación si es un resultado mock
+      if (result.isMock) {
+        showNotificationToast(
+          'info',
+          'Modo de prueba',
+          'El servidor de IA está saturado, te damos un resultado mock de prueba'
+        );
+      }
+    } catch (err: any) {
       console.error(err);
-      setError(err instanceof Error ? err.message : "Falló la IA tuneadora de fachas. Probá de nuevo.");
-      setAppState('error');
+      
+      // Mostrar error específico si es rate limiting
+      if (err.message && err.message.includes('Esperá')) {
+        showNotificationToast('warning', 'Muy rápido', err.message);
+      } else {
+        setError(err instanceof Error ? err.message : "Falló la IA tuneadora de fachas. Probá de nuevo.");
+        setAppState('error');
+      }
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isRateLimited, timeUntilNextRequest, callApi]);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, slot: 'single' | 1 | 2) => {
     const file = event.target.files?.[0];
     if (file) {
       try {
+        // Verificar rate limiting antes de procesar
+        if (isRateLimited) {
+          showNotificationToast(
+            'warning', 
+            'Esperá un momento', 
+            `Esperá ${timeUntilNextRequest} segundos antes de enviar otra foto`
+          );
+          return;
+        }
+
         playSound(uploadSoundData);
         setError(null);
         const { base64, mimeType } = await fileToBase64(file);
@@ -195,11 +249,23 @@ const App: React.FC = () => {
         setError("Che, ponete un nombre o un apodo para entrar al top.");
         return;
     }
+
+    // Verificar rate limiting antes de procesar
+    if (isRateLimited) {
+      showNotificationToast(
+        'warning', 
+        'Esperá un momento', 
+        `Esperá ${timeUntilNextRequest} segundos antes de enviar otra foto`
+      );
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setResult(null);
     try {
-      const fachaResult = await getFachaScore(imageData.base64, imageData.mimeType, aiMode);
+      // Usar el hook con fallback automático
+      const fachaResult = await callApi(getFachaScore, imageData.base64, imageData.mimeType, aiMode);
       playSound(resultSoundData);
 
       const dataUrl = `data:${imageData.mimeType};base64,${imageData.base64}`;
@@ -219,14 +285,29 @@ const App: React.FC = () => {
       
       setResult(fachaResult);
       setAppState('result');
-    } catch (err) {
+
+      // Mostrar notificación si es un resultado mock
+      if (fachaResult.isMock) {
+        showNotificationToast(
+          'info',
+          'Modo de prueba',
+          'El servidor de IA está saturado, te damos un resultado mock de prueba'
+        );
+      }
+    } catch (err: any) {
       console.error(err);
-      setError("Upa, se rompió todo. Capaz tu facha es tan GOD que bugueó la IA. Probá de una con otra foto.");
-      setAppState('error');
+      
+      // Mostrar error específico si es rate limiting
+      if (err.message && err.message.includes('Esperá')) {
+        showNotificationToast('warning', 'Muy rápido', err.message);
+      } else {
+        setError("Upa, se rompió todo. Capaz tu facha es tan GOD que bugueó la IA. Probá de una con otra foto.");
+        setAppState('error');
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [imageData, aiMode, name, leaderboard]);
+  }, [imageData, aiMode, name, leaderboard, isRateLimited, timeUntilNextRequest, callApi]);
   
   const analyzeFachaBattle = useCallback(async () => {
     if (!imageData1 || !imageData2) {
@@ -234,22 +315,49 @@ const App: React.FC = () => {
       setAppState('error');
       return;
     }
+
+    // Verificar rate limiting antes de procesar
+    if (isRateLimited) {
+      showNotificationToast(
+        'warning', 
+        'Esperá un momento', 
+        `Esperá ${timeUntilNextRequest} segundos antes de enviar otra foto`
+      );
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setBattleResult(null);
     try {
-        const result = await getFachaBattleResult(imageData1, imageData2, aiMode);
+        // Usar el hook con fallback automático
+        const result = await callApi(getFachaBattleResult, imageData1, imageData2, aiMode);
         playSound(resultSoundData);
         setBattleResult(result);
         setAppState('battleResult');
-    } catch (err) {
+
+        // Mostrar notificación si es un resultado mock
+        if (result.isMock) {
+          showNotificationToast(
+            'info',
+            'Modo de prueba',
+            'El servidor de IA está saturado, te damos un resultado mock de prueba'
+          );
+        }
+    } catch (err: any) {
         console.error(err);
-        setError("La IA no pudo decidir, la facha es demasiada. Intentá con otras fotos.");
-        setAppState('error');
+        
+        // Mostrar error específico si es rate limiting
+        if (err.message && err.message.includes('Esperá')) {
+          showNotificationToast('warning', 'Muy rápido', err.message);
+        } else {
+          setError("La IA no pudo decidir, la facha es demasiada. Intentá con otras fotos.");
+          setAppState('error');
+        }
     } finally {
         setIsLoading(false);
     }
-}, [imageData1, imageData2, aiMode]);
+}, [imageData1, imageData2, aiMode, isRateLimited, timeUntilNextRequest, callApi]);
 
   const reset = () => {
     // Common
@@ -302,6 +410,16 @@ const App: React.FC = () => {
 
   const hideWipToast = () => {
     setShowWipToast(false);
+  };
+
+  // Notification functions
+  const showNotificationToast = (type: 'error' | 'warning' | 'info' | 'success', title: string, message: string) => {
+    setNotificationContent({ type, title, message });
+    setShowNotification(true);
+  };
+
+  const hideNotificationToast = () => {
+    setShowNotification(false);
   };
 
   const NeonButton: React.FC<{onClick?: () => void, children: React.ReactNode, className?: string, disabled?: boolean}> = ({ onClick, children, className = '', disabled = false }) => (
@@ -1014,6 +1132,16 @@ const App: React.FC = () => {
         onClose={hideWipToast}
         title={wipToastContent.title}
         description={wipToastContent.description}
+      />
+
+      {/* Notification Toast */}
+      <NotificationToast
+        isVisible={showNotification}
+        onClose={hideNotificationToast}
+        type={notificationContent.type}
+        title={notificationContent.title}
+        message={notificationContent.message}
+        duration={5000}
       />
     </div>
   );
