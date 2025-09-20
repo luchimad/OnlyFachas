@@ -93,10 +93,22 @@ export const getFachaBattleResult = async (
             }
         });
 
-        const prompt = `Generate a short, spicy comment in Argentine slang about who won this facha battle. Person 1 scored ${result1.rating.toFixed(1)} and Person 2 scored ${result2.rating.toFixed(1)}. The winner is Person ${winner}. Be creative and use words like: detonar, papi, minusas, etc.
+        const prompt = `Genera un comentario corto y picante en lunfardo argentino sobre esta batalla de facha. Persona 1 sacó ${result1.rating.toFixed(1)} y Persona 2 sacó ${result2.rating.toFixed(1)}. El ganador es la Persona ${winner}.
+
+IMPORTANTE: 
+- Sé bardero pero AMISTOSO, no hiriente
+- Usa jerga argentina divertida (detonar, papi, minusas, papá, etc.)
+- Haz que el perdedor se ría, no que se sienta mal
+- Mantén el tono de joda entre amigos
+- Máximo 2-3 oraciones
+
+Ejemplos de tono:
+- "Papi, la Persona ${winner} te pasó por arriba como un tren. Pero tranqui, que con esa sonrisa seguro que levantas igual"
+- "Che, la Persona ${winner} te dio una paliza épica, pero no te hagas drama que tenés onda para rato"
+- "Uy, la Persona ${winner} te dejó en el molde, pero mirá que bien que te ves igual"
 
 Responde en formato JSON con:
-- comment: comentario corto y picante sobre quién ganó la batalla`;
+- comment: comentario corto, picante pero amistoso sobre quién ganó la batalla`;
 
         const result = await model.generateContent([prompt]);
         const response = await result.response;

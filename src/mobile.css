@@ -49,6 +49,34 @@
   .mobile-main {
     padding: 1rem !important;
   }
+
+  /* Battle mode mobile optimizations */
+  .battle-container {
+    padding: 0.5rem !important;
+  }
+  
+  .battle-image-container {
+    height: 200px !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .battle-vs-text {
+    font-size: 2rem !important;
+    margin: 1rem 0 !important;
+  }
+  
+  .battle-result-image {
+    height: 250px !important;
+  }
+  
+  .battle-score {
+    font-size: 2rem !important;
+  }
+  
+  .battle-comment {
+    font-size: 1rem !important;
+    padding: 1rem !important;
+  }
 }
 
 @media (max-width: 480px) {
