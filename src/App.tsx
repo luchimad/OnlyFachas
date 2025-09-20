@@ -430,43 +430,49 @@ const App: React.FC = () => {
 
   const renderWelcomeView = () => (
     <div className="text-center flex flex-col items-center">
-      <NeonButton 
-        onClick={() => { setAppMode('single'); setAppState('select'); }} 
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mobile-button hover:scale-105 hover:shadow-[0_0_25px_theme('colors.fuchsia.500'),0_0_50px_theme('colors.purple.700')]"
-      >
-        <ZapIcon /> Analizame la facha
-      </NeonButton>
+      {/* Botones de arriba - principales */}
+      <div className="flex flex-col items-center gap-4 w-full max-w-md">
+        <NeonButton 
+          onClick={() => { setAppMode('single'); setAppState('select'); }} 
+          className="w-full text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mobile-button hover:scale-105 hover:shadow-[0_0_25px_theme('colors.fuchsia.500'),0_0_50px_theme('colors.purple.700')]"
+        >
+          <ZapIcon /> Analizame la facha
+        </NeonButton>
+        
+        <NeonButton 
+          onClick={() => setAppState('leaderboard')}
+          className="w-full text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mobile-button bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 dark:focus:ring-yellow-800 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
+        >
+          <TrophyIcon /> Top Fachas
+        </NeonButton>
+      </div>
       
-      <NeonButton 
-        onClick={() => displayWipToast(
-          "Aumentá tu Facha", 
-          "Estamos trabajando en una funcionalidad épica que va a transformar tu foto en una versión GigaChad. La IA está aprendiendo a ser más zarpada que nunca."
-        )}
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mt-2 sm:mt-4 mobile-button bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 hover:shadow-[0_0_25px_theme('colors.cyan.400'),0_0_50px_theme('colors.blue.600')]"
-      >
-        <SparklesIcon /> Aumentá tu facha
-      </NeonButton>
-      
-      <NeonButton 
-        onClick={() => setAppState('leaderboard')}
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mt-2 sm:mt-4 mobile-button bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 dark:focus:ring-yellow-800 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
-      >
-        <TrophyIcon /> Top Fachas
-      </NeonButton>
-      
-      <NeonButton 
-        onClick={() => displayWipToast(
-          "Facha vs Facha", 
-          "Preparando la batalla más épica de la historia. Dos fotos, una IA, y un veredicto final que va a romper todo."
-        )}
-        className="mt-6 w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mobile-button bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:shadow-[0_0_25px_theme('colors.purple.500'),0_0_50px_theme('colors.pink.600')]"
-      >
-        <TrophyIcon /> Facha vs Facha
-      </NeonButton>
+      {/* Botones de abajo - Work in Progress */}
+      <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md mt-6">
+        <NeonButton 
+          onClick={() => displayWipToast(
+            "Aumentá tu Facha", 
+            "Estamos trabajando en una funcionalidad épica que va a transformar tu foto en una versión GigaChad. La IA está aprendiendo a ser más zarpada que nunca."
+          )}
+          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 hover:shadow-[0_0_25px_theme('colors.cyan.400'),0_0_50px_theme('colors.blue.600')]"
+        >
+          <SparklesIcon /> Aumentá tu facha
+        </NeonButton>
+        
+        <NeonButton 
+          onClick={() => displayWipToast(
+            "Facha vs Facha", 
+            "Preparando la batalla más épica de la historia. Dos fotos, una IA, y un veredicto final que va a romper todo."
+          )}
+          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:shadow-[0_0_25px_theme('colors.purple.500'),0_0_50px_theme('colors.pink.600')]"
+        >
+          <TrophyIcon /> Facha vs Facha
+        </NeonButton>
+      </div>
       
        <button 
         onClick={() => setShowSettings(true)}
-        className="mt-4 text-sm text-violet-400 hover:text-white flex items-center gap-2"
+        className="mt-6 text-sm text-violet-400 hover:text-white flex items-center gap-2"
       >
         <SettingsIcon className="w-4 h-4" /> Configurar IA
       </button>

@@ -19,10 +19,10 @@ const WorkInProgressToast: React.FC<WorkInProgressToastProps> = ({
   useEffect(() => {
     if (isVisible) {
       setIsAnimating(true);
-      // Auto-close after 5 seconds
+      // Auto-close after 6 seconds
       const timer = setTimeout(() => {
         handleClose();
-      }, 5000);
+      }, 6000);
       return () => clearTimeout(timer);
     }
   }, [isVisible]);
@@ -37,63 +37,61 @@ const WorkInProgressToast: React.FC<WorkInProgressToastProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 max-w-sm">
-      <div className={`transform transition-all duration-300 ${
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={handleClose}
+      />
+      
+      {/* Popup */}
+      <div className={`relative transform transition-all duration-300 ${
         isAnimating 
-          ? 'translate-x-0 opacity-100 scale-100' 
-          : 'translate-x-full opacity-0 scale-95'
+          ? 'scale-100 opacity-100' 
+          : 'scale-95 opacity-0'
       }`}>
-        <div className="bg-slate-900/95 backdrop-blur-sm border-2 border-yellow-500/50 rounded-xl p-4 shadow-2xl neon-shadow-yellow">
+        <div className="bg-slate-900/90 backdrop-blur-md border-2 border-yellow-500/50 rounded-2xl p-8 shadow-2xl neon-shadow-yellow max-w-md w-full">
           {/* Header */}
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center gap-2">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center gap-3">
               <div className="text-yellow-400 animate-pulse">
-                <ConstructionIcon className="w-5 h-5" />
+                <ConstructionIcon className="w-8 h-8" />
               </div>
-              <div className="flex items-center gap-1">
-                <ClockIcon className="w-4 h-4 text-yellow-400" />
-                <span className="text-xs font-semibold text-yellow-300 uppercase tracking-wider">
+              <div className="flex items-center gap-2">
+                <ClockIcon className="w-5 h-5 text-yellow-400" />
+                <span className="text-sm font-semibold text-yellow-300 uppercase tracking-wider">
                   Work in Progress
                 </span>
               </div>
             </div>
             <button
               onClick={handleClose}
-              className="text-violet-400 hover:text-white transition-colors duration-200 hover:scale-110"
+              className="text-violet-400 hover:text-white transition-colors duration-200 hover:scale-110 p-1"
             >
-              <XIcon className="w-4 h-4" />
+              <XIcon className="w-6 h-6" />
             </button>
           </div>
 
           {/* Content */}
-          <div className="mb-3">
-            <h3 className="font-bold text-lg text-yellow-300 mb-1">
+          <div className="mb-6">
+            <h3 className="font-bold text-2xl text-yellow-300 mb-3 text-center">
               {title}
             </h3>
-            <p className="text-sm text-violet-300 leading-relaxed">
+            <p className="text-base text-violet-300 leading-relaxed text-center">
               {description}
             </p>
           </div>
 
-          {/* Instagram CTA */}
-          <div className="bg-slate-800/50 border border-violet-500/30 rounded-lg p-3">
-            <p className="text-xs text-violet-400/80 mb-2">
-              Próximamente... ¡Seguinos en Instagram para estar al tanto de las novedades!
+          {/* Próximamente message */}
+          <div className="bg-slate-800/50 border border-violet-500/30 rounded-lg p-4 text-center">
+            <p className="text-sm text-violet-400/80">
+              Próximamente... ¡Mantente atento a las novedades!
             </p>
-            <a
-              href="https://instagram.com/luchimad"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-pink-400 hover:text-pink-300 transition-colors duration-200 hover:scale-105"
-            >
-              <span>📸</span>
-              @luchimad
-            </a>
           </div>
 
           {/* Progress bar */}
-          <div className="mt-3 w-full bg-slate-800/50 rounded-full h-1">
-            <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-1 rounded-full animate-pulse"></div>
+          <div className="mt-6 w-full bg-slate-800/50 rounded-full h-2">
+            <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full animate-pulse"></div>
           </div>
         </div>
       </div>
