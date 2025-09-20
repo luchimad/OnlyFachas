@@ -101,7 +101,10 @@ export const getFachaScore = async (base64Image: string, mimeType: string, model
         }
     });
 
-    const jsonText = response.text.trim();
+    const jsonText = response.text?.trim();
+    if (!jsonText) {
+      throw new Error("Empty response from Gemini API");
+    }
     const parsedResult = JSON.parse(jsonText) as FachaResult;
     
     parsedResult.rating = Math.max(1, Math.min(10, parsedResult.rating));
@@ -173,7 +176,10 @@ export const getFachaBattleResult = async (
             }
         });
 
-        const jsonText = response.text.trim();
+        const jsonText = response.text?.trim();
+        if (!jsonText) {
+            throw new Error("Empty response from Gemini API");
+        }
         const commentResult = JSON.parse(jsonText) as { comment: string };
 
         // Step 5: Assemble the final battle result object
