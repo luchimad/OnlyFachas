@@ -3,7 +3,6 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { FachaResult, FachaBattleResult, FachaEnhanceResult, StoredFachaResult, AiMode } from '../types';
 import { getFachaScore, getFachaBattleResult, getEnhancedFacha } from '../services/geminiService';
 import WebcamCapture from '../components/WebcamCapture';
-import GaugeMeter from '../components/GaugeMeter';
 import FachaStats from '../components/FachaStats';
 import Loader from '../components/Loader';
 import WorkInProgressToast from '../components/WorkInProgressToast';
@@ -491,6 +490,28 @@ const App: React.FC = () => {
     return '#d946ef'; // fuchsia-500
   };
 
+  const getFachaTier = (s: number): string => {
+    const tiers: { [key: string]: string[] } = {
+      needsWork: ["Necesitás un cambio de look", "Urgente al peluquero", "El placar te pide ayuda"],
+      average: ["Estás en el promedio", "Metele un poco más de onda", "Zafás, pero hasta ahí"],
+      approved: ["Aprobado, pero con lo justo", "Tenés tu mística", "Vas por buen camino"],
+      good: ["Tenés tu onda, se nota", "Fachero, la verdad", "Titular indiscutido"],
+      god: ["Fachero Nivel Dios", "Nivel Leyenda", "Estás detonado mal"],
+      legend: ["Rompiste el Fachómetro", "La reencarnación de la facha", "El verdadero King"]
+    };
+
+    let selectedTier: string[];
+    if (s <= 3) selectedTier = tiers.needsWork;
+    else if (s <= 5) selectedTier = tiers.average;
+    else if (s < 7) selectedTier = tiers.approved;
+    else if (s < 8.5) selectedTier = tiers.good;
+    else if (s < 10) selectedTier = tiers.god;
+    else selectedTier = tiers.legend;
+
+    const hash = Math.floor(s * 1000) % selectedTier.length;
+    return selectedTier[hash];
+  };
+
   const handleExportResult = async () => {
     if (!result || !imageSrc) return;
     setIsLoading(true);
@@ -738,7 +759,7 @@ const App: React.FC = () => {
             
             {/* Right Column: Verdict */}
             <div className="w-full md:w-2/3 flex flex-col items-center">
-                <h2 className="text-3xl font-bold mb-4 neon-text-fuchsia">El Veredicto</h2>
+                <h2 className="text-4xl font-bold mb-8 neon-text-fuchsia">VEREDICTO</h2>
                 
                 {/* Progress Bar durante análisis */}
                 {isAnalyzing && (
@@ -752,13 +773,43 @@ const App: React.FC = () => {
                   </div>
                 )}
                 
-                <div className="w-full">
+                {/* Score Display - Simple and Clean */}
+                <div className="w-full flex flex-col items-center mb-8">
                   {isAnalyzing ? (
-                    <SkeletonLoader type="meter" className="w-full" />
+                    <SkeletonLoader type="meter" className="w-full h-32" />
                   ) : (
-                    <GaugeMeter score={result.rating} />
+                    <div className="flex flex-col items-center">
+                      <span 
+                        className="font-orbitron text-8xl md:text-9xl font-bold transition-all duration-1000"
+                        style={{ 
+                          color: getScoreColor(result.rating),
+                          textShadow: `0 0 20px ${getScoreColor(result.rating)}`
+                        }}
+                      >
+                        {result.rating.toFixed(1)}
+                      </span>
+                      <p className="text-2xl font-bold text-gray-300 tracking-widest uppercase mt-2">
+                        DE FACHA
+                      </p>
+                      <div className="mt-6 w-full max-w-md text-center bg-slate-800/60 border-2 rounded-lg p-4"
+                           style={{ 
+                             borderColor: getScoreColor(result.rating), 
+                             boxShadow: `0 0 15px ${getScoreColor(result.rating)}40` 
+                           }}>
+                        <p className="text-sm uppercase tracking-widest text-violet-300/80 mb-2">
+                          Tu Rango de Facha
+                        </p>
+                        <p 
+                          className="font-orbitron text-xl font-bold"
+                          style={{ color: getScoreColor(result.rating) }}
+                        >
+                          {getFachaTier(result.rating)}
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </div>
+                
                 <p className="text-lg md:text-xl text-cyan-300 mt-8 p-4 bg-slate-800/50 border border-cyan-500/30 rounded-lg italic w-full">"{result.comment}"</p>
                 <div className="mt-8 w-full flex flex-col md:flex-row gap-6 text-left">
                     <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-green-500/30"><h3 className="font-bold text-lg text-green-400 mb-3 flex items-center gap-2"><CheckCircle2 /> Tus puntos fuertes</h3><ul className="space-y-2 text-green-300/90">{result.fortalezas.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">✅</span>{item}</li>)}</ul></div>
