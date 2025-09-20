@@ -15,15 +15,13 @@ const loadingMessages = [
 
 const Loader: React.FC = () => {
   const [message, setMessage] = useState(loadingMessages[0]);
-  const [messageIndex, setMessageIndex] = useState(0);
 
   useEffect(() => {
+    let currentIndex = 0;
+    
     const interval = setInterval(() => {
-      setMessageIndex(prevIndex => {
-        const nextIndex = (prevIndex + 1) % loadingMessages.length;
-        setMessage(loadingMessages[nextIndex]);
-        return nextIndex;
-      });
+      currentIndex = (currentIndex + 1) % loadingMessages.length;
+      setMessage(loadingMessages[currentIndex]);
     }, 2000);
 
     return () => clearInterval(interval);
