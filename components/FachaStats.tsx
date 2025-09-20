@@ -74,8 +74,8 @@ const FachaStats: React.FC<{ rating: number }> = ({ rating }) => {
     const animatedPercentile = useCountUp(topPercentile, 2000, topPercentile < 1 ? 1 : 0);
     
     // Calcular personas más facheras en juntada de 20
-    // Si estás en el top X%, entonces (100-X)% de personas son más facheras
-    const peopleMoreFacheros = Math.round((100 - topPercentile) / 100 * 20);
+    // Si estás en el top X%, entonces X% de personas son más facheras (las que están por encima de vos)
+    const peopleMoreFacheros = Math.round(topPercentile / 100 * 20);
     const animatedPeople = useCountUp(peopleMoreFacheros, 2000, 0);
 
 
