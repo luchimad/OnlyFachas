@@ -1,0 +1,100 @@
+/* Mobile-specific styles for OnlyFachas */
+
+@media (max-width: 768px) {
+  /* Reduce font sizes for mobile */
+  .mobile-title {
+    font-size: 2.5rem !important;
+    line-height: 1.1 !important;
+  }
+  
+  .mobile-subtitle {
+    font-size: 0.9rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  /* Button optimizations */
+  .mobile-button {
+    width: 100% !important;
+    max-width: 300px !important;
+    margin: 0.5rem auto !important;
+    padding: 0.875rem 1.5rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* Container optimizations */
+  .mobile-container {
+    padding: 1rem !important;
+    min-height: 100vh !important;
+  }
+  
+  /* Footer optimizations */
+  .mobile-footer {
+    font-size: 0.75rem !important;
+    margin-top: 1rem !important;
+    padding: 0 1rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  /* Spacing optimizations */
+  .mobile-spacing {
+    margin: 0.75rem 0 !important;
+  }
+  
+  /* Header optimizations */
+  .mobile-header {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Main content optimizations */
+  .mobile-main {
+    padding: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens */
+  .mobile-title {
+    font-size: 2rem !important;
+  }
+  
+  .mobile-subtitle {
+    font-size: 0.8rem !important;
+  }
+  
+  .mobile-button {
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .mobile-footer {
+    font-size: 0.7rem !important;
+  }
+  
+  /* Reduce padding even more */
+  .mobile-container {
+    padding: 0.75rem !important;
+  }
+  
+  .mobile-main {
+    padding: 0.75rem !important;
+  }
+}
+
+/* Landscape mobile optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+  .mobile-title {
+    font-size: 2rem !important;
+  }
+  
+  .mobile-subtitle {
+    font-size: 0.8rem !important;
+  }
+  
+  .mobile-container {
+    padding: 0.5rem !important;
+  }
+  
+  .mobile-main {
+    padding: 0.5rem !important;
+  }
+}

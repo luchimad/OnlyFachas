@@ -420,19 +420,19 @@ const App: React.FC = () => {
     <div className="text-center flex flex-col items-center">
       <NeonButton 
         onClick={() => { setAppMode('single'); setAppState('select'); }} 
-        className="w-full sm:w-auto text-lg px-8 py-4 hover:scale-105 hover:shadow-[0_0_25px_theme('colors.fuchsia.500'),0_0_50px_theme('colors.purple.700')]"
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mobile-button hover:scale-105 hover:shadow-[0_0_25px_theme('colors.fuchsia.500'),0_0_50px_theme('colors.purple.700')]"
       >
         <ZapIcon /> Analizame la facha
       </NeonButton>
       <NeonButton 
         onClick={() => { setAppMode('enhance'); setAppState('select'); }}
-        className="w-full sm:w-auto text-lg px-8 py-4 mt-4 bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 hover:shadow-[0_0_25px_theme('colors.cyan.400'),0_0_50px_theme('colors.blue.600')]"
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mt-2 sm:mt-4 mobile-button bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 hover:shadow-[0_0_25px_theme('colors.cyan.400'),0_0_50px_theme('colors.blue.600')]"
       >
         <SparklesIcon /> Aumentá tu facha
       </NeonButton>
       <NeonButton 
         onClick={() => setAppState('leaderboard')}
-        className="w-full sm:w-auto text-lg px-8 py-4 mt-4 bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 dark:focus:ring-yellow-800 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mt-2 sm:mt-4 mobile-button bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 dark:focus:ring-yellow-800 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
       >
         <TrophyIcon /> Top Fachas
       </NeonButton>
@@ -453,7 +453,7 @@ const App: React.FC = () => {
 
   const renderSettingsView = () => (
     <div className="w-full max-w-md mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 neon-text-fuchsia">Modelo de IA</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 neon-text-fuchsia">Modelo de IA</h2>
         <p className="text-violet-300 mb-8">Elegí qué tan zarpada querés que sea la IA.</p>
         <div className="flex flex-col gap-4">
             <button
@@ -479,7 +479,7 @@ const App: React.FC = () => {
 
   const renderSelectModeView = () => (
     <div className="text-center">
-      <h2 className="text-3xl md:text-4xl font-bold mb-6 neon-text-fuchsia">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 neon-text-fuchsia">
         {appMode === 'enhance' ? 'Convertite en GigaChad' : '¿Qué onda tu facha?'}
       </h2>
       <p className="text-violet-300 mb-8 max-w-md mx-auto">
@@ -585,7 +585,7 @@ const App: React.FC = () => {
 
   const renderBattleSelectView = () => (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-2 neon-text-fuchsia">Facha vs Facha</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 neon-text-fuchsia">Facha vs Facha</h2>
         <p className="text-violet-300 mb-8 text-center">Subí o sacá dos fotos y que la IA decida quién la rompe más.</p>
         <div className="w-full flex flex-col md:flex-row items-start justify-center gap-8 mb-8">
             <ImageSlot
@@ -594,7 +594,7 @@ const App: React.FC = () => {
                 onCameraClick={() => { playSound(cameraActivateSoundData); setActiveBattleSlot(1); setAppState('capture'); }}
                 onUploadClick={() => fileInputRef1.current?.click()}
             />
-            <div className="font-orbitron text-5xl text-fuchsia-500 self-center pt-4">VS</div>
+            <div className="font-orbitron text-3xl sm:text-4xl md:text-5xl text-fuchsia-500 self-center pt-2 sm:pt-4">VS</div>
              <ImageSlot
                 slot={2}
                 imageSrc={imageSrc2}
@@ -613,7 +613,7 @@ const App: React.FC = () => {
 
   const renderBattleResultView = () => battleResult && (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8 neon-text-fuchsia">Veredicto Final</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 neon-text-fuchsia">Veredicto Final</h2>
         <div className="w-full flex flex-col md:flex-row items-start justify-center gap-8 mb-8">
             {[1, 2].map(slot => {
                 const isWinner = battleResult.winner === slot;
@@ -651,7 +651,7 @@ const App: React.FC = () => {
 
   const renderEnhanceResultView = () => enhancedResult && (
     <div className="w-full max-w-5xl mx-auto flex flex-col items-center text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8 neon-text-fuchsia">¡Mirá lo que sos ahora!</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 neon-text-fuchsia">¡Mirá lo que sos ahora!</h2>
         <div className="w-full flex flex-col md:flex-row items-start justify-center gap-8 mb-8">
             <div className="w-full md:w-1/2 flex flex-col items-center">
                 <h3 className="text-2xl font-bold mb-4 text-violet-300">Antes</h3>
@@ -680,8 +680,8 @@ const App: React.FC = () => {
   
   const renderLeaderboardView = () => (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6 neon-text-fuchsia flex items-center gap-3">
-            <TrophyIcon className="w-10 h-10" /> Top Fachas
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 neon-text-fuchsia flex items-center gap-2 sm:gap-3">
+            <TrophyIcon className="w-8 h-8 sm:w-10 sm:h-10" /> Top Fachas
         </h2>
         {leaderboard.length > 0 ? (
             <div className="w-full space-y-3 max-h-[60vh] overflow-y-auto pr-2">
@@ -763,24 +763,24 @@ const App: React.FC = () => {
   };
 
   const containerClasses = appState === 'welcome' 
-    ? "w-full min-h-[400px] flex items-center justify-center p-8 rounded-2xl fade-in transition-all duration-500" 
-    : "w-full min-h-[400px] flex items-center justify-center p-8 bg-slate-900/50 backdrop-blur-sm border border-violet-500/30 rounded-2xl neon-shadow-purple fade-in transition-all duration-500";
+    ? "w-full min-h-[300px] sm:min-h-[400px] flex items-center justify-center p-4 sm:p-6 md:p-8 rounded-2xl fade-in transition-all duration-500" 
+    : "w-full min-h-[300px] sm:min-h-[400px] flex items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/50 backdrop-blur-sm border border-violet-500/30 rounded-2xl neon-shadow-purple fade-in transition-all duration-500";
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 selection:bg-fuchsia-500 selection:text-white">
+    <div className="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4 mobile-container selection:bg-fuchsia-500 selection:text-white">
       <div className="absolute top-0 left-0 w-full h-full bg-grid-violet-500/20 [mask-image:linear-gradient(to_bottom,white_5%,transparent_90%)]"></div>
       <main className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center justify-center">
-        <header className="text-center mb-10 cursor-pointer" onClick={reset} title="Ir al inicio">
-           <h1 className="neon-text-fuchsia flex items-baseline justify-center gap-x-1 md:gap-x-2">
-            <span className="font-montserrat font-thin tracking-wider text-8xl md:text-7xl">Only</span>
-            <span className="font-arizonia text-8xl md:text-9xl">Fachas</span>
+        <header className="text-center mb-6 sm:mb-10 cursor-pointer mobile-header" onClick={reset} title="Ir al inicio">
+           <h1 className="neon-text-fuchsia flex items-baseline justify-center gap-x-1 md:gap-x-2 mobile-title">
+            <span className="font-montserrat font-thin tracking-wider text-4xl sm:text-6xl md:text-7xl lg:text-8xl">Only</span>
+            <span className="font-arizonia text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">Fachas</span>
           </h1>
-          <p className="text-violet-300 mt-2">La única IA que sabe de tirar facha.</p>
+          <p className="text-violet-300 mt-2 mobile-subtitle">La única IA que sabe de tirar facha.</p>
         </header>
         <div className={containerClasses}>
             {renderContent()}
         </div>
-        <footer className="mt-10 text-center text-violet-400/60 text-sm">
+        <footer className="mt-6 sm:mt-10 text-center text-violet-400/60 text-xs sm:text-sm mobile-footer">
             <p>Hecho con IA y mucho amor. Los resultados son para joder, no te la creas tanto.</p>
         </footer>
       </main>
