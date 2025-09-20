@@ -1013,7 +1013,10 @@ const App: React.FC = () => {
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
                 <h3 className="text-xl font-bold text-violet-200 mb-4">Tus Derechos</h3>
                 <p className="mb-4">
-                    Tenés derecho a solicitar información sobre los datos que recopilamos y a solicitar su eliminación.
+                    <strong>Importante:</strong> No almacenamos ninguna información personal ni fotos. Las imágenes se procesan únicamente en tiempo real y se eliminan inmediatamente después del análisis.
+                </p>
+                <p className="mb-4">
+                    Solo guardamos tus preferencias locales (tema, sonido) en tu navegador. No recopilamos datos personales ni fotos.
                 </p>
                 <p className="text-violet-300/80">
                     Para consultas o solicitudes sobre privacidad podés escribir a: <span className="text-cyan-400">privacy@onlyfachas.com</span>
@@ -1021,7 +1024,7 @@ const App: React.FC = () => {
             </div>
 
             <div className="text-center text-violet-400/60 text-sm">
-                <p>Fecha de última actualización: 19 de septiembre de 2024</p>
+                <p>Fecha de última actualización: 19 de enero de 2025</p>
             </div>
         </div>
 
