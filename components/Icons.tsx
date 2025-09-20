@@ -79,3 +79,21 @@ export const Trash2Icon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <line x1="14" y1="11" x2="14" y2="17" />
   </Icon>
 );
+
+export const ConstructionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <Icon {...props}>
+    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+    <path d="M2 17l10 5 10-5" />
+    <path d="M2 12l10 5 10-5" />
+    <path d="M12 2v20" />
+    <path d="M2 7v10" />
+    <path d="M22 7v10" />
+  </Icon>
+);
+
+export const ClockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <Icon {...props}>
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12,6 12,12 16,14" />
+  </Icon>
+);

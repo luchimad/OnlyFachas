@@ -6,10 +6,11 @@ import WebcamCapture from '../components/WebcamCapture';
 import FachaMeter from '../components/FachaMeter';
 import FachaStats from '../components/FachaStats';
 import Loader from '../components/Loader';
+import WorkInProgress from '../components/WorkInProgress';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
 
 type AppMode = 'single' | 'battle' | 'enhance';
-type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard';
+type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'wip';
 
 // --- Sound Effects ---
 const playSound = (audioSrc: string) => {
@@ -295,9 +296,9 @@ const App: React.FC = () => {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 transition-all duration-300 ${disabled ? 'opacity-50 cursor-not-allowed' : 'group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800'} ${className}`}
+      className={`relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 transition-all duration-300 ${disabled ? 'opacity-50 cursor-not-allowed' : 'group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800'} ${className}`}
     >
-      <span className="relative w-full px-5 py-2.5 transition-all ease-in duration-75 bg-slate-900 rounded-md group-hover:bg-opacity-0 flex items-center justify-center gap-2">
+      <span className="relative w-full px-5 py-2.5 transition-all ease-in duration-75 bg-slate-900/30 backdrop-blur-sm rounded-md group-hover:bg-opacity-0 flex items-center justify-center gap-2 text-white font-bold group-hover:text-white drop-shadow-lg">
         {children}
       </span>
     </button>
@@ -424,24 +425,32 @@ const App: React.FC = () => {
       >
         <ZapIcon /> Analizame la facha
       </NeonButton>
-      <NeonButton 
-        onClick={() => { setAppMode('enhance'); setAppState('select'); }}
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mt-2 sm:mt-4 mobile-button bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 hover:shadow-[0_0_25px_theme('colors.cyan.400'),0_0_50px_theme('colors.blue.600')]"
+      
+      {/* Botón deshabilitado para "Aumentá tu facha" */}
+      <button 
+        onClick={() => { setAppMode('enhance'); setAppState('wip'); }}
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mt-2 sm:mt-4 mobile-button bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 hover:shadow-[0_0_25px_theme('colors.cyan.400'),0_0_50px_theme('colors.blue.600')] opacity-60 cursor-not-allowed"
+        disabled
       >
         <SparklesIcon /> Aumentá tu facha
-      </NeonButton>
+      </button>
+      
       <NeonButton 
         onClick={() => setAppState('leaderboard')}
         className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mt-2 sm:mt-4 mobile-button bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 dark:focus:ring-yellow-800 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
       >
         <TrophyIcon /> Top Fachas
       </NeonButton>
+      
+      {/* Botón deshabilitado para "Facha vs Facha" */}
       <button 
-        onClick={() => { setAppMode('battle'); setAppState('battleSelect'); }}
-        className="mt-6 font-semibold text-violet-300 hover:text-fuchsia-400 transition-colors duration-300 hover:scale-105"
+        onClick={() => { setAppMode('battle'); setAppState('wip'); }}
+        className="mt-6 font-semibold text-violet-300 hover:text-fuchsia-400 transition-colors duration-300 hover:scale-105 opacity-60 cursor-not-allowed"
+        disabled
       >
         Facha vs Facha
       </button>
+      
        <button 
         onClick={() => setShowSettings(true)}
         className="mt-4 text-sm text-violet-400 hover:text-white flex items-center gap-2"
@@ -723,11 +732,37 @@ const App: React.FC = () => {
     </div>
   );
 
+  const renderWorkInProgressView = () => {
+    if (appMode === 'enhance') {
+      return (
+        <WorkInProgress
+          title="Aumentá tu Facha"
+          description="Estamos trabajando en una funcionalidad épica que va a transformar tu foto en una versión GigaChad. La IA está aprendiendo a ser más zarpada que nunca."
+          icon={<SparklesIcon className="w-16 h-16" />}
+          estimatedTime="Próximamente"
+          onBack={reset}
+        />
+      );
+    } else if (appMode === 'battle') {
+      return (
+        <WorkInProgress
+          title="Facha vs Facha"
+          description="Preparando la batalla más épica de la historia. Dos fotos, una IA, y un veredicto final que va a romper todo."
+          icon={<TrophyIcon className="w-16 h-16" />}
+          estimatedTime="Próximamente"
+          onBack={reset}
+        />
+      );
+    }
+    return null;
+  };
+
 
   const renderContent = () => {
     if (isLoading) return <Loader />;
     if (showSettings) return renderSettingsView();
     if (appState === 'leaderboard') return renderLeaderboardView();
+    if (appState === 'wip') return renderWorkInProgressView();
     
     if (appMode === 'enhance') {
       switch(appState) {
