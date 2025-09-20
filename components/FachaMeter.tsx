@@ -49,6 +49,9 @@ const FachaMeter: React.FC<FachaMeterProps> = ({ score }) => {
   const [animatedScore, setAnimatedScore] = useState(0);
   const [animationComplete, setAnimationComplete] = useState(false);
 
+  // Debug log para verificar el score que llega
+  console.log('FachaMeter received score:', score, 'type:', typeof score);
+
   useEffect(() => {
     setAnimationComplete(false); // Resetear en cada nuevo puntaje
     let animationFrameId: number;
