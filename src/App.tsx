@@ -17,6 +17,7 @@ import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useSoundToggle } from './hooks/useSoundToggle';
 import { useTheme } from './hooks/useTheme';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
+import { FiTrendingUp, FiUsers } from "react-icons/fi";
 
 type AppMode = 'single' | 'battle' | 'enhance';
 type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms';
@@ -634,7 +635,7 @@ const App: React.FC = () => {
           onClick={() => setAppState('leaderboard')}
           className="w-full text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mobile-button bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 dark:focus:ring-yellow-800 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
         >
-          <TrophyIcon /> Top Fachas
+          <FiTrendingUp className="w-5 h-5" /> Top Fachas
         </NeonButton>
       </div>
       
@@ -645,16 +646,16 @@ const App: React.FC = () => {
             "Aumentá tu Facha", 
             "Estamos trabajando en una funcionalidad épica que va a transformar tu foto en una versión GigaChad. La IA está aprendiendo a ser más zarpada que nunca."
           )}
-          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 hover:shadow-[0_0_25px_theme('colors.cyan.400'),0_0_50px_theme('colors.blue.600')]"
+          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-gray-500 to-gray-600 group-hover:from-gray-500 group-hover:to-gray-600 hover:shadow-[0_0_25px_theme('colors.gray.500'),0_0_50px_theme('colors.gray.600')]"
         >
           <SparklesIcon /> Aumentá tu facha
         </NeonButton>
         
         <NeonButton 
           onClick={() => { setAppMode('battle'); setAppState('battleSelect'); }}
-          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:shadow-[0_0_25px_theme('colors.purple.500'),0_0_50px_theme('colors.pink.600')]"
+          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-red-500 to-red-600 group-hover:from-red-500 group-hover:to-red-600 hover:shadow-[0_0_25px_theme('colors.red.500'),0_0_50px_theme('colors.red.600')]"
         >
-          <TrophyIcon /> ⚔️ Facha vs Facha ⚔️
+          <FiUsers className="w-5 h-5" /> ⚔️ Facha vs Facha ⚔️
         </NeonButton>
       </div>
       
