@@ -37,7 +37,7 @@ const WorkInProgressToast: React.FC<WorkInProgressToastProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -45,7 +45,7 @@ const WorkInProgressToast: React.FC<WorkInProgressToastProps> = ({
       />
       
       {/* Popup */}
-      <div className={`relative transform transition-all duration-300 ${
+      <div className={`relative z-[10000] transform transition-all duration-300 ${
         isAnimating 
           ? 'scale-100 opacity-100' 
           : 'scale-95 opacity-0'
