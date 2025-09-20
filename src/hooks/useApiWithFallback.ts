@@ -78,9 +78,6 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
       timestamp: Date.now()
     };
 
-    // Debug log para verificar el resultado mock
-    console.log('Generated mock result:', baseResult);
-
     // Para battle results, generar dos puntajes
     if (type === 'battle') {
       const rating2 = Math.floor(Math.random() * 10) + 1;

@@ -41,7 +41,9 @@ const getFachaTier = (s: number): string => {
     else if (s < 10) selectedTier = tiers.god;
     else selectedTier = tiers.legend;
 
-    return selectedTier[Math.floor(Math.random() * selectedTier.length)];
+    // Usar un hash del score para que siempre devuelva el mismo resultado
+    const hash = Math.floor(s * 1000) % selectedTier.length;
+    return selectedTier[hash];
 };
 
 
@@ -49,20 +51,26 @@ const FachaMeter: React.FC<FachaMeterProps> = ({ score }) => {
   const [animatedScore, setAnimatedScore] = useState(0);
   const [animationComplete, setAnimationComplete] = useState(false);
 
-  // Debug log para verificar el score que llega
-  console.log('FachaMeter received score:', score, 'type:', typeof score);
-
   useEffect(() => {
-    setAnimationComplete(false); // Resetear en cada nuevo puntaje
+    // Validar que el score sea un número válido
+    if (typeof score !== 'number' || isNaN(score) || score < 0) {
+      console.error('Invalid score received:', score);
+      return;
+    }
+
+    setAnimationComplete(false);
+    setAnimatedScore(0); // Resetear a 0 antes de animar
+    
     let animationFrameId: number;
     const startTime = Date.now();
-    const duration = 1500; // Duración de la animación en ms
+    const duration = 2000; // Aumentar duración para mejor efecto
 
     const animate = () => {
       const elapsedTime = Date.now() - startTime;
       const progress = Math.min(elapsedTime / duration, 1);
       
-      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      // Easing más suave
+      const easedProgress = 1 - Math.pow(1 - progress, 4);
       const currentScore = easedProgress * score;
       
       setAnimatedScore(currentScore);
@@ -70,22 +78,30 @@ const FachaMeter: React.FC<FachaMeterProps> = ({ score }) => {
       if (progress < 1) {
         animationFrameId = requestAnimationFrame(animate);
       } else {
-        setAnimatedScore(score); // Asegurar que el valor final sea exacto
+        setAnimatedScore(score);
         setAnimationComplete(true);
       }
     };
 
-    animationFrameId = requestAnimationFrame(animate);
+    // Pequeño delay para que se vea el reset
+    setTimeout(() => {
+      animationFrameId = requestAnimationFrame(animate);
+    }, 100);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
   }, [score]);
 
   const normalizedScore = Math.max(0, Math.min(10, animatedScore));
-  const percentage = (normalizedScore / 10) * 100;
+  const percentage = Math.max(0, Math.min(100, (normalizedScore / 10) * 100));
   
   const showSparks = animationComplete && score >= 7;
+  
+  // Asegurar que siempre haya un mínimo visible
+  const minPercentage = Math.max(2, percentage);
 
   const getMeterGradient = (s: number) => {
     if (s <= 3) return 'from-red-500 to-orange-500';
@@ -128,8 +144,19 @@ const FachaMeter: React.FC<FachaMeterProps> = ({ score }) => {
           </span>
           <div className="relative w-12 h-64 bg-slate-800/50 rounded-full overflow-hidden border-2 border-violet-500/30 neon-shadow-purple">
               <div 
-                  className={`absolute bottom-0 left-0 w-full bg-gradient-to-t ${meterGradient} transition-all duration-500 ease-out`}
-                  style={{ height: `${percentage}%` }}
+                  className={`absolute bottom-0 left-0 w-full bg-gradient-to-t ${meterGradient} transition-all duration-1000 ease-out`}
+                  style={{ 
+                    height: `${minPercentage}%`,
+                    minHeight: '4px' // Mínimo visible
+                  }}
+              ></div>
+              {/* Indicador de nivel actual */}
+              <div 
+                className="absolute left-0 w-full h-1 bg-white/30 rounded-full transition-all duration-1000 ease-out"
+                style={{ 
+                  bottom: `${minPercentage}%`,
+                  transform: 'translateY(50%)'
+                }}
               ></div>
           </div>
           <span className="text-3xl" role="img" aria-label="Calavera">💀</span>
@@ -137,14 +164,14 @@ const FachaMeter: React.FC<FachaMeterProps> = ({ score }) => {
       </div>
       
       {/* Apartado Especial para el Rango */}
-      <div className={`mt-8 w-full max-w-md text-center bg-slate-800/60 border-2 rounded-lg p-4 transition-all duration-500 ease-out ${animationComplete ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      <div className={`mt-8 w-full max-w-md text-center bg-slate-800/60 border-2 rounded-lg p-4 transition-all duration-700 ease-out ${animationComplete ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
            style={{ borderColor: textColor, boxShadow: `0 0 15px ${textColor}`}}>
           <p className="text-sm uppercase tracking-widest text-violet-300/80 mb-1">Tu Rango de Facha</p>
           <p 
-            className="font-orbitron text-3xl font-bold" 
+            className="font-orbitron text-3xl font-bold transition-all duration-300" 
             style={{ color: textColor }}
           >
-            {getFachaTier(score)}
+            {animationComplete ? getFachaTier(score) : '...'}
           </p>
       </div>
     </div>

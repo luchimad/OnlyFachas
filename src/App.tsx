@@ -266,7 +266,6 @@ const App: React.FC = () => {
     try {
       // Usar el hook con fallback automático
       const fachaResult = await callApi(getFachaScore, imageData.base64, imageData.mimeType, aiMode);
-      console.log('Facha result received:', fachaResult);
       playSound(resultSoundData);
 
       const dataUrl = `data:${imageData.mimeType};base64,${imageData.base64}`;
