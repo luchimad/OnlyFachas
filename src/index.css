@@ -89,3 +89,54 @@
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Light theme styles */
+.light {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --accent-primary: #8b5cf6;
+    --accent-secondary: #d946ef;
+    --border-color: #e2e8f0;
+    --shadow-color: rgba(139, 92, 246, 0.1);
+}
+
+.light body {
+    background-color: var(--bg-primary);
+    background-image:
+      linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139, 92, 246, 0.05) 1px, transparent 1px);
+}
+
+.light .bg-slate-900 {
+    background-color: var(--bg-primary);
+}
+
+.light .text-white {
+    color: var(--text-primary);
+}
+
+.light .text-slate-300 {
+    color: var(--text-secondary);
+}
+
+.light .border-violet-500 {
+    border-color: var(--accent-primary);
+}
+
+.light .neon-shadow-purple {
+    box-shadow: 0 0 20px var(--shadow-color);
+}
+
+.light .bg-slate-800 {
+    background-color: var(--bg-secondary);
+}
+
+.light .bg-slate-800\/50 {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.light .bg-slate-800\/60 {
+    background-color: rgba(255, 255, 255, 0.9);
+}

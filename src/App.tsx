@@ -9,7 +9,14 @@ import Loader from '../components/Loader';
 import WorkInProgressToast from '../components/WorkInProgressToast';
 import AdBanner from '../components/AdBanner';
 import NotificationToast from '../components/NotificationToast';
+import SkeletonLoader from '../components/SkeletonLoader';
+import ProgressBar from '../components/ProgressBar';
+import SoundToggleButton from '../components/SoundToggleButton';
+import ThemeToggleButton from '../components/ThemeToggleButton';
 import { useApiWithFallback } from './hooks/useApiWithFallback';
+import { useHapticFeedback } from './hooks/useHapticFeedback';
+import { useSoundToggle } from './hooks/useSoundToggle';
+import { useTheme } from './hooks/useTheme';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
 
 type AppMode = 'single' | 'battle' | 'enhance';
@@ -73,11 +80,21 @@ const App: React.FC = () => {
     timeUntilNextRequest, 
     callApi
   } = useApiWithFallback();
+
+  // QoL hooks
+  const haptic = useHapticFeedback();
+  const { isSoundEnabled, toggleSound, playSound: playSoundWithToggle } = useSoundToggle();
+  const { isDark, toggleTheme } = useTheme();
   
   // Single/Enhance mode state
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageData, setImageData] = useState<{base64: string, mimeType: string} | null>(null);
   const [result, setResult] = useState<FachaResult | null>(null);
+  
+  // QoL states
+  const [showSkeleton, setShowSkeleton] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState<string>('');
   
@@ -175,13 +192,22 @@ const App: React.FC = () => {
           return;
         }
 
-        playSound(uploadSoundData);
+        // Haptic feedback al seleccionar imagen
+        haptic.buttonPress();
+        playSoundWithToggle(uploadSoundData);
+        
+        // Mostrar skeleton loading
+        setShowSkeleton(true);
+        
         setError(null);
         const { base64, mimeType } = await fileToBase64(file);
         const newImageData = { base64, mimeType };
         const newImageSrc = URL.createObjectURL(file);
 
-        if (slot === 'single') {
+        // Simular delay de carga
+        setTimeout(() => {
+          setShowSkeleton(false);
+          if (slot === 'single') {
             setResult(null);
             setEnhancedResult(null);
             setImageData(newImageData);
@@ -191,16 +217,18 @@ const App: React.FC = () => {
             } else {
               setAppState('analyze');
             }
-        } else if (slot === 1) {
+          } else if (slot === 1) {
             setBattleResult(null);
             setImageData1(newImageData);
             setImageSrc1(newImageSrc);
-        } else { // slot === 2
+          } else { // slot === 2
             setBattleResult(null);
             setImageData2(newImageData);
             setImageSrc2(newImageSrc);
-        }
+          }
+        }, 500);
       } catch (err) {
+        setShowSkeleton(false);
         setError('No se pudo cargar la imagen. Probá con otra, che.');
         setAppState('error');
       } finally {
@@ -210,6 +238,10 @@ const App: React.FC = () => {
   };
 
   const handleWebcamCapture = (dataUrl: string) => {
+    // Haptic feedback al capturar
+    haptic.success();
+    playSoundWithToggle(uploadSoundData);
+    
     setError(null);
     const [mimePart, dataPart] = dataUrl.split(';base64,');
     const mimeType = mimePart.split(':')[1];
@@ -261,12 +293,29 @@ const App: React.FC = () => {
     }
 
     setIsLoading(true);
+    setIsAnalyzing(true);
+    setProgress(0);
     setError(null);
     setResult(null);
+    
     try {
+      // Simular progreso durante el análisis
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 90) return prev;
+          return prev + Math.random() * 15;
+        });
+      }, 200);
+
       // Usar el hook con fallback automático
       const fachaResult = await callApi(getFachaScore, imageData.base64, imageData.mimeType, aiMode);
-      playSound(resultSoundData);
+      
+      clearInterval(progressInterval);
+      setProgress(100);
+      
+      // Haptic feedback y sonido
+      haptic.success();
+      playSoundWithToggle(resultSoundData);
 
       const dataUrl = `data:${imageData.mimeType};base64,${imageData.base64}`;
       const newEntry: StoredFachaResult = {
@@ -306,8 +355,10 @@ const App: React.FC = () => {
       }
     } finally {
       setIsLoading(false);
+      setIsAnalyzing(false);
+      setTimeout(() => setProgress(0), 1000); // Reset progress after delay
     }
-  }, [imageData, aiMode, name, leaderboard, isRateLimited, timeUntilNextRequest, callApi]);
+  }, [imageData, aiMode, name, leaderboard, isRateLimited, timeUntilNextRequest, callApi, haptic, playSoundWithToggle]);
   
   const analyzeFachaBattle = useCallback(async () => {
     if (!imageData1 || !imageData2) {
@@ -648,7 +699,11 @@ const App: React.FC = () => {
   const renderImageView = () => (
     <div className="w-full max-w-lg mx-auto text-center">
       <div className="mb-6 border-4 border-violet-500 rounded-lg overflow-hidden neon-shadow-purple">
-         <img src={imageSrc!} alt="User upload" className="w-full h-auto object-cover"/>
+        {showSkeleton ? (
+          <SkeletonLoader type="image" className="w-full h-64" />
+        ) : (
+          <img src={imageSrc!} alt="User upload" className="w-full h-auto object-cover"/>
+        )}
       </div>
        <div className="w-full mb-4">
         <input
@@ -684,7 +739,26 @@ const App: React.FC = () => {
             {/* Right Column: Verdict */}
             <div className="w-full md:w-2/3 flex flex-col items-center">
                 <h2 className="text-3xl font-bold mb-4 neon-text-fuchsia">El Veredicto</h2>
-                <div className="w-full"><FachaMeter score={result.rating} /></div>
+                
+                {/* Progress Bar durante análisis */}
+                {isAnalyzing && (
+                  <div className="w-full max-w-md mb-6">
+                    <ProgressBar 
+                      progress={progress} 
+                      duration={2000}
+                      showPercentage={true}
+                      animated={true}
+                    />
+                  </div>
+                )}
+                
+                <div className="w-full">
+                  {isAnalyzing ? (
+                    <SkeletonLoader type="meter" className="w-full" />
+                  ) : (
+                    <FachaMeter score={result.rating} />
+                  )}
+                </div>
                 <p className="text-lg md:text-xl text-cyan-300 mt-8 p-4 bg-slate-800/50 border border-cyan-500/30 rounded-lg italic w-full">"{result.comment}"</p>
                 <div className="mt-8 w-full flex flex-col md:flex-row gap-6 text-left">
                     <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-green-500/30"><h3 className="font-bold text-lg text-green-400 mb-3 flex items-center gap-2"><CheckCircle2 /> Tus puntos fuertes</h3><ul className="space-y-2 text-green-300/90">{result.fortalezas.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">✅</span>{item}</li>)}</ul></div>
@@ -1096,12 +1170,28 @@ const App: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4 mobile-container selection:bg-fuchsia-500 selection:text-white">
       <div className="absolute top-0 left-0 w-full h-full bg-grid-violet-500/20 [mask-image:linear-gradient(to_bottom,white_5%,transparent_90%)]"></div>
       <main className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center justify-center">
-        <header className="text-center mb-6 sm:mb-10 cursor-pointer mobile-header" onClick={reset} title="Ir al inicio">
-           <h1 className="neon-text-fuchsia flex items-baseline justify-center gap-x-1 md:gap-x-2 mobile-title">
-            <span className="font-montserrat font-thin tracking-wider text-4xl sm:text-6xl md:text-7xl lg:text-8xl">Only</span>
-            <span className="font-arizonia text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">Fachas</span>
-          </h1>
-          <p className="text-violet-300 mt-2 mobile-subtitle">La única IA que sabe de tirar facha.</p>
+        <header className="text-center mb-6 sm:mb-10 mobile-header">
+          {/* Control buttons */}
+          <div className="flex justify-center gap-4 mb-4">
+            <SoundToggleButton 
+              isEnabled={isSoundEnabled} 
+              onToggle={toggleSound}
+              className="scale-90 sm:scale-100"
+            />
+            <ThemeToggleButton 
+              isDark={isDark} 
+              onToggle={toggleTheme}
+              className="scale-90 sm:scale-100"
+            />
+          </div>
+          
+          <div className="cursor-pointer" onClick={reset} title="Ir al inicio">
+            <h1 className="neon-text-fuchsia flex items-baseline justify-center gap-x-1 md:gap-x-2 mobile-title">
+              <span className="font-montserrat font-thin tracking-wider text-4xl sm:text-6xl md:text-7xl lg:text-8xl">Only</span>
+              <span className="font-arizonia text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">Fachas</span>
+            </h1>
+            <p className="text-violet-300 mt-2 mobile-subtitle">La única IA que sabe de tirar facha.</p>
+          </div>
         </header>
         <div className={containerClasses}>
             {renderContent()}
