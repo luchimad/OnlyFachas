@@ -7,6 +7,7 @@ import FachaMeter from '../components/FachaMeter';
 import FachaStats from '../components/FachaStats';
 import Loader from '../components/Loader';
 import WorkInProgressToast from '../components/WorkInProgressToast';
+import AdBanner from '../components/AdBanner';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
 
 type AppMode = 'single' | 'battle' | 'enhance';
@@ -572,6 +573,13 @@ const App: React.FC = () => {
                     <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-yellow-500/30"><h3 className="font-bold text-lg text-yellow-400 mb-3 flex items-center gap-2"><XCircle/> Para mejorar, pibe</h3><ul className="space-y-2 text-yellow-300/90">{result.consejos.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">👉</span>{item}</li>)}</ul></div>
                 </div>
                 <FachaStats rating={result.rating} />
+                
+                {/* Anuncio sutil después de estadísticas */}
+                <AdBanner 
+                  slot="9595760046" 
+                  size="medium"
+                  className="mt-6"
+                />
             </div>
         </div>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -735,6 +743,14 @@ const App: React.FC = () => {
                 Todavía no hay nadie en el top. ¡Sé el primero en medir tu facha!
             </p>
         )}
+        
+        {/* Anuncio en el leaderboard */}
+        <AdBanner 
+          slot="6322234604" 
+          size="medium"
+          className="my-6"
+        />
+        
         <div className="mt-8 flex items-center gap-6">
             <NeonButton onClick={reset}>
                 Menú Principal
