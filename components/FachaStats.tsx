@@ -33,22 +33,51 @@ const useCountUp = (end: number, duration = 2000, decimals = 0) => {
     return count.toFixed(decimals);
 };
 
+// Función para aproximar la CDF de la distribución normal estándar
+const normalCDF = (z: number): number => {
+    // Aproximación de Abramowitz y Stegun para la CDF normal estándar
+    const a1 = 0.254829592;
+    const a2 = -0.284496736;
+    const a3 = 1.421413741;
+    const a4 = -1.453152027;
+    const a5 = 1.061405429;
+    const p = 0.3275911;
+
+    const sign = z >= 0 ? 1 : -1;
+    z = Math.abs(z) / Math.sqrt(2);
+
+    const t = 1 / (1 + p * z);
+    const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-z * z);
+
+    return 0.5 * (1 + sign * y);
+};
+
 const getTopPercentile = (rating: number): number => {
-    if (rating >= 10) return 0.5;
-    if (rating >= 9.5) return 1;
-    if (rating >= 9) return 5;
-    if (rating >= 8) return 15;
-    if (rating >= 7) return 30;
-    if (rating >= 5) return 50;
-    return 0; // Not in top 50
+    // Parámetros de la distribución normal
+    const mean = 5;
+    const stdDev = 3;
+    
+    // Calcular z-score
+    const zScore = (rating - mean) / stdDev;
+    
+    // Obtener percentil usando CDF
+    const percentile = normalCDF(zScore) * 100;
+    
+    // Convertir a "top mundial" (100% - percentil)
+    const topPercentile = 100 - percentile;
+    
+    return Math.max(0, Math.min(100, topPercentile));
 };
 
 const FachaStats: React.FC<{ rating: number }> = ({ rating }) => {
-    const peopleInRoom = Math.max(0, 10 - (Math.floor(rating) + 1));
-    const animatedPeople = useCountUp(peopleInRoom, 2000, 0);
-
     const topPercentile = getTopPercentile(rating);
     const animatedPercentile = useCountUp(topPercentile, 2000, topPercentile < 1 ? 1 : 0);
+    
+    // Calcular personas más facheras en juntada de 20
+    // Si estás en el top X%, entonces (100-X)% de personas son más facheras
+    const peopleMoreFacheros = Math.round((100 - topPercentile) / 100 * 20);
+    const animatedPeople = useCountUp(peopleMoreFacheros, 2000, 0);
+
 
     return (
         <div className="mt-6 w-full bg-slate-800/50 p-4 rounded-lg border border-violet-500/30">
