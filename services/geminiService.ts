@@ -27,13 +27,36 @@ export const getFachaScore = async (base64Image: string, mimeType: string, model
     // Instrucción especial optimista para Gemini 1.5
     const prompt = `Tu tarea es analizar la 'facha' (estilo, apariencia, actitud) de la persona en la imagen y darle un puntaje del 1 al 10. 
 
-IMPORTANTE: Sé optimista y generoso con las notas, pero no regales. Busca lo positivo en cada persona. Si alguien tiene buena actitud, estilo interesante, o algo que lo destaque, dale una nota alta (7-9). Solo da notas bajas (1-4) si realmente hay problemas serios de presentación. La mayoría de personas deberían estar entre 6-8.5.
+PASO 1: Primero identifica si es hombre o mujer para adaptar el lenguaje.
 
-Usa jerga argentina y sé picante pero constructivo y alentador. Enfócate en las fortalezas y da consejos motivadores.
+PASO 2: Sé optimista y generoso con las notas, pero no regales. Busca lo positivo en cada persona. Si alguien tiene buena actitud, estilo interesante, o algo que lo destaque, dale una nota alta (7-9). Solo da notas bajas (1-4) si realmente hay problemas serios de presentación. La mayoría de personas deberían estar entre 6-8.5.
+
+PASO 3: Para el comentario, usa jerga argentina y sé picante pero constructivo. Inspírate en estos ejemplos según el puntaje:
+
+FACHAS BAJAS (1-4):
+- "Tenés menos onda que un renglón. Hay que empezar de cero, papá."
+- "Che, con esa cara de velorio no levantás ni la tapa del inodoro."
+- "Te vestiste a oscuras y con el enemigo, ¿no? No se explica ese rejunte."
+- "Tu facha está más devaluada que el peso, pero con un buen estilista capaz que repunta."
+- "Le ponés la misma onda que un lunes a la mañana. ¡Despertate, rey!"
+
+FACHAS PROMEDIO (5-7):
+- "Zafás, eh. No sos Brad Pitt, pero tenés tu no-sé-qué... que tampoco sé bien qué es."
+- "Aprobado, pero con lo justo. Te falta un hervor para detonarla."
+- "Tenés potencial, pero todavía estás en modo demo. Actualizate, crack."
+- "Vas por buen camino, se nota que le metés ganas. No aflojes que casi la rompés."
+
+FACHAS ALTAS (8-10):
+- "Uff, ¿sos real o te escapaste de un póster? Estás para romper corazones en serie."
+- "Fa, mi loco, con esa facha hasta tu ex te vuelve a escribir. Estás detonado."
+- "Ayyyy loquitaaa, con esa cara de atrevida seguro que coleccionás DNI en la mesita de luz."
+- "Nivel de facha: ilegal. Deberías pagar un impuesto por caminar por la calle así."
+- "Pará un poco, ¿quién te dio permiso para tanta facha? Dejá algo para los demás, egoísta."
+- "Sos la razón por la que se inventaron los emojis de fueguito. 🔥"
 
 Responde en formato JSON con:
 - rating: número del 1 al 10 (sé optimista pero justo)
-- comment: comentario corto y picante en lunfardo argentino, pero positivo
+- comment: comentario corto y picante en lunfardo argentino, adaptado al género y puntaje
 - fortalezas: array de 3-5 fortalezas (busca lo bueno)
 - consejos: array de 3-5 consejos para mejorar (motivadores y constructivos)`;
 
@@ -96,16 +119,28 @@ export const getFachaBattleResult = async (
         const prompt = `Genera un comentario corto y picante en lunfardo argentino sobre esta batalla de facha. Persona 1 sacó ${result1.rating.toFixed(1)} y Persona 2 sacó ${result2.rating.toFixed(1)}. El ganador es la Persona ${winner}.
 
 IMPORTANTE: 
+- Primero identifica el género de ambas personas para adaptar el lenguaje
 - Sé bardero pero AMISTOSO, no hiriente
-- Usa jerga argentina divertida (detonar, papi, minusas, papá, etc.)
+- Usa jerga argentina divertida (detonar, papi, minusas, papá, loquita, etc.)
 - Haz que el perdedor se ría, no que se sienta mal
 - Mantén el tono de joda entre amigos
 - Máximo 2-3 oraciones
+- Inspírate en estos estilos según la diferencia de puntaje:
 
-Ejemplos de tono:
+DIFERENCIA GRANDE (3+ puntos):
 - "Papi, la Persona ${winner} te pasó por arriba como un tren. Pero tranqui, que con esa sonrisa seguro que levantas igual"
 - "Che, la Persona ${winner} te dio una paliza épica, pero no te hagas drama que tenés onda para rato"
 - "Uy, la Persona ${winner} te dejó en el molde, pero mirá que bien que te ves igual"
+
+DIFERENCIA MEDIA (1-2 puntos):
+- "Fue re parejo, pero la Persona ${winner} te ganó por un pelo. Casi casi la rompés, crack"
+- "Estuvo picante la cosa, pero la Persona ${winner} te sacó ventaja. No aflojes que estás cerca"
+- "Reñido hasta el final, pero la Persona ${winner} se llevó la victoria. Seguí así que vas bien"
+
+DIFERENCIA PEQUEÑA (0.5 puntos):
+- "Uff, qué batalla! La Persona ${winner} te ganó por poquito, pero estuviste a la altura"
+- "Re parejo todo, pero la Persona ${winner} se llevó el triunfo por detalles. Bien jugado"
+- "Casi empate, pero la Persona ${winner} se impuso. La próxima seguro la ganás"
 
 Responde en formato JSON con:
 - comment: comentario corto, picante pero amistoso sobre quién ganó la batalla`;
@@ -182,19 +217,84 @@ export const getEnhancedFacha = async (base64Image: string, mimeType: string): P
 };
 
 // Mock data functions for when API_KEY is not available
-const getMockFachaResult = (): FachaResult => ({
-    rating: Math.random() * 5 + 5, // Random score between 5-10
-    comment: "¡Tu facha está en modo DEMO! Configurá tu API key para análisis reales.",
-    fortalezas: ["Tienes potencial", "Buen estilo", "Actitud positiva"],
-    consejos: ["Configura tu API key", "Subí una foto real", "Disfrutá la experiencia"]
-});
+const getMockFachaResult = (): FachaResult => {
+    const rating = Math.random() * 5 + 5; // Random score between 5-10
+    let comment = "";
+    
+    if (rating <= 4) {
+        const comments = [
+            "Tenés menos onda que un renglón. Hay que empezar de cero, papá.",
+            "Che, con esa cara de velorio no levantás ni la tapa del inodoro.",
+            "Te vestiste a oscuras y con el enemigo, ¿no? No se explica ese rejunte.",
+            "Tu facha está más devaluada que el peso, pero con un buen estilista capaz que repunta.",
+            "Le ponés la misma onda que un lunes a la mañana. ¡Despertate, rey!"
+        ];
+        comment = comments[Math.floor(Math.random() * comments.length)];
+    } else if (rating <= 7) {
+        const comments = [
+            "Zafás, eh. No sos Brad Pitt, pero tenés tu no-sé-qué... que tampoco sé bien qué es.",
+            "Aprobado, pero con lo justo. Te falta un hervor para detonarla.",
+            "Tenés potencial, pero todavía estás en modo demo. Actualizate, crack.",
+            "Vas por buen camino, se nota que le metés ganas. No aflojes que casi la rompés."
+        ];
+        comment = comments[Math.floor(Math.random() * comments.length)];
+    } else {
+        const comments = [
+            "Uff, ¿sos real o te escapaste de un póster? Estás para romper corazones en serie.",
+            "Fa, mi loco, con esa facha hasta tu ex te vuelve a escribir. Estás detonado.",
+            "Ayyyy loquitaaa, con esa cara de atrevida seguro que coleccionás DNI en la mesita de luz.",
+            "Nivel de facha: ilegal. Deberías pagar un impuesto por caminar por la calle así.",
+            "Pará un poco, ¿quién te dio permiso para tanta facha? Dejá algo para los demás, egoísta.",
+            "Sos la razón por la que se inventaron los emojis de fueguito. 🔥"
+        ];
+        comment = comments[Math.floor(Math.random() * comments.length)];
+    }
+    
+    return {
+        rating,
+        comment: `¡Modo DEMO! ${comment} (Configurá tu API key para análisis reales)`,
+        fortalezas: ["Tienes potencial", "Buen estilo", "Actitud positiva"],
+        consejos: ["Configura tu API key", "Subí una foto real", "Disfrutá la experiencia"]
+    };
+};
 
-const getMockBattleResult = (): FachaBattleResult => ({
-    winner: Math.random() > 0.5 ? 1 : 2,
-    comment: "¡Batalla DEMO! Configurá tu API key para batallas reales.",
-    score1: Math.random() * 5 + 5,
-    score2: Math.random() * 5 + 5
-});
+const getMockBattleResult = (): FachaBattleResult => {
+    const score1 = Math.random() * 5 + 5;
+    const score2 = Math.random() * 5 + 5;
+    const winner = score1 > score2 ? 1 : 2;
+    const difference = Math.abs(score1 - score2);
+    
+    let comment = "";
+    if (difference >= 3) {
+        const comments = [
+            `Papi, la Persona ${winner} te pasó por arriba como un tren. Pero tranqui, que con esa sonrisa seguro que levantas igual`,
+            `Che, la Persona ${winner} te dio una paliza épica, pero no te hagas drama que tenés onda para rato`,
+            `Uy, la Persona ${winner} te dejó en el molde, pero mirá que bien que te ves igual`
+        ];
+        comment = comments[Math.floor(Math.random() * comments.length)];
+    } else if (difference >= 1) {
+        const comments = [
+            `Fue re parejo, pero la Persona ${winner} te ganó por un pelo. Casi casi la rompés, crack`,
+            `Estuvo picante la cosa, pero la Persona ${winner} te sacó ventaja. No aflojes que estás cerca`,
+            `Reñido hasta el final, pero la Persona ${winner} se llevó la victoria. Seguí así que vas bien`
+        ];
+        comment = comments[Math.floor(Math.random() * comments.length)];
+    } else {
+        const comments = [
+            `Uff, qué batalla! La Persona ${winner} te ganó por poquito, pero estuviste a la altura`,
+            `Re parejo todo, pero la Persona ${winner} se llevó el triunfo por detalles. Bien jugado`,
+            `Casi empate, pero la Persona ${winner} se impuso. La próxima seguro la ganás`
+        ];
+        comment = comments[Math.floor(Math.random() * comments.length)];
+    }
+    
+    return {
+        winner,
+        comment: `¡Modo DEMO! ${comment} (Configurá tu API key para batallas reales)`,
+        score1,
+        score2
+    };
+};
 
 const getMockEnhanceResult = (): FachaEnhanceResult => ({
     newImageBase64: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", // 1x1 transparent pixel
