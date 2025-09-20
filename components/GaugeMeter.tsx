@@ -28,18 +28,18 @@ const getFachaTier = (s: number): string => {
 
 const getGaugeColor = (score: number) => {
   if (score <= 3) return {
-    primary: '#ef4444', // red-500
-    secondary: '#f97316', // orange-500
+    primary: '#ef4444',
+    secondary: '#f97316',
     glow: '#ef4444'
   };
   if (score <= 6) return {
-    primary: '#eab308', // yellow-500
-    secondary: '#84cc16', // lime-500
+    primary: '#eab308',
+    secondary: '#84cc16',
     glow: '#eab308'
   };
   return {
-    primary: '#06b6d4', // cyan-500
-    secondary: '#d946ef', // fuchsia-500
+    primary: '#06b6d4',
+    secondary: '#d946ef',
     glow: '#06b6d4'
   };
 };
@@ -59,17 +59,13 @@ const GaugeMeter: React.FC<GaugeMeterProps> = ({ score }) => {
     
     let animationFrameId: number;
     const startTime = Date.now();
-    const duration = 2500; // Animación más larga para el gauge
+    const duration = 2000;
 
     const animate = () => {
       const elapsedTime = Date.now() - startTime;
       const progress = Math.min(elapsedTime / duration, 1);
       
-      // Easing suave con bounce al final
-      const easedProgress = progress < 0.8 
-        ? 1 - Math.pow(1 - progress, 3)
-        : 1 - Math.pow(1 - progress, 2) + Math.sin((progress - 0.8) * 5 * Math.PI) * 0.1;
-      
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
       const currentScore = easedProgress * score;
       setAnimatedScore(currentScore);
 
@@ -83,7 +79,7 @@ const GaugeMeter: React.FC<GaugeMeterProps> = ({ score }) => {
 
     setTimeout(() => {
       animationFrameId = requestAnimationFrame(animate);
-    }, 200);
+    }, 100);
 
     return () => {
       if (animationFrameId) {
@@ -119,25 +115,16 @@ const GaugeMeter: React.FC<GaugeMeterProps> = ({ score }) => {
             <path
               d="M 160 40 A 120 120 0 0 1 40 160 A 120 120 0 0 1 160 280 A 120 120 0 0 1 280 160 A 120 120 0 0 1 160 40"
               fill="none"
-              stroke={`url(#gaugeGradient-${Math.floor(score)})`}
+              stroke={colors.primary}
               strokeWidth="12"
               strokeLinecap="round"
               strokeDasharray="565.48"
               strokeDashoffset={565.48 - (565.48 * percentage) / 100}
               className="transition-all duration-2000 ease-out"
               style={{
-                filter: `drop-shadow(0 0 8px ${colors.glow}) drop-shadow(0 0 16px ${colors.glow})`,
+                filter: `drop-shadow(0 0 8px ${colors.glow})`,
               }}
             />
-            
-            {/* Gradient Definition */}
-            <defs>
-              <linearGradient id={`gaugeGradient-${Math.floor(score)}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor={colors.primary} />
-                <stop offset="50%" stopColor={colors.secondary} />
-                <stop offset="100%" stopColor={colors.primary} />
-              </linearGradient>
-            </defs>
             
             {/* Center Circle */}
             <circle
@@ -187,7 +174,7 @@ const GaugeMeter: React.FC<GaugeMeterProps> = ({ score }) => {
               className="font-orbitron text-6xl font-bold transition-all duration-1000"
               style={{ 
                 color: colors.primary,
-                textShadow: `0 0 10px ${colors.glow}, 0 0 20px ${colors.glow}`,
+                textShadow: `0 0 10px ${colors.glow}`,
                 transform: animationComplete ? 'scale(1.1)' : 'scale(1)'
               }}
             >
@@ -219,7 +206,7 @@ const GaugeMeter: React.FC<GaugeMeterProps> = ({ score }) => {
         }`}
         style={{ 
           borderColor: colors.primary, 
-          boxShadow: `0 0 20px ${colors.glow}40, inset 0 0 20px ${colors.glow}20` 
+          boxShadow: `0 0 20px ${colors.glow}40` 
         }}
       >
         <p className="text-sm uppercase tracking-widest text-violet-300/80 mb-2">
