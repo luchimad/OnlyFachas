@@ -1,5 +1,5 @@
 import React from 'react';
-import { ConstructionIcon, ClockIcon, SparklesIcon } from './Icons';
+import { ConstructionIcon, ClockIcon } from './Icons';
 
 interface WorkInProgressProps {
   title: string;
