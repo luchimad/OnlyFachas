@@ -15,8 +15,10 @@ import { useApiWithFallback } from './hooks/useApiWithFallback';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useSoundToggle } from './hooks/useSoundToggle';
 import { useTheme } from './hooks/useTheme';
+import { useEmergencyControls } from './hooks/useEmergencyControls';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
 import { FiTrendingUp, FiUsers } from "react-icons/fi";
+import { MaintenanceBanner, RateLimitBanner, RequestDelayBanner } from './components/EmergencyBanners';
 
 type AppMode = 'single' | 'battle' | 'enhance';
 type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms' | 'comingSoon';
@@ -71,6 +73,11 @@ const App: React.FC = () => {
     message: '' 
   });
 
+  // Emergency banner states
+  const [showMaintenanceBanner, setShowMaintenanceBanner] = useState(false);
+  const [showRateLimitBanner, setShowRateLimitBanner] = useState(false);
+  const [showRequestDelayBanner, setShowRequestDelayBanner] = useState(false);
+
   // API with fallback hook
   const { 
     isRateLimited, 
@@ -82,6 +89,17 @@ const App: React.FC = () => {
   const haptic = useHapticFeedback();
   const { isSoundEnabled, toggleSound, playSound: playSoundWithToggle } = useSoundToggle();
   const { isDark, toggleTheme } = useTheme();
+  
+  // Emergency controls
+  const {
+    isMaintenanceMode,
+    maxRequestsPerHour,
+    requestDelay,
+    isRateLimited: isEmergencyRateLimited,
+    remainingRequests,
+    checkRateLimit,
+    incrementRequestCount
+  } = useEmergencyControls();
   
   // Single/Enhance mode state
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -124,6 +142,17 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // Emergency controls effect
+  useEffect(() => {
+    if (isMaintenanceMode) {
+      setShowMaintenanceBanner(true);
+    } else if (isEmergencyRateLimited) {
+      setShowRateLimitBanner(true);
+    } else if (requestDelay > 3000) { // Show delay banner if delay is more than 3 seconds
+      setShowRequestDelayBanner(true);
+    }
+  }, [isMaintenanceMode, isEmergencyRateLimited, requestDelay]);
+
   const runFachaEnhancement = useCallback(async (currentImageData: {base64: string, mimeType: string}) => {
     if (!currentImageData) {
       setError("Necesito una foto para tunear, pibe.");
@@ -131,14 +160,22 @@ const App: React.FC = () => {
       return;
     }
 
-    // Verificar rate limiting antes de procesar
-    if (isRateLimited) {
-      showNotificationToast(
-        'warning', 
-        'Esperá un momento', 
-        `Esperá ${timeUntilNextRequest} segundos antes de enviar otra foto`
-      );
+    // Verificar controles de emergencia
+    if (isMaintenanceMode) {
+      setShowMaintenanceBanner(true);
       return;
+    }
+
+    if (!checkRateLimit()) {
+      setShowRateLimitBanner(true);
+      return;
+    }
+
+    // Aplicar delay si está configurado
+    if (requestDelay > 0) {
+      setShowRequestDelayBanner(true);
+      await new Promise(resolve => setTimeout(resolve, requestDelay));
+      setShowRequestDelayBanner(false);
     }
 
     setIsLoading(true);
@@ -146,6 +183,9 @@ const App: React.FC = () => {
     setEnhancedResult(null);
     setAppState('enhancing');
     try {
+      // Incrementar contador de requests
+      incrementRequestCount();
+
       // Usar el hook con fallback automático
       const result = await callApi(getEnhancedFacha, currentImageData.base64, currentImageData.mimeType);
       playSound(resultSoundData);
@@ -279,14 +319,22 @@ const App: React.FC = () => {
         return;
     }
 
-    // Verificar rate limiting antes de procesar
-    if (isRateLimited) {
-      showNotificationToast(
-        'warning', 
-        'Esperá un momento', 
-        `Esperá ${timeUntilNextRequest} segundos antes de enviar otra foto`
-      );
+    // Verificar controles de emergencia
+    if (isMaintenanceMode) {
+      setShowMaintenanceBanner(true);
       return;
+    }
+
+    if (!checkRateLimit()) {
+      setShowRateLimitBanner(true);
+      return;
+    }
+
+    // Aplicar delay si está configurado
+    if (requestDelay > 0) {
+      setShowRequestDelayBanner(true);
+      await new Promise(resolve => setTimeout(resolve, requestDelay));
+      setShowRequestDelayBanner(false);
     }
 
     setIsLoading(true);
@@ -303,6 +351,9 @@ const App: React.FC = () => {
           return prev + Math.random() * 15;
         });
       }, 200);
+
+      // Incrementar contador de requests
+      incrementRequestCount();
 
       // Usar el hook con fallback automático
       const fachaResult = await callApi(getFachaScore, imageData.base64, imageData.mimeType, aiMode);
@@ -364,20 +415,31 @@ const App: React.FC = () => {
       return;
     }
 
-    // Verificar rate limiting antes de procesar
-    if (isRateLimited) {
-      showNotificationToast(
-        'warning', 
-        'Esperá un momento', 
-        `Esperá ${timeUntilNextRequest} segundos antes de enviar otra foto`
-      );
+    // Verificar controles de emergencia
+    if (isMaintenanceMode) {
+      setShowMaintenanceBanner(true);
       return;
+    }
+
+    if (!checkRateLimit()) {
+      setShowRateLimitBanner(true);
+      return;
+    }
+
+    // Aplicar delay si está configurado
+    if (requestDelay > 0) {
+      setShowRequestDelayBanner(true);
+      await new Promise(resolve => setTimeout(resolve, requestDelay));
+      setShowRequestDelayBanner(false);
     }
 
     setIsLoading(true);
     setError(null);
     setBattleResult(null);
     try {
+        // Incrementar contador de requests
+        incrementRequestCount();
+
         // Usar el hook con fallback automático
         const result = await callApi(getFachaBattleResult, imageData1, imageData2, aiMode);
         playSound(resultSoundData);
@@ -1463,6 +1525,26 @@ const App: React.FC = () => {
         message={notificationContent.message}
         duration={5000}
       />
+
+      {/* Emergency Banners */}
+      {showMaintenanceBanner && (
+        <MaintenanceBanner onClose={() => setShowMaintenanceBanner(false)} />
+      )}
+      
+      {showRateLimitBanner && (
+        <RateLimitBanner 
+          remainingRequests={remainingRequests}
+          maxRequests={maxRequestsPerHour}
+          onClose={() => setShowRateLimitBanner(false)} 
+        />
+      )}
+      
+      {showRequestDelayBanner && (
+        <RequestDelayBanner 
+          delaySeconds={Math.ceil(requestDelay / 1000)}
+          onClose={() => setShowRequestDelayBanner(false)} 
+        />
+      )}
     </div>
   );
 };
