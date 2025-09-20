@@ -632,15 +632,22 @@ const App: React.FC = () => {
         </NeonButton>
         
         <NeonButton 
-          onClick={() => setAppState('leaderboard')}
-          className="w-full text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mobile-button bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 dark:focus:ring-yellow-800 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
+          onClick={() => { setAppMode('battle'); setAppState('battleSelect'); }}
+          className="w-full text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mobile-button bg-gradient-to-br from-red-500 to-red-600 group-hover:from-red-500 group-hover:to-red-600 hover:shadow-[0_0_25px_theme('colors.red.500'),0_0_50px_theme('colors.red.600')]"
         >
-          <FiTrendingUp className="w-5 h-5" /> Top Fachas
+          <FiUsers className="w-5 h-5" /> ⚔️ Facha vs Facha ⚔️
         </NeonButton>
       </div>
       
-      {/* Botones de abajo - Work in Progress */}
+      {/* Botones de abajo - Secundarios */}
       <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md mt-6">
+        <NeonButton 
+          onClick={() => setAppState('leaderboard')}
+          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:from-yellow-400 group-hover:to-orange-500 focus:ring-yellow-300 dark:focus:ring-yellow-800 hover:shadow-[0_0_25px_theme('colors.yellow.400'),0_0_50px_theme('colors.orange.600')]"
+        >
+          <FiTrendingUp className="w-5 h-5" /> Top Fachas
+        </NeonButton>
+        
         <NeonButton 
           onClick={() => displayWipToast(
             "Aumentá tu Facha", 
@@ -649,13 +656,6 @@ const App: React.FC = () => {
           className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-gray-500 to-gray-600 group-hover:from-gray-500 group-hover:to-gray-600 hover:shadow-[0_0_25px_theme('colors.gray.500'),0_0_50px_theme('colors.gray.600')]"
         >
           <SparklesIcon /> Aumentá tu facha
-        </NeonButton>
-        
-        <NeonButton 
-          onClick={() => { setAppMode('battle'); setAppState('battleSelect'); }}
-          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-red-500 to-red-600 group-hover:from-red-500 group-hover:to-red-600 hover:shadow-[0_0_25px_theme('colors.red.500'),0_0_50px_theme('colors.red.600')]"
-        >
-          <FiUsers className="w-5 h-5" /> ⚔️ Facha vs Facha ⚔️
         </NeonButton>
       </div>
       
