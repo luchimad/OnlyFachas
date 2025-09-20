@@ -24,13 +24,18 @@ export const getFachaScore = async (base64Image: string, mimeType: string, model
       }
     });
 
-    const prompt = `Tu tarea es analizar la 'facha' (estilo, apariencia, actitud) de la persona en la imagen y darle un puntaje del 1 al 10. Sé muy crítico pero justo. 1 = terrible facha, 10 = facha increíble. También da consejos específicos para mejorar. Usa jerga argentina y sé picante pero constructivo.
+    // Instrucción especial optimista para Gemini 1.5
+    const prompt = `Tu tarea es analizar la 'facha' (estilo, apariencia, actitud) de la persona en la imagen y darle un puntaje del 1 al 10. 
+
+IMPORTANTE: Sé optimista y generoso con las notas, pero no regales. Busca lo positivo en cada persona. Si alguien tiene buena actitud, estilo interesante, o algo que lo destaque, dale una nota alta (7-9). Solo da notas bajas (1-4) si realmente hay problemas serios de presentación. La mayoría de personas deberían estar entre 6-8.5.
+
+Usa jerga argentina y sé picante pero constructivo y alentador. Enfócate en las fortalezas y da consejos motivadores.
 
 Responde en formato JSON con:
-- rating: número del 1 al 10
-- comment: comentario corto y picante en lunfardo argentino
-- fortalezas: array de 3-5 fortalezas
-- consejos: array de 3-5 consejos para mejorar`;
+- rating: número del 1 al 10 (sé optimista pero justo)
+- comment: comentario corto y picante en lunfardo argentino, pero positivo
+- fortalezas: array de 3-5 fortalezas (busca lo bueno)
+- consejos: array de 3-5 consejos para mejorar (motivadores y constructivos)`;
 
     const result = await model.generateContent([
       prompt,

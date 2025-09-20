@@ -6,11 +6,11 @@ import WebcamCapture from '../components/WebcamCapture';
 import FachaMeter from '../components/FachaMeter';
 import FachaStats from '../components/FachaStats';
 import Loader from '../components/Loader';
-import WorkInProgress from '../components/WorkInProgress';
+import WorkInProgressToast from '../components/WorkInProgressToast';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
 
 type AppMode = 'single' | 'battle' | 'enhance';
-type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'wip';
+type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard';
 
 // --- Sound Effects ---
 const playSound = (audioSrc: string) => {
@@ -53,6 +53,8 @@ const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>('welcome');
   const [aiMode, setAiMode] = useState<AiMode>('rapido');
   const [showSettings, setShowSettings] = useState(false);
+  const [showWipToast, setShowWipToast] = useState(false);
+  const [wipToastContent, setWipToastContent] = useState<{title: string, description: string}>({title: '', description: ''});
   
   // Single/Enhance mode state
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -292,6 +294,15 @@ const App: React.FC = () => {
     }
   };
 
+  const displayWipToast = (title: string, description: string) => {
+    setWipToastContent({ title, description });
+    setShowWipToast(true);
+  };
+
+  const hideWipToast = () => {
+    setShowWipToast(false);
+  };
+
   const NeonButton: React.FC<{onClick?: () => void, children: React.ReactNode, className?: string, disabled?: boolean}> = ({ onClick, children, className = '', disabled = false }) => (
     <button
       onClick={onClick}
@@ -426,14 +437,15 @@ const App: React.FC = () => {
         <ZapIcon /> Analizame la facha
       </NeonButton>
       
-      {/* Botón deshabilitado para "Aumentá tu facha" */}
-      <button 
-        onClick={() => { setAppMode('enhance'); setAppState('wip'); }}
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mt-2 sm:mt-4 mobile-button bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 hover:shadow-[0_0_25px_theme('colors.cyan.400'),0_0_50px_theme('colors.blue.600')] opacity-60 cursor-not-allowed"
-        disabled
+      <NeonButton 
+        onClick={() => displayWipToast(
+          "Aumentá tu Facha", 
+          "Estamos trabajando en una funcionalidad épica que va a transformar tu foto en una versión GigaChad. La IA está aprendiendo a ser más zarpada que nunca."
+        )}
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mt-2 sm:mt-4 mobile-button bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 hover:shadow-[0_0_25px_theme('colors.cyan.400'),0_0_50px_theme('colors.blue.600')]"
       >
         <SparklesIcon /> Aumentá tu facha
-      </button>
+      </NeonButton>
       
       <NeonButton 
         onClick={() => setAppState('leaderboard')}
@@ -442,14 +454,15 @@ const App: React.FC = () => {
         <TrophyIcon /> Top Fachas
       </NeonButton>
       
-      {/* Botón deshabilitado para "Facha vs Facha" */}
-      <button 
-        onClick={() => { setAppMode('battle'); setAppState('wip'); }}
-        className="mt-6 font-semibold text-violet-300 hover:text-fuchsia-400 transition-colors duration-300 hover:scale-105 opacity-60 cursor-not-allowed"
-        disabled
+      <NeonButton 
+        onClick={() => displayWipToast(
+          "Facha vs Facha", 
+          "Preparando la batalla más épica de la historia. Dos fotos, una IA, y un veredicto final que va a romper todo."
+        )}
+        className="mt-6 w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 mobile-button bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:shadow-[0_0_25px_theme('colors.purple.500'),0_0_50px_theme('colors.pink.600')]"
       >
-        Facha vs Facha
-      </button>
+        <TrophyIcon /> Facha vs Facha
+      </NeonButton>
       
        <button 
         onClick={() => setShowSettings(true)}
@@ -732,37 +745,12 @@ const App: React.FC = () => {
     </div>
   );
 
-  const renderWorkInProgressView = () => {
-    if (appMode === 'enhance') {
-      return (
-        <WorkInProgress
-          title="Aumentá tu Facha"
-          description="Estamos trabajando en una funcionalidad épica que va a transformar tu foto en una versión GigaChad. La IA está aprendiendo a ser más zarpada que nunca."
-          icon={<SparklesIcon className="w-16 h-16" />}
-          estimatedTime="Próximamente"
-          onBack={reset}
-        />
-      );
-    } else if (appMode === 'battle') {
-      return (
-        <WorkInProgress
-          title="Facha vs Facha"
-          description="Preparando la batalla más épica de la historia. Dos fotos, una IA, y un veredicto final que va a romper todo."
-          icon={<TrophyIcon className="w-16 h-16" />}
-          estimatedTime="Próximamente"
-          onBack={reset}
-        />
-      );
-    }
-    return null;
-  };
 
 
   const renderContent = () => {
     if (isLoading) return <Loader />;
     if (showSettings) return renderSettingsView();
     if (appState === 'leaderboard') return renderLeaderboardView();
-    if (appState === 'wip') return renderWorkInProgressView();
     
     if (appMode === 'enhance') {
       switch(appState) {
@@ -819,6 +807,14 @@ const App: React.FC = () => {
             <p>Hecho con IA y mucho amor. Los resultados son para joder, no te la creas tanto.</p>
         </footer>
       </main>
+      
+      {/* Work in Progress Toast */}
+      <WorkInProgressToast
+        isVisible={showWipToast}
+        onClose={hideWipToast}
+        title={wipToastContent.title}
+        description={wipToastContent.description}
+      />
     </div>
   );
 };
