@@ -838,26 +838,6 @@ const App: React.FC = () => {
       </div>
   );
 
-  const ImageSlot: React.FC<{
-    slot: 1 | 2,
-    imageSrc: string | null,
-    onUploadClick: () => void,
-    onCameraClick: () => void
-  }> = ({ slot, imageSrc, onUploadClick, onCameraClick }) => (
-    <div className="flex flex-col items-center gap-4 w-full md:w-1/2">
-        <div className="w-full h-64 bg-slate-800/50 border-2 border-dashed border-violet-500/50 rounded-lg flex items-center justify-center overflow-hidden">
-            {imageSrc ? (
-                <img src={imageSrc} alt={`Contendiente ${slot}`} className="w-full h-full object-cover" />
-            ) : (
-                <span className="text-violet-400">Contendiente {slot}</span>
-            )}
-        </div>
-        <div className="flex gap-2">
-            <NeonButton onClick={onCameraClick}><CameraIcon /></NeonButton>
-            <NeonButton onClick={onUploadClick}><UploadIcon /></NeonButton>
-        </div>
-    </div>
-  );
 
   const renderBattleSelectView = () => (
     <div className="w-full max-w-6xl mx-auto flex flex-col items-center battle-container">
