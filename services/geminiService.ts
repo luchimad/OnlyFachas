@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FachaResult, FachaBattleResult, FachaEnhanceResult, AiMode } from '../types';
+import { MOCK_COMMENTS, MOCK_BATTLE_COMMENTS } from '../src/constants/mockData';
 
 const API_KEY = import.meta.env.VITE_API_KEY as string;
 if (!API_KEY) {
@@ -219,36 +220,7 @@ export const getEnhancedFacha = async (base64Image: string, mimeType: string): P
 // Mock data functions for when API_KEY is not available
 const getMockFachaResult = (): FachaResult => {
     const rating = Math.random() * 5 + 5; // Random score between 5-10
-    let comment = "";
-    
-    if (rating <= 4) {
-        const comments = [
-            "Tenés menos onda que un renglón. Hay que empezar de cero, papá.",
-            "Che, con esa cara de velorio no levantás ni la tapa del inodoro.",
-            "Te vestiste a oscuras y con el enemigo, ¿no? No se explica ese rejunte.",
-            "Tu facha está más devaluada que el peso, pero con un buen estilista capaz que repunta.",
-            "Le ponés la misma onda que un lunes a la mañana. ¡Despertate, rey!"
-        ];
-        comment = comments[Math.floor(Math.random() * comments.length)];
-    } else if (rating <= 7) {
-        const comments = [
-            "Zafás, eh. No sos Brad Pitt, pero tenés tu no-sé-qué... que tampoco sé bien qué es.",
-            "Aprobado, pero con lo justo. Te falta un hervor para detonarla.",
-            "Tenés potencial, pero todavía estás en modo demo. Actualizate, crack.",
-            "Vas por buen camino, se nota que le metés ganas. No aflojes que casi la rompés."
-        ];
-        comment = comments[Math.floor(Math.random() * comments.length)];
-    } else {
-        const comments = [
-            "Uff, ¿sos real o te escapaste de un póster? Estás para romper corazones en serie.",
-            "Fa, mi loco, con esa facha hasta tu ex te vuelve a escribir. Estás detonado.",
-            "Ayyyy loquitaaa, con esa cara de atrevida seguro que coleccionás DNI en la mesita de luz.",
-            "Nivel de facha: ilegal. Deberías pagar un impuesto por caminar por la calle así.",
-            "Pará un poco, ¿quién te dio permiso para tanta facha? Dejá algo para los demás, egoísta.",
-            "Sos la razón por la que se inventaron los emojis de fueguito. 🔥"
-        ];
-        comment = comments[Math.floor(Math.random() * comments.length)];
-    }
+    const comment = MOCK_COMMENTS[Math.floor(Math.random() * MOCK_COMMENTS.length)];
     
     return {
         rating,
@@ -266,26 +238,14 @@ const getMockBattleResult = (): FachaBattleResult => {
     
     let comment = "";
     if (difference >= 3) {
-        const comments = [
-            `Papi, la Persona ${winner} te pasó por arriba como un tren. Pero tranqui, que con esa sonrisa seguro que levantas igual`,
-            `Che, la Persona ${winner} te dio una paliza épica, pero no te hagas drama que tenés onda para rato`,
-            `Uy, la Persona ${winner} te dejó en el molde, pero mirá que bien que te ves igual`
-        ];
-        comment = comments[Math.floor(Math.random() * comments.length)];
+        const comments = MOCK_BATTLE_COMMENTS.slice(0, 3);
+        comment = comments[Math.floor(Math.random() * comments.length)].replace('{winner}', winner.toString());
     } else if (difference >= 1) {
-        const comments = [
-            `Fue re parejo, pero la Persona ${winner} te ganó por un pelo. Casi casi la rompés, crack`,
-            `Estuvo picante la cosa, pero la Persona ${winner} te sacó ventaja. No aflojes que estás cerca`,
-            `Reñido hasta el final, pero la Persona ${winner} se llevó la victoria. Seguí así que vas bien`
-        ];
-        comment = comments[Math.floor(Math.random() * comments.length)];
+        const comments = MOCK_BATTLE_COMMENTS.slice(3, 6);
+        comment = comments[Math.floor(Math.random() * comments.length)].replace('{winner}', winner.toString());
     } else {
-        const comments = [
-            `Uff, qué batalla! La Persona ${winner} te ganó por poquito, pero estuviste a la altura`,
-            `Re parejo todo, pero la Persona ${winner} se llevó el triunfo por detalles. Bien jugado`,
-            `Casi empate, pero la Persona ${winner} se impuso. La próxima seguro la ganás`
-        ];
-        comment = comments[Math.floor(Math.random() * comments.length)];
+        const comments = MOCK_BATTLE_COMMENTS.slice(6, 9);
+        comment = comments[Math.floor(Math.random() * comments.length)].replace('{winner}', winner.toString());
     }
     
     return {

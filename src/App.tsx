@@ -16,6 +16,7 @@ import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useSoundToggle } from './hooks/useSoundToggle';
 import { useTheme } from './hooks/useTheme';
 import { useEmergencyControls } from './hooks/useEmergencyControls';
+import { getScoreColor, getFachaTier, escapeXml } from './utils/fachaUtils';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
 import { FiTrendingUp, FiUsers } from "react-icons/fi";
 import { MaintenanceBanner, RateLimitBanner, RequestDelayBanner } from './components/EmergencyBanners';
@@ -536,33 +537,6 @@ const App: React.FC = () => {
     </button>
   );
 
-  const getScoreColor = (s: number) => {
-    if (s <= 3) return '#f97316'; // orange-500
-    if (s <= 6) return '#84cc16'; // lime-500
-    return '#d946ef'; // fuchsia-500
-  };
-
-  const getFachaTier = (s: number): string => {
-    const tiers: { [key: string]: string[] } = {
-      needsWork: ["Necesitás un cambio de look", "Urgente al peluquero", "El placar te pide ayuda"],
-      average: ["Estás en el promedio", "Metele un poco más de onda", "Zafás, pero hasta ahí"],
-      approved: ["Aprobado, pero con lo justo", "Tenés tu mística", "Vas por buen camino"],
-      good: ["Tenés tu onda, se nota", "Fachero, la verdad", "Titular indiscutido"],
-      god: ["Fachero Nivel Dios", "Nivel Leyenda", "Estás detonado mal"],
-      legend: ["Rompiste el Fachómetro", "La reencarnación de la facha", "El verdadero King"]
-    };
-
-    let selectedTier: string[];
-    if (s <= 3) selectedTier = tiers.needsWork;
-    else if (s <= 5) selectedTier = tiers.average;
-    else if (s < 7) selectedTier = tiers.approved;
-    else if (s < 8.5) selectedTier = tiers.good;
-    else if (s < 10) selectedTier = tiers.god;
-    else selectedTier = tiers.legend;
-
-    const hash = Math.floor(s * 1000) % selectedTier.length;
-    return selectedTier[hash];
-  };
 
   const handleExportResult = async () => {
     if (!result || !imageSrc) return;
@@ -586,16 +560,6 @@ const App: React.FC = () => {
         const score = result.rating.toFixed(1);
         const color = getScoreColor(result.rating);
 
-        const escapeXml = (unsafe: string) => unsafe.replace(/[<>&'"]/g, (c) => {
-            switch (c) {
-                case '<': return '&lt;';
-                case '>': return '&gt;';
-                case '&': return '&amp;';
-                case '\'': return '&apos;';
-                case '"': return '&quot;';
-                default: return c;
-            }
-        });
 
         const svgContent = `
             <svg width="1080" height="1920" xmlns="http://www.w3.org/2000/svg" style="font-family: 'Roboto', sans-serif;">

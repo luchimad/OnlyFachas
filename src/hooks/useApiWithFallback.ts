@@ -1,40 +1,12 @@
 import { useState, useCallback, useRef } from 'react';
 import { FachaResult, FachaBattleResult, FachaEnhanceResult } from '../../types';
+import { MOCK_COMMENTS, MOCK_STRENGTHS, MOCK_ADVICE } from '../constants/mockData';
 
 // Rate limiting configuration
 const RATE_LIMIT_MS = 15000; // 15 seconds between requests
 const CACHE_KEY = 'onlyfachas_last_result';
 const RATE_LIMIT_KEY = 'onlyfachas_last_request';
 
-// Mock data for fallback when API fails
-const MOCK_COMMENTS = [
-  "¡Che, tenés una facha que te la regalaron en el kiosco! 🔥",
-  "Mirá vos, parece que te vestiste con los ojos cerrados pero igual zafás 😎",
-  "Uy, esa facha está más perdida que el Diego en el 94, pero tiene onda ⚽",
-  "¡Increíble! Tu facha es tan única que hasta la IA se confundió 🤖",
-  "Che, esa facha está más picante que un asado en domingo 🥩",
-  "¡Wow! Tenés una facha que hasta los maniquíes se ponen celosos 👔",
-  "Uy, esa facha está más brillante que el futuro de Argentina ✨",
-  "¡Increíble! Tu facha es tan épica que hasta los espejos se rompen 🪞",
-  "Che, esa facha está más fresca que una birra bien fría 🍺",
-  "¡Wow! Tenés una facha que hasta los robots te piden consejos 🤖"
-];
-
-const MOCK_STRENGTHS = [
-  "Tu actitud es imparable",
-  "Tenés un estilo único",
-  "Tu confianza se nota",
-  "Sos auténtico/a",
-  "Tu energía es contagiosa"
-];
-
-const MOCK_ADVICE = [
-  "Probá con colores más vibrantes",
-  "Experimentá con diferentes estilos",
-  "Confía más en vos mismo/a",
-  "Sé más creativo/a con los accesorios",
-  "Disfrutá más del proceso"
-];
 
 // Interface for the hook return
 interface UseApiWithFallbackReturn {
