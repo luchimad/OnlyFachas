@@ -13,12 +13,12 @@ import { useApiWithFallback } from './hooks/useApiWithFallback';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useEmergencyControls } from './hooks/useEmergencyControls';
 import { getScoreColor, getFachaTier, escapeXml } from './utils/fachaUtils';
-import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon } from '../components/Icons';
+import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon, InstagramIcon } from '../components/Icons';
 import { FiTrendingUp, FiUsers } from "react-icons/fi";
 import { MaintenanceBanner, RateLimitBanner, RequestDelayBanner } from './components/EmergencyBanners';
 
 type AppMode = 'single' | 'battle' | 'enhance';
-type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms' | 'comingSoon';
+type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms' | 'comingSoon' | 'about' | 'faq';
 
 
 
@@ -58,6 +58,9 @@ const App: React.FC = () => {
   const [showMaintenanceBanner, setShowMaintenanceBanner] = useState(false);
   const [showRateLimitBanner, setShowRateLimitBanner] = useState(false);
   const [showRequestDelayBanner, setShowRequestDelayBanner] = useState(false);
+  
+  // Age/content confirmation state
+  const [isAgeConfirmed, setIsAgeConfirmed] = useState(false);
 
   // API with fallback hook
   const { 
@@ -120,6 +123,7 @@ const App: React.FC = () => {
         setLeaderboard([]);
     }
   }, []);
+
 
   // Emergency controls effect
   useEffect(() => {
@@ -448,6 +452,7 @@ const App: React.FC = () => {
     setError(null);
     setIsLoading(false);
     setShowSettings(false);
+    setIsAgeConfirmed(false);
     
     // Single / Enhance
     setImageSrc(null);
@@ -636,12 +641,14 @@ const App: React.FC = () => {
           <FiTrendingUp className="w-5 h-5" /> Top Fachas
         </NeonButton>
         
-        <NeonButton 
+        <button
           onClick={() => setAppState('comingSoon')}
-          className="w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button bg-gradient-to-br from-gray-500 to-gray-600 group-hover:from-gray-500 group-hover:to-gray-600 hover:shadow-[0_0_25px_theme('colors.gray.500'),0_0_50px_theme('colors.gray.600')]"
+          className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-gray-500 to-gray-600 transition-all duration-300 w-full sm:w-1/2 text-base sm:text-lg px-4 sm:px-6 py-3 sm:py-4 mobile-button hover:scale-105 hover:shadow-[0_0_25px_theme('colors.gray.500'),0_0_50px_theme('colors.gray.600')]"
         >
-          <SparklesIcon /> Aumentá tu facha
-        </NeonButton>
+          <span className="relative w-full px-5 py-2.5 transition-all ease-in duration-75 bg-slate-900/30 backdrop-blur-sm rounded-md group-hover:bg-opacity-0 flex items-center justify-center gap-2 text-white font-bold group-hover:text-white drop-shadow-lg">
+            <SparklesIcon /> Aumentá tu facha
+          </span>
+        </button>
       </div>
       
        <button 
@@ -687,14 +694,55 @@ const App: React.FC = () => {
       <p className="text-violet-300 mb-8 max-w-md mx-auto">
         {appMode === 'enhance' ? 'Subí tu mejor foto y dejá que la IA te transforme en una leyenda.' : 'Subí una foto o tirá una selfie para que nuestra IA te diga si tenés pinta. De una, sin vueltas.'}
       </p>
+      
+      {/* Advertencia y checkbox */}
+      <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-yellow-500/50 rounded-2xl p-6 mb-8 max-w-lg mx-auto">
+        <div className="text-4xl mb-4">⚠️</div>
+        <h3 className="text-lg font-bold text-yellow-300 mb-4">Advertencia Importante</h3>
+        <div className="space-y-3 text-left text-sm text-violet-300/90">
+          <p>• <span className="font-bold text-red-300">Prohibido contenido explícito o +18</span></p>
+          <p>• <span className="font-bold text-cyan-300">Las fotos NO se almacenan</span> - se procesan y eliminan inmediatamente</p>
+          <p>• <span className="font-bold text-violet-300">Solo para entretenimiento</span> - no es una medida real de apariencia</p>
+        </div>
+        
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <input
+            type="checkbox"
+            id="ageConfirmation"
+            checked={isAgeConfirmed}
+            onChange={(e) => setIsAgeConfirmed(e.target.checked)}
+            className="w-5 h-5 text-fuchsia-600 bg-slate-700 border-violet-500 rounded focus:ring-fuchsia-500 focus:ring-2"
+          />
+          <label htmlFor="ageConfirmation" className="text-sm text-violet-300 cursor-pointer">
+            Confirmo que tengo <span className="font-bold text-cyan-400">más de 18 años</span> o supervisión adulta, 
+            y que <span className="font-bold text-cyan-400">NO subiré contenido explícito</span>
+          </label>
+        </div>
+      </div>
+
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-        <NeonButton onClick={() => { setAppState('capture'); }}>
+        <NeonButton 
+          onClick={() => { setAppState('capture'); }} 
+          disabled={!isAgeConfirmed}
+          className={!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}
+        >
           <CameraIcon /> Activar Cámara
         </NeonButton>
-        <NeonButton onClick={() => fileInputRef.current?.click()}>
+        <NeonButton 
+          onClick={() => fileInputRef.current?.click()} 
+          disabled={!isAgeConfirmed}
+          className={!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}
+        >
            <UploadIcon /> Subir Foto
         </NeonButton>
       </div>
+      
+      {!isAgeConfirmed && (
+        <p className="mt-4 text-sm text-yellow-400">
+          ⚠️ Debes confirmar los términos para continuar
+        </p>
+      )}
+      
        <button onClick={reset} className="mt-6 text-sm text-violet-400 hover:text-white">Volver</button>
       <input type="file" ref={fileInputRef} onChange={(e) => handleImageUpload(e, 'single')} accept="image/*" className="hidden" />
     </div>
@@ -833,6 +881,31 @@ const App: React.FC = () => {
           <span className="text-cyan-400 font-bold"> ¡Spoiler: va a estar re picante!</span>
         </p>
         
+        {/* Advertencia y checkbox */}
+        <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-yellow-500/50 rounded-2xl p-6 mb-8 max-w-2xl mx-auto">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h3 className="text-lg font-bold text-yellow-300 mb-4">Advertencia Importante</h3>
+          <div className="space-y-3 text-left text-sm text-violet-300/90">
+            <p>• <span className="font-bold text-red-300">Prohibido contenido explícito o +18</span></p>
+            <p>• <span className="font-bold text-cyan-300">Las fotos NO se almacenan</span> - se procesan y eliminan inmediatamente</p>
+            <p>• <span className="font-bold text-violet-300">Solo para entretenimiento</span> - no es una medida real de apariencia</p>
+          </div>
+          
+          <div className="mt-4 flex items-center justify-center gap-3">
+            <input
+              type="checkbox"
+              id="ageConfirmationBattle"
+              checked={isAgeConfirmed}
+              onChange={(e) => setIsAgeConfirmed(e.target.checked)}
+              className="w-5 h-5 text-fuchsia-600 bg-slate-700 border-violet-500 rounded focus:ring-fuchsia-500 focus:ring-2"
+            />
+            <label htmlFor="ageConfirmationBattle" className="text-sm text-violet-300 cursor-pointer">
+              Confirmo que tengo <span className="font-bold text-cyan-400">más de 18 años</span> o supervisión adulta, 
+              y que <span className="font-bold text-cyan-400">NO subiré contenido explícito</span>
+            </label>
+          </div>
+        </div>
+        
         <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-12 mb-8">
             {/* Contendiente 1 */}
             <div className="w-full lg:w-1/3 flex flex-col items-center">
@@ -855,13 +928,15 @@ const App: React.FC = () => {
                 <div className="flex gap-3 mt-4">
                     <NeonButton 
                         onClick={() => { setActiveBattleSlot(1); setAppState('capture'); }}
-                        className="bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500"
+                        disabled={!isAgeConfirmed}
+                        className={`bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 ${!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <CameraIcon /> Cámara
                     </NeonButton>
                     <NeonButton 
                         onClick={() => fileInputRef1.current?.click()}
-                        className="bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500"
+                        disabled={!isAgeConfirmed}
+                        className={`bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 ${!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <UploadIcon /> Subir
                     </NeonButton>
@@ -900,13 +975,15 @@ const App: React.FC = () => {
                 <div className="flex gap-3 mt-4">
                     <NeonButton 
                         onClick={() => { setActiveBattleSlot(2); setAppState('capture'); }}
-                        className="bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500"
+                        disabled={!isAgeConfirmed}
+                        className={`bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 ${!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <CameraIcon /> Cámara
                     </NeonButton>
                     <NeonButton 
                         onClick={() => fileInputRef2.current?.click()}
-                        className="bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500"
+                        disabled={!isAgeConfirmed}
+                        className={`bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 ${!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <UploadIcon /> Subir
                     </NeonButton>
@@ -923,7 +1000,13 @@ const App: React.FC = () => {
                 <ZapIcon /> 🔥 INICIAR BATALLA 🔥
             </NeonButton>
             
-            {(!imageData1 || !imageData2) && (
+            {!isAgeConfirmed && (
+                <p className="text-yellow-400 text-sm text-center">
+                  ⚠️ Debes confirmar los términos para continuar
+                </p>
+            )}
+            
+            {(!imageData1 || !imageData2) && isAgeConfirmed && (
                 <p className="text-violet-300/60 text-sm text-center">
                   {!imageData1 && !imageData2 ? 'Subí las dos fotos para comenzar la batalla' : 
                    !imageData1 ? 'Falta la foto del Contendiente 1' : 'Falta la foto del Contendiente 2'}
@@ -1128,6 +1211,15 @@ const App: React.FC = () => {
             Política de Privacidad
         </h2>
         <div className="space-y-6 text-violet-300/90 leading-relaxed">
+            <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-cyan-500/50 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-cyan-300 mb-4">⚠️ Aclaración Importante</h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    La palabra <span className="text-cyan-400 font-bold">"facha"</span> se usa en el sentido coloquial argentino de 'fachero/estilo', sin relación con política o ideologías. 
+                    Es un término del lunfardo porteño que hace referencia a la apariencia, el estilo personal o la forma de vestir, 
+                    y no tiene ninguna connotación política o ideológica.
+                </p>
+            </div>
+
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
                 <h3 className="text-xl font-bold text-violet-200 mb-4">Resumen</h3>
                 <p>
@@ -1182,7 +1274,7 @@ const App: React.FC = () => {
                     Solo guardamos tus preferencias locales (tema, sonido) en tu navegador. No recopilamos datos personales ni fotos.
                 </p>
                 <p className="text-violet-300/80">
-                    Para consultas o solicitudes sobre privacidad podés escribir a: <span className="text-cyan-400">privacy@onlyfachas.com</span>
+                    Para consultas o solicitudes sobre privacidad podés escribir a: <span className="text-cyan-400">onlyfachasoficial@gmail.com</span>
                 </p>
             </div>
 
@@ -1209,6 +1301,15 @@ const App: React.FC = () => {
                 <h3 className="text-xl font-bold text-violet-200 mb-4">1. Aceptación</h3>
                 <p>
                     Al acceder o utilizar OnlyFachas aceptás estos términos en su totalidad. Si no estás de acuerdo, no uses la aplicación.
+                </p>
+            </div>
+
+            <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-cyan-500/50 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-cyan-300 mb-4">⚠️ Aclaración Importante</h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    La palabra <span className="text-cyan-400 font-bold">"facha"</span> se usa en el sentido coloquial argentino de 'fachero/estilo', sin relación con política o ideologías. 
+                    Es un término del lunfardo porteño que hace referencia a la apariencia, el estilo personal o la forma de vestir, 
+                    y no tiene ninguna connotación política o ideológica.
                 </p>
             </div>
 
@@ -1271,7 +1372,7 @@ const App: React.FC = () => {
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
                 <h3 className="text-xl font-bold text-violet-200 mb-4">7. Contacto</h3>
                 <p>
-                    Para consultas o solicitudes sobre privacidad podés escribir a: <span className="text-cyan-400">contacto@onlyfachas.com</span>
+                    Para consultas o solicitudes sobre privacidad podés escribir a: <span className="text-cyan-400">onlyfachasoficial@gmail.com</span>
                 </p>
             </div>
 
@@ -1357,6 +1458,287 @@ const App: React.FC = () => {
     </div>
   );
 
+  const renderAboutView = () => (
+    <div className="w-full max-w-4xl mx-auto text-center">
+        <div className="mb-8">
+            <div className="text-8xl mb-6">🚀</div>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-4 neon-text-fuchsia">
+                Sobre Nosotros
+            </h2>
+            <p className="text-xl text-violet-300 mb-8">
+                La historia detrás de esta locura
+            </p>
+        </div>
+
+        <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-cyan-500/50 rounded-2xl p-8 mb-8">
+            <div className="text-6xl mb-4">💡</div>
+            <h3 className="text-2xl font-bold text-cyan-300 mb-4">
+                El Origen
+            </h3>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-6">
+                OnlyFachas nació como un experimento medio en broma de un estudiante de ingeniería aeroespacial que quería probar qué tan lejos podía llegar jugando con inteligencia artificial.
+            </p>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-6">
+                La idea apareció una noche de estudio entre mates y risas: <span className="text-cyan-400 font-bold">"¿y si hacemos una IA que mida la facha?"</span>.
+            </p>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-6">
+                Lo que arrancó como chiste para un par de amigos terminó convirtiéndose en un proyecto que mezcló código, diseño y mucho humor argentino.
+            </p>
+        </div>
+
+        <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30 mb-8">
+            <h4 className="text-lg font-bold text-violet-200 mb-4">El Despegue</h4>
+            <p className="text-violet-300/90 mb-4">
+                Cuando el primer prototipo estuvo listo y se lo mostró a sus amigos, todos se engancharon.
+            </p>
+            <p className="text-violet-300/90 mb-4">
+                Empezaron a competir por los puntajes, a compartir capturas y a tirar ideas para nuevas funciones.
+            </p>
+            <p className="text-violet-300/90 mb-4">
+                Ese entusiasmo fue el empujón para darle una vuelta más profesional, abrir el sitio y dejar que cualquiera pueda probar su nivel de facha.
+            </p>
+        </div>
+
+        <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-yellow-500/50 rounded-2xl p-8 mb-8">
+            <div className="text-6xl mb-4">⚠️</div>
+            <h4 className="text-lg font-bold text-yellow-300 mb-4">Importante</h4>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-4">
+                Es importante aclarar que <span className="text-yellow-400 font-bold">OnlyFachas no es una medida real ni científica de nada</span>.
+            </p>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-4">
+                Los puntajes son solo un juego, un análisis de IA pensado para divertirse en juntadas, o para pasar el rato con amigos.
+            </p>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-4">
+                La idea es reírse, compartir un momento y no tomarse demasiado en serio la calificación.
+            </p>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-4">
+                <span className="text-cyan-400 font-bold">La facha de verdad está en la actitud, no en un número.</span>
+            </p>
+        </div>
+
+        <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30 mb-8">
+            <h4 className="text-lg font-bold text-violet-200 mb-4">Nuestros Objetivos</h4>
+            <p className="text-violet-300/90 mb-4">
+                Hoy OnlyFachas sigue siendo un proyecto independiente, hecho con ganas y mucho humor, pero con objetivos claros:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                    <div className="text-2xl mb-2">🎯</div>
+                    <h4 className="font-bold text-cyan-300 mb-2">Experiencia Divertida</h4>
+                    <p className="text-sm text-violet-300/80">Ofrecer una experiencia divertida y segura</p>
+                </div>
+                
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                    <div className="text-2xl mb-2">🔒</div>
+                    <h4 className="font-bold text-cyan-300 mb-2">Privacidad Total</h4>
+                    <p className="text-sm text-violet-300/80">No guardar fotos ni datos personales</p>
+                </div>
+                
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                    <div className="text-2xl mb-2">😄</div>
+                    <h4 className="font-bold text-cyan-300 mb-2">Humor Criollo</h4>
+                    <p className="text-sm text-violet-300/80">Mantener un toque de humor criollo en cada análisis</p>
+                </div>
+                
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                    <div className="text-2xl mb-2">🎭</div>
+                    <h4 className="font-bold text-cyan-300 mb-2">Solo Joda</h4>
+                    <p className="text-sm text-violet-300/80">Recordar siempre que esto es solo joda</p>
+                </div>
+            </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-fuchsia-500/50 rounded-2xl p-8 mb-8">
+            <div className="text-6xl mb-4">🤝</div>
+            <h4 className="text-lg font-bold text-fuchsia-300 mb-4">Únete a la Comunidad</h4>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-4">
+                Si te divertís usándolo, compartilo con tus amigos y ayudanos a que esta locura siga creciendo.
+            </p>
+            <p className="text-lg text-violet-300/90 leading-relaxed mb-4">
+                Gracias por ser parte de esta comunidad que sabe que la facha no es solo apariencia: <span className="text-fuchsia-400 font-bold">es actitud y buena onda</span>.
+            </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <NeonButton onClick={reset} className="bg-gradient-to-br from-purple-500 to-pink-500">
+                🏠 Volver al Inicio
+            </NeonButton>
+            <NeonButton onClick={() => setAppState('leaderboard')} className="bg-gradient-to-br from-yellow-400 to-orange-500">
+                <FiTrendingUp className="w-5 h-5" /> Ver Top Fachas
+            </NeonButton>
+        </div>
+    </div>
+  );
+
+
+  const renderFaqView = () => (
+    <div className="w-full max-w-4xl mx-auto text-center">
+        <div className="mb-8">
+            <div className="text-8xl mb-6">❓</div>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-4 neon-text-fuchsia">
+                Preguntas Frecuentes
+            </h2>
+            <p className="text-xl text-violet-300 mb-8">
+                Todo lo que necesitás saber sobre OnlyFachas
+            </p>
+        </div>
+
+        <div className="space-y-6 text-left">
+            {/* ¿Qué es OnlyFachas? */}
+            <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-cyan-500/50 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-cyan-300 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">🤖</span>
+                    ¿Qué es OnlyFachas?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    OnlyFachas es una app web que usa inteligencia artificial para dar un puntaje de "facha" a una foto.
+                </p>
+                <p className="text-violet-300/90 leading-relaxed mt-2">
+                    Es un juego para divertirse, no un análisis serio ni una medida real de belleza o estilo.
+                </p>
+            </div>
+
+            {/* ¿Las fotos se guardan? */}
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">🔒</span>
+                    ¿Las fotos se guardan en algún lado?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    No. Las imágenes se procesan solo para el análisis y después se descartan.
+                </p>
+                <p className="text-violet-300/90 leading-relaxed mt-2">
+                    No almacenamos ni compartimos tus fotos con nadie.
+                </p>
+            </div>
+
+            {/* ¿Por qué cambia el puntaje? */}
+            <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-yellow-500/50 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-yellow-300 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">📊</span>
+                    ¿Por qué a veces el puntaje cambia?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    La IA analiza cada foto de manera independiente y puede dar resultados distintos según la luz, el encuadre o la expresión.
+                </p>
+                <p className="text-violet-300/90 leading-relaxed mt-2">
+                    Recordá que es solo para divertirse, no hay una "medición exacta".
+                </p>
+            </div>
+
+            {/* ¿Puedo usarlo desde el celular? */}
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">📱</span>
+                    ¿Puedo usarlo desde el celular?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    Sí. El sitio está pensado para funcionar en celulares, tablets y computadoras.
+                </p>
+                <p className="text-violet-300/90 leading-relaxed mt-2">
+                    Podés subir una foto o usar la cámara directamente.
+                </p>
+            </div>
+
+            {/* ¿Qué pasa si la IA falla? */}
+            <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-orange-500/50 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-orange-300 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">⚠️</span>
+                    ¿Qué pasa si la IA falla o está saturada?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    Si la IA de Google no responde usamos un modo de prueba que devuelve resultados de ejemplo para que la experiencia siga siendo divertida.
+                </p>
+            </div>
+
+            {/* ¿Necesito crear cuenta? */}
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">👤</span>
+                    ¿Necesito crear una cuenta?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    No. No pedimos registro ni datos personales.
+                </p>
+                <p className="text-violet-300/90 leading-relaxed mt-2">
+                    Todo el historial de puntajes queda guardado solo en tu dispositivo.
+                </p>
+            </div>
+
+            {/* ¿Es gratis? */}
+            <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-green-500/50 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-green-300 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">💰</span>
+                    ¿Es gratis?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    Sí. OnlyFachas es totalmente gratuito.
+                </p>
+                <p className="text-violet-300/90 leading-relaxed mt-2">
+                    Hay anuncios de Google AdSense para cubrir costos de hosting, pero no es necesario pagar nada para usarlo.
+                </p>
+            </div>
+
+            {/* ¿Puedo compartir resultados? */}
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">📤</span>
+                    ¿Puedo compartir mis resultados?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    Claro. Podés descargar tu análisis como imagen y compartirla en redes sociales o en tus grupos de amigos.
+                </p>
+            </div>
+
+            {/* ¿Es apto para menores? */}
+            <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-blue-500/50 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-blue-300 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">👶</span>
+                    ¿Es apto para menores?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    El contenido es humorístico y no contiene material inapropiado, pero recomendamos que los menores lo usen con supervisión adulta para entender que es solo un juego.
+                </p>
+            </div>
+
+            {/* ¿Puedo sugerir mejoras? */}
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">💬</span>
+                    ¿Puedo sugerir mejoras o reportar un problema?
+                </h3>
+                <p className="text-violet-300/90 leading-relaxed">
+                    Sí. Nos encanta recibir feedback.
+                </p>
+                <p className="text-violet-300/90 leading-relaxed mt-2">
+                    Podés escribirnos por Instagram en <a href="https://instagram.com/onlyfachas" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 underline">@onlyfachas</a> o por email a <span className="text-cyan-400">onlyfachasoficial@gmail.com</span>.
+                </p>
+            </div>
+        </div>
+
+        {/* Mensaje final */}
+        <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-fuchsia-500/50 rounded-2xl p-8 mt-8">
+            <div className="text-6xl mb-4">🎭</div>
+            <h4 className="text-lg font-bold text-fuchsia-300 mb-4">Recordá</h4>
+            <p className="text-lg text-violet-300/90 leading-relaxed">
+                OnlyFachas es solo para pasar un buen rato.
+            </p>
+            <p className="text-lg text-violet-300/90 leading-relaxed mt-2">
+                La verdadera facha está en la actitud y en la buena onda, no en un número.
+            </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <NeonButton onClick={reset} className="bg-gradient-to-br from-purple-500 to-pink-500">
+                🏠 Volver al Inicio
+            </NeonButton>
+            <NeonButton onClick={() => setAppState('about')} className="bg-gradient-to-br from-cyan-400 to-blue-500">
+                📖 Sobre Nosotros
+            </NeonButton>
+        </div>
+    </div>
+  );
+
   const renderContent = () => {
     if (isLoading) return <Loader />;
     if (showSettings) return renderSettingsView();
@@ -1364,6 +1746,8 @@ const App: React.FC = () => {
     if (appState === 'privacy') return renderPrivacyView();
     if (appState === 'terms') return renderTermsView();
     if (appState === 'comingSoon') return renderComingSoonView();
+    if (appState === 'about') return renderAboutView();
+    if (appState === 'faq') return renderFaqView();
     
     if (appMode === 'enhance') {
       switch(appState) {
@@ -1414,6 +1798,33 @@ const App: React.FC = () => {
               <span className="font-arizonia text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">Fachas</span>
             </h1>
             <p className="text-violet-300 mt-2 mobile-subtitle">La única IA que sabe de tirar facha.</p>
+          </div>
+          
+          {/* Botón Sobre Nosotros y enlace Instagram */}
+          <div className="flex items-center justify-center gap-2 mt-4 text-sm text-violet-400/80">
+            <button 
+              onClick={() => setAppState('about')}
+              className="hover:text-violet-300 transition-colors duration-200 underline"
+            >
+              Sobre Nosotros
+            </button>
+            <span className="text-violet-400/40">|</span>
+            <button 
+              onClick={() => setAppState('faq')}
+              className="hover:text-violet-300 transition-colors duration-200 underline"
+            >
+              Preguntas Frecuentes
+            </button>
+            <span className="text-violet-400/40">|</span>
+            <a 
+              href="https://www.instagram.com/onlyfachas/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 hover:text-violet-300 transition-colors duration-200"
+            >
+              <InstagramIcon className="w-4 h-4" />
+              <span>@onlyfachas</span>
+            </a>
           </div>
         </header>
         <div className={containerClasses}>
