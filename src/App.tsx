@@ -9,6 +9,7 @@ import AdBanner from '../components/AdBanner';
 import NotificationToast from '../components/NotificationToast';
 import SkeletonLoader from '../components/SkeletonLoader';
 import ProgressBar from '../components/ProgressBar';
+import MinimalLoader from '../components/MinimalLoader';
 import { useApiWithFallback } from './hooks/useApiWithFallback';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useEmergencyControls } from './hooks/useEmergencyControls';
@@ -97,6 +98,7 @@ const App: React.FC = () => {
   
   // Leaderboard state
   const [leaderboard, setLeaderboard] = useState<StoredFachaResult[]>([]);
+  const [selectedLeaderboardResult, setSelectedLeaderboardResult] = useState<StoredFachaResult | null>(null);
 
   // Enhance mode state
   const [enhancedResult, setEnhancedResult] = useState<FachaEnhanceResult | null>(null);
@@ -472,6 +474,9 @@ const App: React.FC = () => {
     if (fileInputRef1.current) fileInputRef1.current.value = "";
     if (fileInputRef2.current) fileInputRef2.current.value = "";
 
+    // Leaderboard
+    setSelectedLeaderboardResult(null);
+
     setAppMode('single');
     setAppState('welcome');
   };
@@ -490,6 +495,11 @@ const App: React.FC = () => {
             setAppState('error');
         }
     }
+  };
+
+  const handleLeaderboardResultClick = (entry: StoredFachaResult) => {
+    setSelectedLeaderboardResult(entry);
+    setAppState('result');
   };
 
 
@@ -752,7 +762,9 @@ const App: React.FC = () => {
     <div className="w-full max-w-lg mx-auto text-center">
       <div className="mb-6 border-4 border-violet-500 rounded-lg overflow-hidden neon-shadow-purple">
         {showSkeleton ? (
-          <SkeletonLoader type="image" className="w-full h-64" />
+          <div className="w-full h-64 flex items-center justify-center bg-slate-800/50">
+            <MinimalLoader message="Procesando imagen..." />
+          </div>
         ) : (
           <img src={imageSrc!} alt="User upload" className="w-full h-auto object-cover"/>
         )}
@@ -779,74 +791,80 @@ const App: React.FC = () => {
     </div>
   );
   
-  const renderResultView = () => result && (
+  const renderResultView = () => {
+    // Usar resultado del leaderboard si está seleccionado, sino usar resultado normal
+    const currentResult = selectedLeaderboardResult || result;
+    const currentImageSrc = selectedLeaderboardResult?.imageSrc || imageSrc;
+    const isFromLeaderboard = !!selectedLeaderboardResult;
+    
+    return currentResult && (
     <div className="text-center w-full max-w-6xl mx-auto flex flex-col items-center">
         <div className="w-full flex flex-col md:flex-row items-start gap-8">
             {/* Left Column: Image */}
             <div className="w-full md:w-1/3 flex-shrink-0">
-                <h3 className="text-2xl font-bold mb-4 text-violet-300 text-center">Tu Foto</h3>
-                <img src={imageSrc!} alt="Tu foto analizada" className="rounded-lg border-4 border-violet-500 neon-shadow-purple w-full"/>
+                <h3 className="text-2xl font-bold mb-4 text-violet-300 text-center">
+                    {isFromLeaderboard ? `${selectedLeaderboardResult.name} - Análisis` : 'Tu Foto'}
+                </h3>
+                <img src={currentImageSrc!} alt={isFromLeaderboard ? `Foto de ${selectedLeaderboardResult.name}` : "Tu foto analizada"} className="rounded-lg border-4 border-violet-500 neon-shadow-purple w-full"/>
+                {isFromLeaderboard && (
+                    <div className="mt-4 p-3 bg-slate-800/50 rounded-lg border border-violet-500/30">
+                        <p className="text-sm text-violet-300">
+                            📅 Analizado el {new Date(selectedLeaderboardResult.timestamp).toLocaleDateString()}
+                        </p>
+                    </div>
+                )}
             </div>
             
             {/* Right Column: Verdict */}
             <div className="w-full md:w-2/3 flex flex-col items-center">
                 <h2 className="text-4xl font-bold mb-8 neon-text-fuchsia">VEREDICTO</h2>
                 
-                {/* Progress Bar durante análisis */}
-                {isAnalyzing && (
-                  <div className="w-full max-w-md mb-6">
-                    <ProgressBar 
-                      progress={progress} 
-                      duration={2000}
-                      showPercentage={true}
-                      animated={true}
-                    />
-                  </div>
-                )}
-                
                 {/* Score Display - Simple and Clean */}
                 <div className="w-full flex flex-col items-center mb-8">
                   {isAnalyzing ? (
-                    <SkeletonLoader type="meter" className="w-full h-32" />
+                    <MinimalLoader 
+                      message="Analizando tu facha..." 
+                      className="py-12"
+                    />
                   ) : (
                     <div className="flex flex-col items-center">
                       <span 
                         className="font-orbitron text-8xl md:text-9xl font-bold transition-all duration-1000"
                         style={{ 
-                          color: getScoreColor(result.rating),
-                          textShadow: `0 0 20px ${getScoreColor(result.rating)}`
+                          color: getScoreColor(currentResult.rating),
+                          textShadow: `0 0 20px ${getScoreColor(currentResult.rating)}`
                         }}
                       >
-                        {result.rating.toFixed(1)}
+                        {currentResult.rating.toFixed(1)}
                       </span>
                       <p className="text-2xl font-bold text-gray-300 tracking-widest uppercase mt-2">
                         DE FACHA
                       </p>
                       <div className="mt-6 w-full max-w-md text-center bg-slate-800/60 border-2 rounded-lg p-4"
                            style={{ 
-                             borderColor: getScoreColor(result.rating), 
-                             boxShadow: `0 0 15px ${getScoreColor(result.rating)}40` 
+                             borderColor: getScoreColor(currentResult.rating), 
+                             boxShadow: `0 0 15px ${getScoreColor(currentResult.rating)}40` 
                            }}>
                         <p className="text-sm uppercase tracking-widest text-violet-300/80 mb-2">
-                          Tu Rango de Facha
+                          {isFromLeaderboard ? 'Rango de Facha' : 'Tu Rango de Facha'}
                         </p>
                         <p 
                           className="font-orbitron text-xl font-bold"
-                          style={{ color: getScoreColor(result.rating) }}
+                          style={{ color: getScoreColor(currentResult.rating) }}
                         >
-                          {getFachaTier(result.rating)}
+                          {getFachaTier(currentResult.rating)}
                         </p>
                       </div>
                     </div>
                   )}
                 </div>
                 
-                <p className="text-lg md:text-xl text-cyan-300 mt-8 p-4 bg-slate-800/50 border border-cyan-500/30 rounded-lg italic w-full">"{result.comment}"</p>
+                <p className="text-lg md:text-xl text-cyan-300 mt-8 p-4 bg-slate-800/50 border border-cyan-500/30 rounded-lg italic w-full">"{currentResult.comment}"</p>
                 <div className="mt-8 w-full flex flex-col md:flex-row gap-6 text-left">
-                    <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-green-500/30"><h3 className="font-bold text-lg text-green-400 mb-3 flex items-center gap-2"><CheckCircle2 /> Tus puntos fuertes</h3><ul className="space-y-2 text-green-300/90">{result.fortalezas.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">✅</span>{item}</li>)}</ul></div>
-                    <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-yellow-500/30"><h3 className="font-bold text-lg text-yellow-400 mb-3 flex items-center gap-2"><XCircle/> Para mejorar, pibe</h3><ul className="space-y-2 text-yellow-300/90">{result.consejos.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">👉</span>{item}</li>)}</ul></div>
+                    <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-green-500/30"><h3 className="font-bold text-lg text-green-400 mb-3 flex items-center gap-2"><CheckCircle2 /> {isFromLeaderboard ? 'Puntos fuertes' : 'Tus puntos fuertes'}</h3><ul className="space-y-2 text-green-300/90">{currentResult.fortalezas.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">✅</span>{item}</li>)}</ul></div>
+                    <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-yellow-500/30"><h3 className="font-bold text-lg text-yellow-400 mb-3 flex items-center gap-2"><XCircle/> Para mejorar, pibe</h3><ul className="space-y-2 text-yellow-300/90">{currentResult.consejos.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">👉</span>{item}</li>)}</ul></div>
                 </div>
-                <FachaStats rating={result.rating} />
+                <FachaStats rating={currentResult.rating} />
                 
                 {/* Anuncio sutil después de estadísticas */}
                 <AdBanner 
@@ -857,11 +875,23 @@ const App: React.FC = () => {
             </div>
         </div>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
-            <NeonButton onClick={reset}><RefreshCwIcon /> Otra vez</NeonButton>
-            <NeonButton onClick={handleExportResult}><DownloadIcon /> Exportar Veredicto</NeonButton>
+            {isFromLeaderboard ? (
+                <>
+                    <NeonButton onClick={() => { setSelectedLeaderboardResult(null); setAppState('leaderboard'); }}>
+                        <TrophyIcon /> Volver al Top
+                    </NeonButton>
+                    <NeonButton onClick={reset}><RefreshCwIcon /> Nuevo Análisis</NeonButton>
+                </>
+            ) : (
+                <>
+                    <NeonButton onClick={reset}><RefreshCwIcon /> Otra vez</NeonButton>
+                    <NeonButton onClick={handleExportResult}><DownloadIcon /> Exportar Veredicto</NeonButton>
+                </>
+            )}
         </div>
     </div>
   );
+  };
   
   const renderErrorView = () => (
       <div className="text-center text-red-400 bg-red-900/50 p-6 rounded-lg border border-red-500">
@@ -1160,18 +1190,26 @@ const App: React.FC = () => {
         {leaderboard.length > 0 ? (
             <div className="w-full space-y-3 max-h-[60vh] overflow-y-auto pr-2">
                 {leaderboard.map((entry, index) => (
-                    <div key={entry.id} className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-lg border border-violet-500/20 w-full transition-all hover:bg-slate-800 hover:border-fuchsia-500">
+                    <div 
+                        key={entry.id} 
+                        onClick={() => handleLeaderboardResultClick(entry)}
+                        className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-lg border border-violet-500/20 w-full transition-all hover:bg-slate-800 hover:border-fuchsia-500 cursor-pointer hover:scale-[1.02] active:scale-[0.98] group"
+                        title="Tocá para ver el análisis completo"
+                    >
                         <span className="font-orbitron text-2xl font-bold text-fuchsia-400 w-12 text-center">#{index + 1}</span>
-                        <img src={entry.imageSrc} alt={entry.name} className="w-16 h-16 rounded-full object-cover border-2 border-violet-400" />
+                        <img src={entry.imageSrc} alt={entry.name} className="w-16 h-16 rounded-full object-cover border-2 border-violet-400 group-hover:border-fuchsia-400 transition-colors" />
                         <div className="flex-grow">
-                            <p className="font-bold text-lg text-white truncate">{entry.name}</p>
-                            <p className="text-sm text-violet-300">Clasificó el {new Date(entry.timestamp).toLocaleDateString()}</p>
+                            <p className="font-bold text-lg text-white truncate group-hover:text-fuchsia-300 transition-colors">{entry.name}</p>
+                            <p className="text-sm text-violet-300 group-hover:text-violet-200 transition-colors">Clasificó el {new Date(entry.timestamp).toLocaleDateString()}</p>
                         </div>
                         <div className="text-right">
-                            <p className="font-orbitron text-3xl font-bold" style={{ color: getScoreColor(entry.rating), textShadow: `0 0 8px ${getScoreColor(entry.rating)}` }}>
+                            <p className="font-orbitron text-3xl font-bold group-hover:scale-110 transition-transform" style={{ color: getScoreColor(entry.rating), textShadow: `0 0 8px ${getScoreColor(entry.rating)}` }}>
                                 {entry.rating.toFixed(1)}
                             </p>
-                            <p className="text-xs text-violet-400 uppercase">de Facha</p>
+                            <p className="text-xs text-violet-400 uppercase group-hover:text-violet-200 transition-colors">de Facha</p>
+                        </div>
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity text-fuchsia-400 text-sm font-bold">
+                            👆 Ver análisis
                         </div>
                     </div>
                 ))}
