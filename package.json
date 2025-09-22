@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "@types/html2canvas": "^0.5.35",
+    "html2canvas": "^1.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0"

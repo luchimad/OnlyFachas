@@ -13,8 +13,8 @@ import { useApiWithFallback } from './hooks/useApiWithFallback';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useEmergencyControls } from './hooks/useEmergencyControls';
 import { useAudio } from './hooks/useAudio';
-import { getScoreColor, getFachaTier, escapeXml } from './utils/fachaUtils';
-import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon, InstagramIcon } from '../components/Icons';
+import { getScoreColor, getFachaTier } from './utils/fachaUtils';
+import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, SparklesIcon, Trash2Icon, InstagramIcon } from '../components/Icons';
 import { FiVolume2, FiVolumeX } from "react-icons/fi";
 import { FiTrendingUp, FiUsers } from "react-icons/fi";
 import { MaintenanceBanner, RateLimitBanner, RequestDelayBanner } from './components/EmergencyBanners';
@@ -94,6 +94,7 @@ const App: React.FC = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultContainerRef = useRef<HTMLDivElement>(null);
   const [name, setName] = useState<string>('');
   
   // Leaderboard state
@@ -690,102 +691,7 @@ const App: React.FC = () => {
   );
 
 
-  const handleExportResult = async () => {
-    if (!result || !imageSrc) return;
-    setIsLoading(true);
 
-    try {
-        let dataUrl: string;
-        if (imageSrc.startsWith('data:')) {
-            dataUrl = imageSrc;
-        } else {
-            const response = await fetch(imageSrc);
-            const blob = await response.blob();
-            dataUrl = await new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result as string);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
-        }
-
-        const score = result.rating.toFixed(1);
-        const color = getScoreColor(result.rating);
-
-
-        const svgContent = `
-            <svg width="1080" height="1920" xmlns="http://www.w3.org/2000/svg" style="font-family: 'Roboto', sans-serif;">
-                <defs>
-                    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#1a0f2b;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#0f051a;stop-opacity:1" />
-                    </linearGradient>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#backgroundGradient)" />
-                
-                <text x="540" y="120" font-family="Orbitron, sans-serif" font-size="70" fill="#fuchsia-400" text-anchor="middle" style="text-shadow: 0 0 10px #fuchsia-500;">OnlyFachas</text>
-                <text x="540" y="180" font-size="30" fill="#a78bfa" text-anchor="middle">El Veredicto Final</text>
-
-                <clipPath id="imageClip"><rect x="140" y="240" width="800" height="800" rx="30" /></clipPath>
-                <image href="${dataUrl}" x="140" y="240" width="800" height="800" preserveAspectRatio="xMidYMid slice" clip-path="url(#imageClip)" />
-                <rect x="140" y="240" width="800" height="800" rx="30" fill="none" stroke="${color}" stroke-width="8" style="filter: drop-shadow(0 0 15px ${color});" />
-                
-                <text x="540" y="1150" font-family="Orbitron, sans-serif" font-size="200" fill="${color}" text-anchor="middle" style="text-shadow: 0 0 20px ${color};">${score}</text>
-                
-                <foreignObject x="80" y="1220" width="920" height="180">
-                    <p xmlns="http://www.w3.org/1999/xhtml" style="color: #67e8f9; font-size: 38px; text-align: center; margin: 0; font-style: italic; word-wrap: break-word;">
-                        "${escapeXml(result.comment)}"
-                    </p>
-                </foreignObject>
-
-                <rect x="80" y="1420" width="920" height="420" rx="20" fill="rgba(255,255,255,0.05)" />
-
-                <text x="120" y="1480" font-size="35" fill="#4ade80" font-weight="bold">Puntos Fuertes:</text>
-                <foreignObject x="120" y="1510" width="840" height="130">
-                    <ul xmlns="http://www.w3.org/1999/xhtml" style="color: #a3e635; font-size: 30px; margin: 0; padding-left: 40px;">
-                        ${result.fortalezas.map(f => `<li>${escapeXml(f)}</li>`).join('')}
-                    </ul>
-                </foreignObject>
-
-                <text x="120" y="1670" font-size="35" fill="#facc15" font-weight="bold">Para Mejorar:</text>
-                <foreignObject x="120" y="1700" width="840" height="130">
-                    <ul xmlns="http://www.w3.org/1999/xhtml" style="color: #fde047; font-size: 30px; margin: 0; padding-left: 40px;">
-                        ${result.consejos.map(c => `<li>${escapeXml(c)}</li>`).join('')}
-                    </ul>
-                </foreignObject>
-            </svg>
-        `;
-        const svgBlob = new Blob([svgContent], {type: 'image/svg+xml;charset=utf-8'});
-        const url = URL.createObjectURL(svgBlob);
-        const image = new Image();
-        image.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1080;
-            canvas.height = 1920;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                ctx.drawImage(image, 0, 0);
-            }
-            URL.revokeObjectURL(url);
-            const a = document.createElement('a');
-            a.download = 'veredicto-onlyfachas.png';
-            a.href = canvas.toDataURL('image/png');
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setIsLoading(false);
-        };
-        image.onerror = () => {
-             setError("No se pudo generar la imagen para exportar.");
-             setIsLoading(false);
-        }
-        image.src = url;
-    } catch (err) {
-        console.error("Error exporting result:", err);
-        setError("Falló la exportación. ¿Será que tu facha rompió la compu?");
-        setIsLoading(false);
-    }
-  };
 
   const renderWelcomeView = () => (
     <div className="text-center flex flex-col items-center">
@@ -962,7 +868,7 @@ const App: React.FC = () => {
     const isFromLeaderboard = !!selectedLeaderboardResult;
     
     return currentResult && (
-    <div className="text-center w-full max-w-6xl mx-auto flex flex-col items-center">
+    <div ref={resultContainerRef} className="text-center w-full max-w-6xl mx-auto flex flex-col items-center">
         <div className="w-full flex flex-col md:flex-row items-start gap-8">
             {/* Left Column: Image */}
             <div className="w-full md:w-1/3 flex-shrink-0">
@@ -1049,10 +955,10 @@ const App: React.FC = () => {
             ) : (
                 <>
                     <NeonButton onClick={reset}><RefreshCwIcon /> Otra vez</NeonButton>
-                    <NeonButton onClick={handleExportResult}><DownloadIcon /> Exportar Veredicto</NeonButton>
                 </>
             )}
         </div>
+        
     </div>
   );
   };
@@ -1065,6 +971,7 @@ const App: React.FC = () => {
         <NeonButton onClick={reset} className="mt-6"><RefreshCwIcon /> Intentar de nuevo</NeonButton>
       </div>
   );
+
 
 
   const renderBattleSelectView = () => (
