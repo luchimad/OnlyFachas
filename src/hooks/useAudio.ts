@@ -11,7 +11,6 @@ interface AudioOptions {
  */
 export const useAudio = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const preloadedAudios = useRef<Map<string, HTMLAudioElement>>(new Map());
 
   const playAudio = useCallback((audioPath: string, options: AudioOptions = {}) => {
     try {

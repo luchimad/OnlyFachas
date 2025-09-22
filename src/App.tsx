@@ -8,8 +8,6 @@ import FachaStats from '../components/FachaStats';
 import Loader from '../components/Loader';
 import AdBanner from '../components/AdBanner';
 import NotificationToast from '../components/NotificationToast';
-import SkeletonLoader from '../components/SkeletonLoader';
-import ProgressBar from '../components/ProgressBar';
 import MinimalLoader from '../components/MinimalLoader';
 import { useApiWithFallback } from './hooks/useApiWithFallback';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
@@ -94,7 +92,6 @@ const App: React.FC = () => {
   
   // QoL states
   const [showSkeleton, setShowSkeleton] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState<string>('');
@@ -581,20 +578,6 @@ const App: React.FC = () => {
   };
 
   // Funciones para controlar la música de fondo
-  const toggleBackgroundMusic = () => {
-    if (backgroundMusic) {
-      if (isMusicPlaying) {
-        backgroundMusic.pause();
-        setIsMusicPlaying(false);
-      } else {
-        backgroundMusic.play().then(() => {
-          setIsMusicPlaying(true);
-        }).catch(error => {
-          console.warn('Error al reproducir música de fondo:', error);
-        });
-      }
-    }
-  };
 
   const stopBackgroundMusic = () => {
     if (backgroundMusic) {
