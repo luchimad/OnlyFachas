@@ -93,7 +93,6 @@ const App: React.FC = () => {
   // QoL states
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState<string>('');
   
@@ -388,27 +387,16 @@ const App: React.FC = () => {
 
     setIsLoading(true);
     setIsAnalyzing(true);
-    setProgress(0);
     setError(null);
     setResult(null);
     
     try {
-      // Simular progreso durante el análisis
-      const progressInterval = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 90) return prev;
-          return prev + Math.random() * 15;
-        });
-      }, 200);
 
       // Incrementar contador de requests
       incrementRequestCount();
 
       // Usar el hook con fallback automático
       const fachaResult = await callApi(getFachaScore, imageData.base64, imageData.mimeType, aiMode);
-      
-      clearInterval(progressInterval);
-      setProgress(100);
       
       // Haptic feedback
       haptic.success();
@@ -455,7 +443,6 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
       setIsAnalyzing(false);
-      setTimeout(() => setProgress(0), 1000); // Reset progress after delay
     }
   }, [imageData, aiMode, name, leaderboard, isRateLimited, timeUntilNextRequest, callApi, haptic]);
   
