@@ -56,9 +56,9 @@ const WebcamCapture: React.FC<WebcamCaptureProps> = ({ onCapture, onCancel }) =>
   const NeonButton: React.FC<{onClick: () => void, children: React.ReactNode}> = ({ onClick, children }) => (
     <button
       onClick={onClick}
-      className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-purple-200"
+      className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-white rounded-lg group bg-gradient-to-br from-violet-500 to-fuchsia-500 group-hover:from-violet-600 group-hover:to-fuchsia-600 hover:text-white focus:ring-4 focus:outline-none focus:ring-violet-500/50 transition-all duration-300 neon-shadow-fuchsia"
     >
-      <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0 flex items-center gap-2">
+      <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-slate-800/80 rounded-md group-hover:bg-opacity-0 flex items-center gap-2">
         {children}
       </span>
     </button>
