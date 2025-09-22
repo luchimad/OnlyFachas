@@ -93,6 +93,7 @@ const App: React.FC = () => {
   // QoL states
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState<string>('');
   
@@ -110,7 +111,6 @@ const App: React.FC = () => {
   
   // Estado para música de fondo
   const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement | null>(null);
-  const [isMusicPlaying, setIsMusicPlaying] = useState<boolean>(false);
 
   // Pre-cargar audios comunes al inicializar
   useEffect(() => {
@@ -150,7 +150,6 @@ const App: React.FC = () => {
       
       // Reproducir inmediatamente cuando se crea
       music.play().then(() => {
-        setIsMusicPlaying(true);
         console.log('Música de fondo iniciada');
       }).catch(error => {
         console.warn('Error al reproducir música de fondo:', error);
@@ -164,7 +163,6 @@ const App: React.FC = () => {
       backgroundMusic.pause();
       backgroundMusic.currentTime = 0;
       setBackgroundMusic(null);
-      setIsMusicPlaying(false);
     }
   }, [audioEnabled, backgroundMusic]);
 
@@ -584,7 +582,6 @@ const App: React.FC = () => {
       backgroundMusic.pause();
       backgroundMusic.currentTime = 0;
       backgroundMusic.volume = 0; // Silenciar completamente
-      setIsMusicPlaying(false);
     }
   };
 
@@ -2017,7 +2014,6 @@ const App: React.FC = () => {
                   // Si se está desactivando, cortar TODO
                   setAudioEnabled(false);
                   stopBackgroundMusic();
-                  setIsMusicPlaying(false);
                 } else {
                   // Si se está activando, iniciar TODO
                   setAudioEnabled(true);
