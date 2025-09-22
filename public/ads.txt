@@ -4,8 +4,7 @@
 # Google AdSense
 google.com, pub-7767554718249498, DIRECT, f08c47fec0942fa0
 
-# Google Ad Manager (if you plan to use it)
+# Google Ad Manager 
 # google.com, pub-7767554718249498, DIRECT, f08c47fec0942fa0
 
-# Add other ad networks as needed
-# Example format: domain.com, publisher-id, relationship, certification-authority-id
+
