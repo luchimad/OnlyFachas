@@ -1,6 +1,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { FachaResult, FachaBattleResult, FachaEnhanceResult, StoredFachaResult, AiMode } from '../types';
+import './animations.css';
 import { getFachaScore, getFachaBattleResult, getEnhancedFacha } from '../services/geminiService';
 import WebcamCapture from '../components/WebcamCapture';
 import FachaStats from '../components/FachaStats';
@@ -13,8 +14,10 @@ import MinimalLoader from '../components/MinimalLoader';
 import { useApiWithFallback } from './hooks/useApiWithFallback';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useEmergencyControls } from './hooks/useEmergencyControls';
+import { useAudio } from './hooks/useAudio';
 import { getScoreColor, getFachaTier, escapeXml } from './utils/fachaUtils';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, DownloadIcon, SparklesIcon, Trash2Icon, InstagramIcon } from '../components/Icons';
+import { FiVolume2, FiVolumeX } from "react-icons/fi";
 import { FiTrendingUp, FiUsers } from "react-icons/fi";
 import { MaintenanceBanner, RateLimitBanner, RequestDelayBanner } from './components/EmergencyBanners';
 
@@ -99,6 +102,75 @@ const App: React.FC = () => {
   // Leaderboard state
   const [leaderboard, setLeaderboard] = useState<StoredFachaResult[]>([]);
   const [selectedLeaderboardResult, setSelectedLeaderboardResult] = useState<StoredFachaResult | null>(null);
+  
+  // Audio state
+  const [audioEnabled, setAudioEnabled] = useState<boolean>(false);
+  const { playAudio } = useAudio();
+  
+  // Estado para rotación de audios (evitar repetir el mismo consecutivamente)
+  const [lastPlayedAudio, setLastPlayedAudio] = useState<string>('');
+  const [lastPlayedBattleAudio, setLastPlayedBattleAudio] = useState<string>('');
+  
+  // Estado para música de fondo
+  const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement | null>(null);
+  const [isMusicPlaying, setIsMusicPlaying] = useState<boolean>(false);
+
+  // Pre-cargar audios comunes al inicializar
+  useEffect(() => {
+    if (audioEnabled) {
+      // Pre-cargar los audios más comunes
+      const commonAudios = [
+        '/audios/facha_detected_1.mp3',
+        '/audios/facha_detected_2.mp3',
+        '/audios/facha_detected_low1.mp3',
+        '/audios/facha_detected_low2.mp3',
+        '/audios/facha_detected_mid1.mp3',
+        '/audios/facha_detected_mid2.mp3',
+        '/audios/facha_detected_super.mp3',
+        '/audios/facha_detected_super2.mp3',
+        '/audios/facha_detected_super3.mp3',
+        '/audios/1_wins.mp3',
+        '/audios/1_wins_super.mp3',
+        '/audios/2_wins.mp3',
+        '/audios/2_wins_super.mp3'
+      ];
+
+      commonAudios.forEach(audioPath => {
+        const audio = new Audio(audioPath);
+        audio.preload = 'auto';
+        audio.load();
+      });
+    }
+  }, [audioEnabled]);
+
+  // Inicializar música de fondo (solo cuando se active el audio)
+  useEffect(() => {
+    if (audioEnabled && !backgroundMusic) {
+      const music = new Audio('/audios/Deep_Close.mp3');
+      music.loop = true;
+      music.volume = 0.3; // Volumen bajo para no tapar la voz
+      music.preload = 'auto';
+      
+      // Reproducir inmediatamente cuando se crea
+      music.play().then(() => {
+        setIsMusicPlaying(true);
+        console.log('Música de fondo iniciada');
+      }).catch(error => {
+        console.warn('Error al reproducir música de fondo:', error);
+      });
+      
+      setBackgroundMusic(music);
+    }
+    
+    // Cleanup cuando se desactiva el audio
+    if (!audioEnabled && backgroundMusic) {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+      setBackgroundMusic(null);
+      setIsMusicPlaying(false);
+    }
+  }, [audioEnabled, backgroundMusic]);
+
 
   // Enhance mode state
   const [enhancedResult, setEnhancedResult] = useState<FachaEnhanceResult | null>(null);
@@ -364,6 +436,9 @@ const App: React.FC = () => {
       setResult(fachaResult);
       setAppState('result');
 
+      // Reproducir audio según el puntaje
+      playFachaAudio(fachaResult.rating);
+
       // Mostrar notificación si es un resultado mock
       if (fachaResult.isMock) {
         showNotificationToast(
@@ -425,6 +500,9 @@ const App: React.FC = () => {
         const result = await callApi(getFachaBattleResult, imageData1, imageData2, aiMode);
         setBattleResult(result);
         setAppState('battleResult');
+
+        // Reproducir audio de batalla
+        playBattleAudio(result.winner, result.score1, result.score2);
 
         // Mostrar notificación si es un resultado mock
         if (result.isMock) {
@@ -500,6 +578,125 @@ const App: React.FC = () => {
   const handleLeaderboardResultClick = (entry: StoredFachaResult) => {
     setSelectedLeaderboardResult(entry);
     setAppState('result');
+  };
+
+  // Funciones para controlar la música de fondo
+  const toggleBackgroundMusic = () => {
+    if (backgroundMusic) {
+      if (isMusicPlaying) {
+        backgroundMusic.pause();
+        setIsMusicPlaying(false);
+      } else {
+        backgroundMusic.play().then(() => {
+          setIsMusicPlaying(true);
+        }).catch(error => {
+          console.warn('Error al reproducir música de fondo:', error);
+        });
+      }
+    }
+  };
+
+  const stopBackgroundMusic = () => {
+    if (backgroundMusic) {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+      backgroundMusic.volume = 0; // Silenciar completamente
+      setIsMusicPlaying(false);
+    }
+  };
+
+  // Función para reproducir audio según el puntaje con rotación
+  const playFachaAudio = (rating: number) => {
+    if (!audioEnabled) return; // Solo afecta a los efectos de voz, no a la música de fondo
+    
+    let audioFile = '';
+    let availableAudios: string[] = [];
+    
+    // Definir audios disponibles según el rango
+    if (rating >= 9) {
+      // Super facha (9-10): 3 variantes super
+      availableAudios = [
+        '/audios/facha_detected_super.mp3',
+        '/audios/facha_detected_super2.mp3',
+        '/audios/facha_detected_super3.mp3'
+      ];
+    } else if (rating >= 7) {
+      // Facha alta (7-9): 2 variantes normales
+      availableAudios = [
+        '/audios/facha_detected_1.mp3',
+        '/audios/facha_detected_2.mp3'
+      ];
+    } else if (rating >= 5) {
+      // Facha media (5-6): 2 variantes mid
+      availableAudios = [
+        '/audios/facha_detected_mid1.mp3',
+        '/audios/facha_detected_mid2.mp3'
+      ];
+    } else {
+      // Facha baja (0-4): 2 variantes low
+      availableAudios = [
+        '/audios/facha_detected_low1.mp3',
+        '/audios/facha_detected_low2.mp3'
+      ];
+    }
+    
+    // Filtrar el último audio reproducido para evitar repetición
+    const filteredAudios = availableAudios.filter(audio => audio !== lastPlayedAudio);
+    
+    // Si solo hay un audio disponible, usarlo; sino elegir aleatoriamente de los filtrados
+    if (filteredAudios.length > 0) {
+      const randomIndex = Math.floor(Math.random() * filteredAudios.length);
+      audioFile = filteredAudios[randomIndex];
+    } else {
+      // Fallback: usar el primero disponible
+      audioFile = availableAudios[0];
+    }
+    
+    // Guardar el audio que se va a reproducir
+    setLastPlayedAudio(audioFile);
+    
+    playAudio(audioFile, { volume: 0.7 });
+  };
+
+  // Función para reproducir audio de batalla con rotación
+  const playBattleAudio = (winner: 1 | 2, score1: number, score2: number) => {
+    if (!audioEnabled) return; // Solo afecta a los efectos de voz, no a la música de fondo
+    
+    const scoreDiff = Math.abs(score1 - score2);
+    let availableAudios: string[] = [];
+    
+    // Definir audios disponibles según el ganador y diferencia
+    if (winner === 1) {
+      if (scoreDiff >= 2) {
+        availableAudios = ['/audios/1_wins_super.mp3'];
+      } else {
+        availableAudios = ['/audios/1_wins.mp3'];
+      }
+    } else {
+      if (scoreDiff >= 2) {
+        availableAudios = ['/audios/2_wins_super.mp3'];
+      } else {
+        availableAudios = ['/audios/2_wins.mp3'];
+      }
+    }
+    
+    // Filtrar el último audio de batalla reproducido para evitar repetición
+    const filteredAudios = availableAudios.filter(audio => audio !== lastPlayedBattleAudio);
+    
+    // Si solo hay un audio disponible, usarlo; sino elegir aleatoriamente de los filtrados
+    let audioFile = '';
+    if (filteredAudios.length > 0) {
+      const randomIndex = Math.floor(Math.random() * filteredAudios.length);
+      audioFile = filteredAudios[randomIndex];
+    } else {
+      // Fallback: usar el primero disponible
+      audioFile = availableAudios[0];
+    }
+    
+    // Guardar el audio que se va a reproducir
+    setLastPlayedBattleAudio(audioFile);
+    
+    playAudio(audioFile, { volume: 0.7 });
   };
 
 
@@ -1829,13 +2026,37 @@ const App: React.FC = () => {
       <div className="absolute top-0 left-0 w-full h-full bg-grid-violet-500/20 [mask-image:linear-gradient(to_bottom,white_5%,transparent_90%)]"></div>
       <main className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center justify-center">
         <header className="text-center mb-6 sm:mb-10 mobile-header">
+          {/* Control de Audio Unificado */}
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={() => {
+                if (audioEnabled) {
+                  // Si se está desactivando, cortar TODO
+                  setAudioEnabled(false);
+                  stopBackgroundMusic();
+                  setIsMusicPlaying(false);
+                } else {
+                  // Si se está activando, iniciar TODO
+                  setAudioEnabled(true);
+                  // La música se creará automáticamente en el useEffect
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-violet-500/30 rounded-lg text-violet-300 hover:bg-slate-700/50 hover:border-violet-400 transition-all duration-200"
+              title={audioEnabled ? "Desactivar audio y música" : "Activar audio y música"}
+            >
+              {audioEnabled ? <FiVolume2 className="w-5 h-5" /> : <FiVolumeX className="w-5 h-5" />}
+              <span className="text-sm font-medium">
+                {audioEnabled ? "🔊 Audio + Música ON" : "🔊 Audio + Música OFF"}
+              </span>
+            </button>
+          </div>
           
           <div className="cursor-pointer" onClick={reset} title="Ir al inicio">
             <h1 className="neon-text-fuchsia flex items-baseline justify-center gap-x-1 md:gap-x-2 mobile-title">
               <span className="font-montserrat font-thin tracking-wider text-4xl sm:text-6xl md:text-7xl lg:text-8xl">Only</span>
               <span className="font-arizonia text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">Fachas</span>
             </h1>
-            <p className="text-violet-300 mt-2 mobile-subtitle">La única IA que sabe de tirar facha.</p>
+            <p className="text-violet-300 mt-2 mobile-subtitle animate-pulse-90bpm">La única IA que sabe de tirar facha.</p>
           </div>
           
           {/* Botón Sobre Nosotros y enlace Instagram */}

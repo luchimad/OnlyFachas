@@ -1,0 +1,31 @@
+/* Animación de pulso a 90 BPM */
+@keyframes pulse-90bpm {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+  }
+}
+
+/* Clase para aplicar la animación de 90 BPM */
+.animate-pulse-90bpm {
+  animation: pulse-90bpm 0.667s ease-in-out infinite; /* 90 BPM = 60/90 = 0.667s por beat */
+}
+
+/* Efecto adicional de resplandor que sigue el pulso */
+.animate-pulse-90bpm::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(236, 72, 153, 0.1), transparent);
+  border-radius: inherit;
+  animation: pulse-90bpm 0.667s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
