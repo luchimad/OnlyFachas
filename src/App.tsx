@@ -1221,74 +1221,84 @@ const App: React.FC = () => {
         </h2>
         <div className="space-y-6 text-violet-300/90 leading-relaxed">
             <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-cyan-500/50 rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-cyan-300 mb-4">⚠️ Aclaración Importante</h3>
+                <h3 className="text-xl font-bold text-cyan-300 mb-4">1. Aclaración Importante</h3>
                 <p className="text-violet-300/90 leading-relaxed">
-                    La palabra <span className="text-cyan-400 font-bold">"facha"</span> se usa en el sentido coloquial argentino de 'fachero/estilo', sin relación con política o ideologías. 
-                    Es un término del lunfardo porteño que hace referencia a la apariencia, el estilo personal o la forma de vestir, 
-                    y no tiene ninguna connotación política o ideológica.
+                    La palabra <span className="text-cyan-400 font-bold">"facha"</span> se usa únicamente en el sentido argentino de fachero/estilo, sin relación con política o ideologías.
+                    Se refiere a apariencia o "pinta" de una persona, nunca a creencias ni posicionamientos.
                 </p>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">Resumen</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">2. Resumen</h3>
                 <p>
-                    OnlyFachas respeta tu privacidad. Esta aplicación procesa las imágenes que subís únicamente para generar un puntaje de facha en tiempo real. No almacenamos, guardamos ni compartimos las fotos ni los resultados.
+                    OnlyFachas respeta tu privacidad.
+                    Procesamos las imágenes solo para generar un puntaje de facha en tiempo real.
+                    No almacenamos, guardamos ni compartimos las fotos ni los resultados.
                 </p>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">Procesamiento de Imágenes</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">3. Procesamiento de Imágenes</h3>
                 <p className="mb-4">
-                    Las imágenes se envían de manera temporal a los servicios de inteligencia artificial de Google Gemini para su análisis y luego se descartan inmediatamente. No mantenemos copias de tus fotos en nuestros servidores.
+                    Las fotos se envían de manera temporal a los servicios de inteligencia artificial de Google Gemini.
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-violet-300/80">
-                    <li>Las imágenes se procesan únicamente para generar el puntaje de facha</li>
-                    <li>No se almacenan en nuestros servidores</li>
-                    <li>Se eliminan automáticamente después del análisis</li>
-                    <li>No se comparten con terceros</li>
+                    <li>Se utilizan únicamente para calcular el puntaje.</li>
+                    <li>No se guardan en nuestros servidores.</li>
+                    <li>Se eliminan automáticamente después del análisis.</li>
+                    <li>No se comparten con terceros.</li>
                 </ul>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">Datos Técnicos</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">4. Datos Técnicos</h3>
                 <p className="mb-4">
-                    OnlyFachas puede recopilar datos técnicos de uso (por ejemplo cookies, datos de navegador, tiempo en la app) para fines de estadísticas, anuncios y mejora de la experiencia.
+                    Podemos recopilar datos de uso anónimos para estadísticas, publicidad y mejora de la experiencia, como:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-violet-300/80">
-                    <li>Datos de navegación anónimos</li>
-                    <li>Tiempo de permanencia en la aplicación</li>
-                    <li>Páginas visitadas</li>
-                    <li>Información del dispositivo (tipo, navegador)</li>
+                    <li>Cookies y datos de navegación.</li>
+                    <li>Tiempo de permanencia en la aplicación.</li>
+                    <li>Páginas visitadas.</li>
+                    <li>Información básica del dispositivo (tipo, navegador).</li>
                 </ul>
+                <p className="text-violet-300/80 mt-4">
+                    Estos datos no identifican a una persona de forma directa.
+                </p>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">Servicios de Terceros</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">5. Servicios de Terceros</h3>
                 <p className="mb-4">
-                    Al usar la aplicación aceptas que tus datos de navegación sean utilizados por Google AdSense y servicios analíticos según sus propias políticas.
+                    Al usar OnlyFachas aceptás que algunos datos de navegación sean tratados por terceros bajo sus propias políticas:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-violet-300/80">
-                    <li><strong>Google Gemini:</strong> Para análisis de imágenes</li>
-                    <li><strong>Google AdSense:</strong> Para mostrar anuncios</li>
-                    <li><strong>Google Analytics:</strong> Para estadísticas de uso</li>
+                    <li><strong>Google Gemini:</strong> procesamiento de imágenes.</li>
+                    <li><strong>Google AdSense:</strong> anuncios publicitarios.</li>
+                    <li><strong>Google Analytics:</strong> métricas y estadísticas de uso.</li>
                 </ul>
+                <p className="text-violet-300/80 mt-4">
+                    Recomendamos revisar las políticas de privacidad de Google para más información.
+                </p>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">Tus Derechos</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">6. Tus Derechos</h3>
                 <p className="mb-4">
-                    <strong>Importante:</strong> No almacenamos ninguna información personal ni fotos. Las imágenes se procesan únicamente en tiempo real y se eliminan inmediatamente después del análisis.
+                    No guardamos ninguna foto ni información personal.
                 </p>
                 <p className="mb-4">
-                    Solo guardamos tus preferencias locales (tema, sonido) en tu navegador. No recopilamos datos personales ni fotos.
+                    Podés borrar las cookies de tu navegador para eliminar los datos técnicos almacenados localmente.
                 </p>
                 <p className="text-violet-300/80">
-                    Para consultas o solicitudes sobre privacidad podés escribir a: <span className="text-cyan-400">onlyfachasoficial@gmail.com</span>
+                    Solo se guardan, en tu propio dispositivo, las preferencias locales (por ejemplo, audio o configuraciones de juego).
                 </p>
             </div>
 
-            <div className="text-center text-violet-400/60 text-sm">
-                <p>Fecha de última actualización: 19 de enero de 2025</p>
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">7. Contacto</h3>
+                <p>
+                    Para consultas o solicitudes vinculadas a privacidad escribinos a: <span className="text-cyan-400">onlyfachasoficial@gmail.com</span>
+                </p>
             </div>
         </div>
 
@@ -1303,90 +1313,85 @@ const App: React.FC = () => {
   const renderTermsView = () => (
     <div className="w-full max-w-4xl mx-auto text-left">
         <h2 className="text-2xl sm:text-3xl font-bold mb-6 neon-text-fuchsia text-center">
-            Términos de Uso
+            Términos y Condiciones de OnlyFachas
         </h2>
         <div className="space-y-6 text-violet-300/90 leading-relaxed">
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
                 <h3 className="text-xl font-bold text-violet-200 mb-4">1. Aceptación</h3>
                 <p>
-                    Al acceder o utilizar OnlyFachas aceptás estos términos en su totalidad. Si no estás de acuerdo, no uses la aplicación.
+                    Al acceder o utilizar OnlyFachas aceptás estos términos en su totalidad.
+                    Si no estás de acuerdo, no uses la aplicación.
                 </p>
             </div>
 
             <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-cyan-500/50 rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-cyan-300 mb-4">⚠️ Aclaración Importante</h3>
+                <h3 className="text-xl font-bold text-cyan-300 mb-4">2. Aclaración Importante</h3>
                 <p className="text-violet-300/90 leading-relaxed">
-                    La palabra <span className="text-cyan-400 font-bold">"facha"</span> se usa en el sentido coloquial argentino de 'fachero/estilo', sin relación con política o ideologías. 
-                    Es un término del lunfardo porteño que hace referencia a la apariencia, el estilo personal o la forma de vestir, 
-                    y no tiene ninguna connotación política o ideológica.
+                    El término <span className="text-cyan-400 font-bold">"facha"</span> se usa únicamente en el sentido argentino de fachero/estilo, sin relación con política o ideologías.
+                    Hace referencia a la apariencia o "pinta" de una persona, su look o estilo personal.
                 </p>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">2. Uso Permitido</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">3. Uso Permitido</h3>
                 <p className="mb-4">
-                    La aplicación es solo para fines de entretenimiento. No debe usarse para acosar, discriminar, difamar o infringir derechos de terceros.
+                    OnlyFachas es una aplicación de entretenimiento.
+                    Queda prohibido usarla para acosar, discriminar, difamar o infringir derechos de terceros.
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-violet-300/80">
-                    <li>Uso exclusivamente para entretenimiento</li>
-                    <li>Prohibido el acoso o discriminación</li>
-                    <li>Respeto a los derechos de terceros</li>
-                    <li>Uso responsable y ético</li>
+                    <li>Uso exclusivo para diversión.</li>
+                    <li>No subir contenido ofensivo, ilegal, violento o sexual.</li>
+                    <li>Respetar derechos de imagen y de autor.</li>
+                    <li>Ser mayor de 18 años o contar con supervisión adulta.</li>
                 </ul>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">3. Contenido del Usuario</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">4. Contenido del Usuario</h3>
                 <p className="mb-4">
-                    Sos responsable de las fotos que subas. No subas contenido ilegal, violento, explícito, protegido por derechos de autor o que infrinja la ley.
+                    Vos sos el único responsable de las fotos que subas.
+                    No cargues imágenes de otras personas sin su consentimiento.
                 </p>
                 <p className="text-violet-300/80">
-                    Aunque las imágenes no se almacenen, Google o los servicios de terceros pueden aplicar filtros automáticos para moderación.
+                    Las imágenes no se almacenan: se procesan en el momento mediante servicios de terceros (por ejemplo, Google Gemini) que pueden aplicar filtros automáticos para moderación.
                 </p>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">4. Limitación de Responsabilidad</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">5. Limitación de Responsabilidad</h3>
                 <p className="mb-4">
-                    OnlyFachas se ofrece tal cual, sin garantías de ningún tipo. El puntaje es generado por algoritmos de IA y no representa un juicio real sobre tu apariencia.
+                    OnlyFachas se ofrece "tal cual", sin garantías de ningún tipo.
+                    Los puntajes generados por la IA:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-violet-300/80">
-                    <li>Los resultados son solo para entretenimiento</li>
-                    <li>No constituyen un juicio real sobre tu apariencia</li>
-                    <li>No nos hacemos responsables por el uso de los resultados</li>
-                    <li>El servicio se ofrece "tal cual"</li>
+                    <li>Son solo para entretenimiento.</li>
+                    <li>No constituyen un juicio real sobre apariencia o valor personal.</li>
+                    <li>Pueden variar o contener errores.</li>
+                    <li>No asumimos responsabilidad por decisiones tomadas en base a los resultados.</li>
                 </ul>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">5. Servicios de Terceros</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">6. Servicios de Terceros</h3>
                 <p className="mb-4">
-                    El análisis de imagen se realiza mediante APIs de Google Gemini y la publicación de anuncios a través de Google AdSense. Al usar la aplicación aceptás las políticas de privacidad y términos de estos servicios.
-                </p>
-                <ul className="list-disc list-inside space-y-2 text-violet-300/80">
-                    <li>Google Gemini para análisis de imágenes</li>
-                    <li>Google AdSense para publicidad</li>
-                    <li>Google Analytics para estadísticas</li>
-                    <li>Aceptación de políticas de terceros</li>
-                </ul>
-            </div>
-
-            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">6. Cambios</h3>
-                <p>
-                    Podemos actualizar estos términos y la política de privacidad en cualquier momento. El uso continuo de la aplicación después de un cambio implica aceptación.
+                    El análisis de imágenes se realiza con APIs de Google (Gemini, entre otros) y las métricas publicitarias se gestionan a través de Google AdSense.
+                    Al usar la aplicación aceptás las políticas de privacidad y términos de dichos servicios.
                 </p>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
-                <h3 className="text-xl font-bold text-violet-200 mb-4">7. Contacto</h3>
+                <h3 className="text-xl font-bold text-violet-200 mb-4">7. Cambios</h3>
                 <p>
-                    Para consultas o solicitudes sobre privacidad podés escribir a: <span className="text-cyan-400">onlyfachasoficial@gmail.com</span>
+                    Podemos actualizar estos términos y/o la política de privacidad en cualquier momento.
+                    El uso continuo de la aplicación implica la aceptación de las modificaciones.
                 </p>
             </div>
 
-            <div className="text-center text-violet-400/60 text-sm">
-                <p>Fecha de última actualización: 19 de septiembre de 2024</p>
+            <div className="bg-slate-800/50 p-6 rounded-lg border border-violet-500/30">
+                <h3 className="text-xl font-bold text-violet-200 mb-4">8. Contacto</h3>
+                <p>
+                    Para consultas o solicitudes vinculadas a privacidad, escribí a: <span className="text-cyan-400">onlyfachasoficial@gmail.com</span>
+                </p>
             </div>
         </div>
 
