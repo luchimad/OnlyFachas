@@ -15,6 +15,21 @@ build/
 .env.test.local
 .env.production.local
 
+# Security - API Keys and Secrets
+*API_KEY*
+*SECRET*
+*TOKEN*
+*PASSWORD*
+*PRIVATE*
+*CREDENTIAL*
+
+# Documentation with sensitive data
+*UPDATE*.md
+*CONFIG*.md
+*SETUP*.md
+*SECRET*.md
+*KEY*.md
+
 # IDE
 .vscode/
 .idea/
