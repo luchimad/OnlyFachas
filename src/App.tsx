@@ -706,10 +706,10 @@ const App: React.FC = () => {
       </p>
       
       {/* Aviso informativo */}
-      <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-yellow-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
-        <div className="flex items-center justify-center gap-2 text-sm">
-          <span className="text-yellow-400">⚠️</span>
-          <span className="text-yellow-300">Contenido +18 • Fotos no se almacenan • Solo entretenimiento</span>
+      <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-cyan-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
+        <div className="flex items-center justify-center gap-2 text-sm text-center">
+          <span className="text-cyan-400">ℹ️</span>
+          <span className="text-cyan-300">Al subir una foto me comprometo a no subir contenido explícito y soy mayor de 16 años o tengo supervisión de un adulto. Para tu privacidad, las fotos no se almacenan.</span>
         </div>
       </div>
 
@@ -909,10 +909,10 @@ const App: React.FC = () => {
         </p>
         
         {/* Aviso informativo */}
-        <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-yellow-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
-          <div className="flex items-center justify-center gap-2 text-sm">
-            <span className="text-yellow-400">⚠️</span>
-            <span className="text-yellow-300">Contenido +18 • Fotos no se almacenan • Solo entretenimiento</span>
+        <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-cyan-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
+          <div className="flex items-center justify-center gap-2 text-sm text-center">
+            <span className="text-cyan-400">ℹ️</span>
+            <span className="text-cyan-300">Al subir una foto me comprometo a no subir contenido explícito y soy mayor de 16 años o tengo supervisión de un adulto. Para tu privacidad, las fotos no se almacenan.</span>
           </div>
         </div>
         
