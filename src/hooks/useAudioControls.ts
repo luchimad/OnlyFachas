@@ -31,7 +31,6 @@ export const useAudioControls = (): AudioControls => {
   
   // Referencias para efectos de audio
   const effectsAudioRef = useRef<HTMLAudioElement | null>(null);
-  const [lastPlayedAudio, setLastPlayedAudio] = useState<string>('');
 
   // Cargar configuraciones guardadas al inicializar
   useEffect(() => {
@@ -151,7 +150,6 @@ export const useAudioControls = (): AudioControls => {
       }, 300);
       
       effectsAudioRef.current = audio;
-      setLastPlayedAudio(audioPath);
       
       return audio;
     } catch (error) {

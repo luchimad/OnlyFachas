@@ -79,7 +79,7 @@ const App: React.FC = () => {
   const [showRequestDelayBanner, setShowRequestDelayBanner] = useState(false);
   
   // Age verification hook
-  const { isAgeConfirmed, confirmAge } = useAgeVerification();
+  const { isAgeConfirmed } = useAgeVerification();
 
   // API with fallback hook
   const { 
@@ -128,9 +128,7 @@ const App: React.FC = () => {
     setEffectsEnabled,
     setMusicVolume,
     setEffectsVolume,
-    playEffect,
-    stopMusic,
-    startMusic
+    playEffect
   } = useAudioControls();
   
   // Estado para rotación de audios (evitar repetir el mismo consecutivamente)
@@ -577,7 +575,7 @@ const App: React.FC = () => {
   };
 
   // Función para reproducir audio de batalla con rotación
-  const playBattleAudio = (winner: 1 | 2, score1: number, score2: number) => {
+  const playBattleAudio = (_winner: 1 | 2, _score1: number, _score2: number) => {
     const audioFile = selectBattleAudio(lastPlayedBattleAudio);
     setLastPlayedBattleAudio(audioFile);
     playEffect(audioFile);
@@ -730,9 +728,7 @@ const App: React.FC = () => {
       
       
        <button 
-         onClick={(e) => {
-           e.preventDefault();
-           e.stopPropagation();
+         onClick={() => {
            console.log('🔙 Volver button clicked!');
            reset();
          }} 
@@ -771,9 +767,7 @@ const App: React.FC = () => {
           <ZapIcon /> Medir Facha
         </NeonButton>
         <NeonButton 
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             console.log('🔄 Probar de Nuevo clicked!');
             reset();
           }} 
@@ -893,9 +887,7 @@ const App: React.FC = () => {
         <p className="font-bold text-lg">¡Upa! Algo salió mal</p>
         <p>{error}</p>
         <NeonButton 
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             console.log('🔄 Intentar de nuevo clicked!');
             reset();
           }} 
@@ -1466,9 +1458,7 @@ const App: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <NeonButton 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 console.log('🏠 Volver al Inicio clicked!');
                 reset();
               }} 
@@ -1586,9 +1576,7 @@ const App: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <NeonButton 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 console.log('🏠 Volver al Inicio clicked!');
                 reset();
               }} 
@@ -1763,9 +1751,7 @@ const App: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
             <NeonButton 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 console.log('🏠 Volver al Inicio clicked!');
                 reset();
               }} 
