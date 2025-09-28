@@ -197,11 +197,26 @@ const App: React.FC = () => {
         const storedData = localStorage.getItem('onlyFachasLeaderboard');
         if (storedData) {
             const parsedData = JSON.parse(storedData) as StoredFachaResult[];
-            setLeaderboard(parsedData);
+            
+            // Limpiar datos antiguos (más de 30 días)
+            const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+            const cleanedData = parsedData.filter(entry => entry.timestamp > thirtyDaysAgo);
+            
+            // Limitar a 50 entradas máximo
+            const limitedData = cleanedData.slice(0, 50);
+            
+            setLeaderboard(limitedData);
+            
+            // Si se limpiaron datos, guardar la versión limpia
+            if (cleanedData.length !== parsedData.length || limitedData.length !== cleanedData.length) {
+                localStorage.setItem('onlyFachasLeaderboard', JSON.stringify(limitedData));
+            }
         }
     } catch (e) {
         console.error("Failed to load leaderboard from localStorage", e);
         setLeaderboard([]);
+        // Limpiar datos corruptos
+        localStorage.removeItem('onlyFachasLeaderboard');
     }
   }, []);
 
@@ -434,10 +449,28 @@ const App: React.FC = () => {
       };
 
       const updatedLeaderboard = [...leaderboard, newEntry]
-          .sort((a, b) => b.rating - a.rating);
+          .sort((a, b) => b.rating - a.rating)
+          .slice(0, 50); // Limitar a 50 entradas máximo
       
       setLeaderboard(updatedLeaderboard);
-      localStorage.setItem('onlyFachasLeaderboard', JSON.stringify(updatedLeaderboard));
+      
+      try {
+        localStorage.setItem('onlyFachasLeaderboard', JSON.stringify(updatedLeaderboard));
+      } catch (error) {
+        console.warn('localStorage quota exceeded, clearing old data...');
+        // Limpiar datos antiguos y reintentar
+        localStorage.removeItem('onlyFachasLeaderboard');
+        localStorage.removeItem('onlyfachas_requests');
+        localStorage.removeItem('onlyFachas_ageVerified');
+        localStorage.removeItem('onlyFachas_ageVerifiedExpiry');
+        localStorage.removeItem('onlyFachas_cache');
+        localStorage.removeItem('onlyFachas_rateLimit');
+        
+        // Guardar solo las últimas 20 entradas
+        const limitedLeaderboard = updatedLeaderboard.slice(0, 20);
+        localStorage.setItem('onlyFachasLeaderboard', JSON.stringify(limitedLeaderboard));
+        setLeaderboard(limitedLeaderboard);
+      }
       
       setResult(fachaResult);
       setAppState('result');
@@ -570,6 +603,30 @@ const App: React.FC = () => {
             setAppState('error');
         }
     }
+  };
+
+  const clearAllLocalStorage = () => {
+      // Limpiar todos los datos de OnlyFachas del localStorage
+      const keysToRemove = [
+          'onlyFachasLeaderboard',
+          'onlyfachas_requests',
+          'onlyFachas_ageVerified',
+          'onlyFachas_ageVerifiedExpiry',
+          'onlyFachas_cache',
+          'onlyFachas_rateLimit'
+      ];
+      
+      keysToRemove.forEach(key => {
+          try {
+              localStorage.removeItem(key);
+          } catch (error) {
+              console.warn(`Error removing ${key}:`, error);
+          }
+      });
+      
+      // Resetear estados
+      setLeaderboard([]);
+      console.log('localStorage cleared successfully');
   };
 
   const handleLeaderboardResultClick = (entry: StoredFachaResult) => {
@@ -1217,6 +1274,13 @@ const App: React.FC = () => {
                     <Trash2Icon /> Borrar Top
                 </button>
             )}
+            <button
+                onClick={clearAllLocalStorage}
+                className="flex items-center gap-2 text-yellow-400 hover:text-yellow-300 hover:scale-105 transition-transform text-sm"
+                title="Limpiar todos los datos guardados (útil si hay problemas de almacenamiento)"
+            >
+                <Trash2Icon /> Limpiar Datos
+            </button>
         </div>
     </div>
   );
