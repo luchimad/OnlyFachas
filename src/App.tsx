@@ -706,10 +706,10 @@ const App: React.FC = () => {
       </p>
       
       {/* Aviso informativo */}
-      <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-cyan-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
+      <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-yellow-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
         <div className="flex items-center justify-center gap-2 text-sm text-center">
-          <span className="text-cyan-400">ℹ️</span>
-          <span className="text-cyan-300">Al subir una foto me comprometo a no subir contenido explícito y soy mayor de 16 años o tengo supervisión de un adulto. Para tu privacidad, las fotos no se almacenan.</span>
+          <span className="text-yellow-400">⚠️</span>
+          <span className="text-yellow-300">Al continuar confirmo que no subiré imágenes explícitas y que tengo 18 años o más. OnlyFachas es solo para diversión: las fotos se procesan en el momento y no se guardan.</span>
         </div>
       </div>
 
@@ -847,7 +847,7 @@ const App: React.FC = () => {
                   )}
                 </div>
                 
-                <p className="text-lg md:text-xl text-cyan-300 mt-8 p-4 bg-slate-800/50 border border-cyan-500/30 rounded-lg italic w-full">"{currentResult.comment}"</p>
+                <p className="text-lg md:text-xl text-cyan-300 mt-8 p-4 bg-slate-800/50 border border-yellow-500/30 rounded-lg italic w-full">"{currentResult.comment}"</p>
                 <div className="mt-8 w-full flex flex-col md:flex-row gap-6 text-left">
                     <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-green-500/30"><h3 className="font-bold text-lg text-green-400 mb-3 flex items-center gap-2"><CheckCircle2 /> {isFromLeaderboard ? 'Puntos fuertes' : 'Tus puntos fuertes'}</h3><ul className="space-y-2 text-green-300/90">{currentResult.fortalezas.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">✅</span>{item}</li>)}</ul></div>
                     <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-yellow-500/30"><h3 className="font-bold text-lg text-yellow-400 mb-3 flex items-center gap-2"><XCircle/> Para mejorar, pibe</h3><ul className="space-y-2 text-yellow-300/90">{currentResult.consejos.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">👉</span>{item}</li>)}</ul></div>
@@ -909,10 +909,10 @@ const App: React.FC = () => {
         </p>
         
         {/* Aviso informativo */}
-        <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-cyan-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
+        <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-yellow-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
           <div className="flex items-center justify-center gap-2 text-sm text-center">
-            <span className="text-cyan-400">ℹ️</span>
-            <span className="text-cyan-300">Al subir una foto me comprometo a no subir contenido explícito y soy mayor de 16 años o tengo supervisión de un adulto. Para tu privacidad, las fotos no se almacenan.</span>
+            <span className="text-yellow-400">⚠️</span>
+            <span className="text-yellow-300">Al continuar confirmo que no subiré imágenes explícitas y que tengo 18 años o más. OnlyFachas es solo para diversión: las fotos se procesan en el momento y no se guardan.</span>
           </div>
         </div>
         
@@ -1141,7 +1141,7 @@ const App: React.FC = () => {
                 />
             </div>
         </div>
-        <p className="text-lg md:text-xl text-cyan-300 mt-4 p-4 bg-slate-800/50 border border-cyan-500/30 rounded-lg italic w-full">
+        <p className="text-lg md:text-xl text-cyan-300 mt-4 p-4 bg-slate-800/50 border border-yellow-500/30 rounded-lg italic w-full">
             "{enhancedResult.comment}"
         </p>
         <div className="flex gap-4 mt-8">
@@ -1422,19 +1422,19 @@ const App: React.FC = () => {
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-yellow-500/30">
                     <div className="text-2xl mb-2">🎨</div>
                     <h4 className="font-bold text-cyan-300 mb-2">Transformación Total</h4>
                     <p className="text-sm text-violet-300/80">Tu foto se convierte en una obra de arte de la facha</p>
                 </div>
                 
-                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-yellow-500/30">
                     <div className="text-2xl mb-2">🤖</div>
                     <h4 className="font-bold text-cyan-300 mb-2">IA Avanzada</h4>
                     <p className="text-sm text-violet-300/80">Algoritmos de última generación para resultados épicos</p>
                 </div>
                 
-                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-yellow-500/30">
                     <div className="text-2xl mb-2">🔥</div>
                     <h4 className="font-bold text-cyan-300 mb-2">Resultados Zarpados</h4>
                     <p className="text-sm text-violet-300/80">Prepárate para quedar detonado con el resultado</p>
@@ -1537,25 +1537,25 @@ const App: React.FC = () => {
                 Hoy OnlyFachas sigue siendo un proyecto independiente, hecho con ganas y mucho humor, pero con objetivos claros:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-yellow-500/30">
                     <div className="text-2xl mb-2">🎯</div>
                     <h4 className="font-bold text-cyan-300 mb-2">Experiencia Divertida</h4>
                     <p className="text-sm text-violet-300/80">Ofrecer una experiencia divertida y segura</p>
                 </div>
                 
-                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-yellow-500/30">
                     <div className="text-2xl mb-2">🔒</div>
                     <h4 className="font-bold text-cyan-300 mb-2">Privacidad Total</h4>
                     <p className="text-sm text-violet-300/80">No guardar fotos ni datos personales</p>
                 </div>
                 
-                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-yellow-500/30">
                     <div className="text-2xl mb-2">😄</div>
                     <h4 className="font-bold text-cyan-300 mb-2">Humor Criollo</h4>
                     <p className="text-sm text-violet-300/80">Mantener un toque de humor criollo en cada análisis</p>
                 </div>
                 
-                <div className="bg-slate-700/50 p-4 rounded-lg border border-cyan-500/30">
+                <div className="bg-slate-700/50 p-4 rounded-lg border border-yellow-500/30">
                     <div className="text-2xl mb-2">🎭</div>
                     <h4 className="font-bold text-cyan-300 mb-2">Solo Joda</h4>
                     <p className="text-sm text-violet-300/80">Recordar siempre que esto es solo joda</p>
