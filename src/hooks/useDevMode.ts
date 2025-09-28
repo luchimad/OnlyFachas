@@ -32,7 +32,7 @@ const useDevMode = () => {
     showDevMenu: false
   });
 
-  const [keySequence, setKeySequence] = useState<string[]>([]);
+  const [, setKeySequence] = useState<string[]>([]);
 
   // Función para manejar la secuencia de teclas DEV MODE
   const handleKeyPress = useCallback((event: KeyboardEvent) => {

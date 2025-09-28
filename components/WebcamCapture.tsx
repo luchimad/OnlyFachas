@@ -9,8 +9,6 @@ interface WebcamCaptureProps {
 const WebcamCapture: React.FC<WebcamCaptureProps> = ({ onCapture, onCancel }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
 
   useEffect(() => {
     const startWebcam = async () => {
@@ -26,13 +24,7 @@ const WebcamCapture: React.FC<WebcamCaptureProps> = ({ onCapture, onCancel }) =>
         
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.play().then(() => {
-            setIsLoading(false);
-            setError(null);
-          }).catch(() => {
-            setIsLoading(false);
-            setError(null);
-          });
+          videoRef.current.play();
         }
       } catch (err: any) {
         console.error("Error accessing webcam: ", err);
@@ -49,8 +41,7 @@ const WebcamCapture: React.FC<WebcamCaptureProps> = ({ onCapture, onCancel }) =>
           errorMessage = "Error de seguridad. Asegúrate de que la página esté servida por HTTPS.";
         }
         
-        setError(errorMessage);
-        setIsLoading(false);
+        console.error(errorMessage);
       }
     };
 

@@ -76,7 +76,7 @@ const App: React.FC = () => {
   const [showRequestDelayBanner, setShowRequestDelayBanner] = useState(false);
   
   // Age verification hook
-  const { isAgeConfirmed } = useAgeVerification();
+  const { } = useAgeVerification();
 
   // Dev mode hook
   const {
@@ -92,11 +92,9 @@ const App: React.FC = () => {
     trackApiUsage,
     trackForcedScore,
     trackMockModeToggle,
-    trackApiError,
     trackSuccessfulAnalysis,
     trackFailedAnalysis,
-    trackDevModeAccess,
-    trackPageView
+    trackDevModeAccess
   } = useAnalytics();
 
   // API with fallback hook

@@ -29,7 +29,8 @@ export const useAnalytics = () => {
 
       // Inicializar gtag
       window.gtag = window.gtag || function() {
-        (window.gtag.q = window.gtag.q || []).push(arguments);
+        (window.gtag as any).q = (window.gtag as any).q || [];
+        (window.gtag as any).q.push(arguments);
       };
       window.gtag('js', new Date());
       window.gtag('config', GA_MEASUREMENT_ID, {
