@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Age Verification</title>
+</head>
+<body>
+    <h1>Test Age Verification</h1>
+    <button onclick="clearStorage()">Limpiar localStorage</button>
+    <button onclick="checkStorage()">Verificar localStorage</button>
+    <button onclick="setVerification()">Simular verificación</button>
+    <div id="output"></div>
+
+    <script>
+        function clearStorage() {
+            localStorage.removeItem('onlyFachas_ageVerified');
+            localStorage.removeItem('onlyFachas_ageVerifiedExpiry');
+            document.getElementById('output').innerHTML = '<p>✅ localStorage limpiado</p>';
+        }
+
+        function checkStorage() {
+            const verified = localStorage.getItem('onlyFachas_ageVerified');
+            const expiry = localStorage.getItem('onlyFachas_ageVerifiedExpiry');
+            const now = new Date();
+            const expiryDate = expiry ? new Date(expiry) : null;
+            
+            let status = '❌ No verificado';
+            if (verified === 'true' && expiryDate) {
+                if (now < expiryDate) {
+                    status = '✅ Verificado (válido hasta: ' + expiryDate.toLocaleString() + ')';
+                } else {
+                    status = '⏰ Verificado pero expirado (' + expiryDate.toLocaleString() + ')';
+                }
+            }
+            
+            document.getElementById('output').innerHTML = `
+                <p><strong>Estado:</strong> ${status}</p>
+                <p><strong>Verificado:</strong> ${verified || 'null'}</p>
+                <p><strong>Expira:</strong> ${expiry || 'null'}</p>
+                <p><strong>Ahora:</strong> ${now.toLocaleString()}</p>
+            `;
+        }
+
+        function setVerification() {
+            const now = new Date();
+            const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+            
+            localStorage.setItem('onlyFachas_ageVerified', 'true');
+            localStorage.setItem('onlyFachas_ageVerifiedExpiry', endOfDay.toISOString());
+            
+            document.getElementById('output').innerHTML = '<p>✅ Verificación simulada hasta: ' + endOfDay.toLocaleString() + '</p>';
+        }
+    </script>
+</body>
+</html>
+
+
+

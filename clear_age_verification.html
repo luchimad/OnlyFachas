@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Verificación de Edad</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a2e; color: white; }
+        button { padding: 10px 20px; margin: 10px; background: #6c5ce7; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #5f3dc4; }
+        .status { margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #00b894; }
+        .info { background: #0984e3; }
+    </style>
+</head>
+<body>
+    <h1>🧹 Limpiar Verificación de Edad - OnlyFachas</h1>
+    
+    <button onclick="clearStorage()">🗑️ Limpiar localStorage</button>
+    <button onclick="checkStorage()">🔍 Verificar Estado</button>
+    <button onclick="simulateVerification()">✅ Simular Verificación</button>
+    <button onclick="openApp()">🚀 Abrir OnlyFachas</button>
+    
+    <div id="output"></div>
+
+    <script>
+        function clearStorage() {
+            localStorage.removeItem('onlyFachas_ageVerified');
+            localStorage.removeItem('onlyFachas_ageVerifiedExpiry');
+            showStatus('✅ localStorage limpiado completamente', 'success');
+        }
+
+        function checkStorage() {
+            const verified = localStorage.getItem('onlyFachas_ageVerified');
+            const expiry = localStorage.getItem('onlyFachas_ageVerifiedExpiry');
+            const now = new Date();
+            const expiryDate = expiry ? new Date(expiry) : null;
+            
+            let status = '❌ No verificado';
+            let statusClass = 'info';
+            
+            if (verified === 'true' && expiryDate) {
+                if (now < expiryDate) {
+                    status = '✅ Verificado (válido hasta: ' + expiryDate.toLocaleString() + ')';
+                    statusClass = 'success';
+                } else {
+                    status = '⏰ Verificado pero expirado (' + expiryDate.toLocaleString() + ')';
+                    statusClass = 'info';
+                }
+            }
+            
+            showStatus(`
+                <strong>Estado:</strong> ${status}<br>
+                <strong>Verificado:</strong> ${verified || 'null'}<br>
+                <strong>Expira:</strong> ${expiry || 'null'}<br>
+                <strong>Ahora:</strong> ${now.toLocaleString()}
+            `, statusClass);
+        }
+
+        function simulateVerification() {
+            const now = new Date();
+            const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+            
+            localStorage.setItem('onlyFachas_ageVerified', 'true');
+            localStorage.setItem('onlyFachas_ageVerifiedExpiry', endOfDay.toISOString());
+            
+            showStatus('✅ Verificación simulada hasta: ' + endOfDay.toLocaleString(), 'success');
+        }
+
+        function openApp() {
+            window.open('http://localhost:5176/', '_blank');
+        }
+
+        function showStatus(message, className) {
+            document.getElementById('output').innerHTML = `<div class="status ${className}">${message}</div>`;
+        }
+
+        // Verificar estado al cargar
+        checkStorage();
+    </script>
+</body>
+</html>
+
+
+

@@ -12,9 +12,12 @@ import MinimalLoader from '../components/MinimalLoader';
 import { useApiWithFallback } from './hooks/useApiWithFallback';
 import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useEmergencyControls } from './hooks/useEmergencyControls';
-import { useAudio } from './hooks/useAudio';
+import { useAudioControls } from './hooks/useAudioControls';
+import { useAgeVerification } from './hooks/useAgeVerification';
 import { getScoreColor, getFachaTier } from './utils/fachaUtils';
+import { selectFachaAudio, selectBattleAudio } from './utils/audioUtils';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, SparklesIcon, Trash2Icon, InstagramIcon } from '../components/Icons';
+import { AudioSettings } from './components/AudioSettings';
 import { FiVolume2, FiVolumeX } from "react-icons/fi";
 import { FiTrendingUp, FiUsers } from "react-icons/fi";
 import { MaintenanceBanner, RateLimitBanner, RequestDelayBanner } from './components/EmergencyBanners';
@@ -45,6 +48,20 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [appMode, setAppMode] = useState<AppMode>('single');
   const [appState, setAppState] = useState<AppState>('welcome');
+  
+  // Debug: Log state changes
+  useEffect(() => {
+    console.log('📱 App state changed to:', appState);
+  }, [appState]);
+  
+  useEffect(() => {
+    console.log('🎮 App mode changed to:', appMode);
+  }, [appMode]);
+  
+  // Debug: Log initial state
+  useEffect(() => {
+    console.log('🚀 App initialized - State:', appState, 'Mode:', appMode);
+  }, []);
   const [aiMode, setAiMode] = useState<AiMode>('rapido');
   const [showSettings, setShowSettings] = useState(false);
 
@@ -61,8 +78,8 @@ const App: React.FC = () => {
   const [showRateLimitBanner, setShowRateLimitBanner] = useState(false);
   const [showRequestDelayBanner, setShowRequestDelayBanner] = useState(false);
   
-  // Age/content confirmation state
-  const [isAgeConfirmed, setIsAgeConfirmed] = useState(false);
+  // Age verification hook
+  const { isAgeConfirmed, confirmAge } = useAgeVerification();
 
   // API with fallback hook
   const { 
@@ -101,35 +118,42 @@ const App: React.FC = () => {
   const [leaderboard, setLeaderboard] = useState<StoredFachaResult[]>([]);
   const [selectedLeaderboardResult, setSelectedLeaderboardResult] = useState<StoredFachaResult | null>(null);
   
-  // Audio state
-  const [audioEnabled, setAudioEnabled] = useState<boolean>(false);
-  const { playAudio } = useAudio();
+  // Audio controls hook
+  const {
+    musicEnabled,
+    effectsEnabled,
+    musicVolume,
+    effectsVolume,
+    setMusicEnabled,
+    setEffectsEnabled,
+    setMusicVolume,
+    setEffectsVolume,
+    playEffect,
+    stopMusic,
+    startMusic
+  } = useAudioControls();
   
   // Estado para rotación de audios (evitar repetir el mismo consecutivamente)
   const [lastPlayedAudio, setLastPlayedAudio] = useState<string>('');
   const [lastPlayedBattleAudio, setLastPlayedBattleAudio] = useState<string>('');
-  
-  // Estado para música de fondo
-  const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement | null>(null);
 
-  // Pre-cargar audios comunes al inicializar
+  // Pre-cargar audios comunes al inicializar (solo efectos)
   useEffect(() => {
-    if (audioEnabled) {
-      // Pre-cargar los audios más comunes
+    if (effectsEnabled) {
       const commonAudios = [
-        '/audios/facha_detected_1.mp3',
-        '/audios/facha_detected_2.mp3',
-        '/audios/facha_detected_low1.mp3',
-        '/audios/facha_detected_low2.mp3',
-        '/audios/facha_detected_mid1.mp3',
-        '/audios/facha_detected_mid2.mp3',
-        '/audios/facha_detected_super.mp3',
-        '/audios/facha_detected_super2.mp3',
-        '/audios/facha_detected_super3.mp3',
-        '/audios/1_wins.mp3',
-        '/audios/1_wins_super.mp3',
-        '/audios/2_wins.mp3',
-        '/audios/2_wins_super.mp3'
+        '/audios/frases/individual/facha_detected_1.mp3',
+        '/audios/frases/individual/facha_detected_2.mp3',
+        '/audios/frases/individual/facha_detected_low1.mp3',
+        '/audios/frases/individual/facha_detected_low2.mp3',
+        '/audios/frases/individual/facha_detected_mid1.mp3',
+        '/audios/frases/individual/facha_detected_mid2.mp3',
+        '/audios/frases/individual/facha_detected_super.mp3',
+        '/audios/frases/individual/facha_detected_super2.mp3',
+        '/audios/frases/individual/facha_detected_super3.mp3',
+        '/audios/frases/facha-vs-facha/1_wins.mp3',
+        '/audios/frases/facha-vs-facha/1_wins_super.mp3',
+        '/audios/frases/facha-vs-facha/2_wins.mp3',
+        '/audios/frases/facha-vs-facha/2_wins_super.mp3'
       ];
 
       commonAudios.forEach(audioPath => {
@@ -138,33 +162,7 @@ const App: React.FC = () => {
         audio.load();
       });
     }
-  }, [audioEnabled]);
-
-  // Inicializar música de fondo (solo cuando se active el audio)
-  useEffect(() => {
-    if (audioEnabled && !backgroundMusic) {
-      const music = new Audio('/audios/Deep_Close.mp3');
-      music.loop = true;
-      music.volume = 0.3; // Volumen bajo para no tapar la voz
-      music.preload = 'auto';
-      
-      // Reproducir inmediatamente cuando se crea
-      music.play().then(() => {
-        console.log('Música de fondo iniciada');
-      }).catch(error => {
-        console.warn('Error al reproducir música de fondo:', error);
-      });
-      
-      setBackgroundMusic(music);
-    }
-    
-    // Cleanup cuando se desactiva el audio
-    if (!audioEnabled && backgroundMusic) {
-      backgroundMusic.pause();
-      backgroundMusic.currentTime = 0;
-      setBackgroundMusic(null);
-    }
-  }, [audioEnabled, backgroundMusic]);
+  }, [effectsEnabled]);
 
 
   // Enhance mode state
@@ -511,35 +509,43 @@ const App: React.FC = () => {
 }, [imageData1, imageData2, aiMode, isRateLimited, timeUntilNextRequest, callApi]);
 
   const reset = () => {
-    // Common
-    setError(null);
-    setIsLoading(false);
-    setShowSettings(false);
-    setIsAgeConfirmed(false);
+    console.log('🔄 Resetting app state...');
     
-    // Single / Enhance
-    setImageSrc(null);
-    setImageData(null);
-    setResult(null);
-    setEnhancedResult(null);
-    setName('');
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    
-    // Battle
-    setImageSrc1(null);
-    setImageData1(null);
-    setImageSrc2(null);
-    setImageData2(null);
-    setBattleResult(null);
-    setActiveBattleSlot(null);
-    if (fileInputRef1.current) fileInputRef1.current.value = "";
-    if (fileInputRef2.current) fileInputRef2.current.value = "";
+    try {
+      // Common
+      setError(null);
+      setIsLoading(false);
+      setShowSettings(false);
+      
+      // Single / Enhance
+      setImageSrc(null);
+      setImageData(null);
+      setResult(null);
+      setEnhancedResult(null);
+      setName('');
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      
+      // Battle
+      setImageSrc1(null);
+      setImageData1(null);
+      setImageSrc2(null);
+      setImageData2(null);
+      setBattleResult(null);
+      setActiveBattleSlot(null);
+      if (fileInputRef1.current) fileInputRef1.current.value = "";
+      if (fileInputRef2.current) fileInputRef2.current.value = "";
 
-    // Leaderboard
-    setSelectedLeaderboardResult(null);
+      // Leaderboard
+      setSelectedLeaderboardResult(null);
 
-    setAppMode('single');
-    setAppState('welcome');
+      // Reset to initial state - Force immediate update
+      setAppMode('single');
+      setAppState('welcome');
+      
+      console.log('✅ App state reset completed - Mode: single, State: welcome');
+    } catch (error) {
+      console.error('❌ Error during reset:', error);
+    }
   };
   
   const clearLeaderboard = () => {
@@ -563,108 +569,18 @@ const App: React.FC = () => {
     setAppState('result');
   };
 
-  // Funciones para controlar la música de fondo
-
-  const stopBackgroundMusic = () => {
-    if (backgroundMusic) {
-      backgroundMusic.pause();
-      backgroundMusic.currentTime = 0;
-      backgroundMusic.volume = 0; // Silenciar completamente
-    }
-  };
-
   // Función para reproducir audio según el puntaje con rotación
   const playFachaAudio = (rating: number) => {
-    if (!audioEnabled) return; // Solo afecta a los efectos de voz, no a la música de fondo
-    
-    let audioFile = '';
-    let availableAudios: string[] = [];
-    
-    // Definir audios disponibles según el rango
-    if (rating >= 9) {
-      // Super facha (9-10): 3 variantes super
-      availableAudios = [
-        '/audios/facha_detected_super.mp3',
-        '/audios/facha_detected_super2.mp3',
-        '/audios/facha_detected_super3.mp3'
-      ];
-    } else if (rating >= 7) {
-      // Facha alta (7-9): 2 variantes normales
-      availableAudios = [
-        '/audios/facha_detected_1.mp3',
-        '/audios/facha_detected_2.mp3'
-      ];
-    } else if (rating >= 5) {
-      // Facha media (5-6): 2 variantes mid
-      availableAudios = [
-        '/audios/facha_detected_mid1.mp3',
-        '/audios/facha_detected_mid2.mp3'
-      ];
-    } else {
-      // Facha baja (0-4): 2 variantes low
-      availableAudios = [
-        '/audios/facha_detected_low1.mp3',
-        '/audios/facha_detected_low2.mp3'
-      ];
-    }
-    
-    // Filtrar el último audio reproducido para evitar repetición
-    const filteredAudios = availableAudios.filter(audio => audio !== lastPlayedAudio);
-    
-    // Si solo hay un audio disponible, usarlo; sino elegir aleatoriamente de los filtrados
-    if (filteredAudios.length > 0) {
-      const randomIndex = Math.floor(Math.random() * filteredAudios.length);
-      audioFile = filteredAudios[randomIndex];
-    } else {
-      // Fallback: usar el primero disponible
-      audioFile = availableAudios[0];
-    }
-    
-    // Guardar el audio que se va a reproducir
+    const audioFile = selectFachaAudio(rating, lastPlayedAudio);
     setLastPlayedAudio(audioFile);
-    
-    playAudio(audioFile, { volume: 0.7 });
+    playEffect(audioFile);
   };
 
   // Función para reproducir audio de batalla con rotación
   const playBattleAudio = (winner: 1 | 2, score1: number, score2: number) => {
-    if (!audioEnabled) return; // Solo afecta a los efectos de voz, no a la música de fondo
-    
-    const scoreDiff = Math.abs(score1 - score2);
-    let availableAudios: string[] = [];
-    
-    // Definir audios disponibles según el ganador y diferencia
-    if (winner === 1) {
-      if (scoreDiff >= 2) {
-        availableAudios = ['/audios/1_wins_super.mp3'];
-      } else {
-        availableAudios = ['/audios/1_wins.mp3'];
-      }
-    } else {
-      if (scoreDiff >= 2) {
-        availableAudios = ['/audios/2_wins_super.mp3'];
-      } else {
-        availableAudios = ['/audios/2_wins.mp3'];
-      }
-    }
-    
-    // Filtrar el último audio de batalla reproducido para evitar repetición
-    const filteredAudios = availableAudios.filter(audio => audio !== lastPlayedBattleAudio);
-    
-    // Si solo hay un audio disponible, usarlo; sino elegir aleatoriamente de los filtrados
-    let audioFile = '';
-    if (filteredAudios.length > 0) {
-      const randomIndex = Math.floor(Math.random() * filteredAudios.length);
-      audioFile = filteredAudios[randomIndex];
-    } else {
-      // Fallback: usar el primero disponible
-      audioFile = availableAudios[0];
-    }
-    
-    // Guardar el audio que se va a reproducir
+    const audioFile = selectBattleAudio(lastPlayedBattleAudio);
     setLastPlayedBattleAudio(audioFile);
-    
-    playAudio(audioFile, { volume: 0.7 });
+    playEffect(audioFile);
   };
 
 
@@ -741,25 +657,41 @@ const App: React.FC = () => {
   );
 
   const renderSettingsView = () => (
-    <div className="w-full max-w-md mx-auto text-center">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 neon-text-fuchsia">Modelo de IA</h2>
-        <p className="text-violet-300 mb-8">Elegí qué tan zarpada querés que sea la IA.</p>
-        <div className="flex flex-col gap-4">
-            <button
-                onClick={() => setAiMode('rapido')}
-                className={`p-4 rounded-lg border-2 text-left transition-all ${aiMode === 'rapido' ? 'border-fuchsia-500 bg-fuchsia-500/10 neon-shadow-fuchsia' : 'border-violet-500/30 bg-slate-800/50 hover:bg-violet-500/10'}`}
-            >
-                <h3 className="font-bold text-lg text-white">Rápido y Furioso</h3>
-                <p className="text-sm text-violet-300">Respuestas al toque. Ideal para ansiosos.</p>
-            </button>
-            <button
-                onClick={() => setAiMode('creativo')}
-                className={`p-4 rounded-lg border-2 text-left transition-all ${aiMode === 'creativo' ? 'border-fuchsia-500 bg-fuchsia-500/10 neon-shadow-fuchsia' : 'border-violet-500/30 bg-slate-800/50 hover:bg-violet-500/10'}`}
-            >
-                <h3 className="font-bold text-lg text-white">Modo Creativo</h3>
-                <p className="text-sm text-violet-300">Análisis más zarpado y original. Puede tardar un toque más.</p>
-            </button>
+    <div className="w-full max-w-md mx-auto text-center space-y-8">
+        {/* Configuración de Audio */}
+        <AudioSettings
+          musicEnabled={musicEnabled}
+          effectsEnabled={effectsEnabled}
+          musicVolume={musicVolume}
+          effectsVolume={effectsVolume}
+          setMusicEnabled={setMusicEnabled}
+          setEffectsEnabled={setEffectsEnabled}
+          setMusicVolume={setMusicVolume}
+          setEffectsVolume={setEffectsVolume}
+        />
+        
+        {/* Configuración de IA */}
+        <div>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 neon-text-fuchsia">Modelo de IA</h2>
+          <p className="text-violet-300 mb-8">Elegí qué tan zarpada querés que sea la IA.</p>
+          <div className="flex flex-col gap-4">
+              <button
+                  onClick={() => setAiMode('rapido')}
+                  className={`p-4 rounded-lg border-2 text-left transition-all ${aiMode === 'rapido' ? 'border-fuchsia-500 bg-fuchsia-500/10 neon-shadow-fuchsia' : 'border-violet-500/30 bg-slate-800/50 hover:bg-violet-500/10'}`}
+              >
+                  <h3 className="font-bold text-lg text-white">Rápido y Furioso</h3>
+                  <p className="text-sm text-violet-300">Respuestas al toque. Ideal para ansiosos.</p>
+              </button>
+              <button
+                  onClick={() => setAiMode('creativo')}
+                  className={`p-4 rounded-lg border-2 text-left transition-all ${aiMode === 'creativo' ? 'border-fuchsia-500 bg-fuchsia-500/10 neon-shadow-fuchsia' : 'border-violet-500/30 bg-slate-800/50 hover:bg-violet-500/10'}`}
+              >
+                  <h3 className="font-bold text-lg text-white">Modo Creativo</h3>
+                  <p className="text-sm text-violet-300">Análisis más zarpado y original. Puede tardar un toque más.</p>
+              </button>
+          </div>
         </div>
+        
         <NeonButton onClick={() => setShowSettings(false)} className="mt-8">
             Volver
         </NeonButton>
@@ -775,55 +707,39 @@ const App: React.FC = () => {
         {appMode === 'enhance' ? 'Subí tu mejor foto y dejá que la IA te transforme en una leyenda.' : 'Subí una foto o tirá una selfie para que nuestra IA te diga si tenés pinta. De una, sin vueltas.'}
       </p>
       
-      {/* Advertencia y checkbox */}
-      <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-yellow-500/50 rounded-2xl p-6 mb-8 max-w-lg mx-auto">
-        <div className="text-4xl mb-4">⚠️</div>
-        <h3 className="text-lg font-bold text-yellow-300 mb-4">Advertencia Importante</h3>
-        <div className="space-y-3 text-left text-sm text-violet-300/90">
-          <p>• <span className="font-bold text-red-300">Prohibido contenido explícito o +18</span></p>
-          <p>• <span className="font-bold text-cyan-300">Las fotos NO se almacenan</span> - se procesan y eliminan inmediatamente</p>
-          <p>• <span className="font-bold text-violet-300">Solo para entretenimiento</span> - no es una medida real de apariencia</p>
-        </div>
-        
-        <div className="mt-4 flex items-center justify-center gap-3">
-          <input
-            type="checkbox"
-            id="ageConfirmation"
-            checked={isAgeConfirmed}
-            onChange={(e) => setIsAgeConfirmed(e.target.checked)}
-            className="w-5 h-5 text-fuchsia-600 bg-slate-700 border-violet-500 rounded focus:ring-fuchsia-500 focus:ring-2"
-          />
-          <label htmlFor="ageConfirmation" className="text-sm text-violet-300 cursor-pointer">
-            Confirmo que tengo <span className="font-bold text-cyan-400">más de 18 años</span> o supervisión adulta, 
-            y que <span className="font-bold text-cyan-400">NO subiré contenido explícito</span>
-          </label>
+      {/* Aviso informativo */}
+      <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-yellow-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
+        <div className="flex items-center justify-center gap-2 text-sm">
+          <span className="text-yellow-400">⚠️</span>
+          <span className="text-yellow-300">Contenido +18 • Fotos no se almacenan • Solo entretenimiento</span>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
         <NeonButton 
           onClick={() => { setAppState('capture'); }} 
-          disabled={!isAgeConfirmed}
-          className={!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}
         >
           <CameraIcon /> Activar Cámara
         </NeonButton>
         <NeonButton 
           onClick={() => fileInputRef.current?.click()} 
-          disabled={!isAgeConfirmed}
-          className={!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}
         >
            <UploadIcon /> Subir Foto
         </NeonButton>
       </div>
       
-      {!isAgeConfirmed && (
-        <p className="mt-4 text-sm text-yellow-400">
-          ⚠️ Debes confirmar los términos para continuar
-        </p>
-      )}
       
-       <button onClick={reset} className="mt-6 text-sm text-violet-400 hover:text-white">Volver</button>
+       <button 
+         onClick={(e) => {
+           e.preventDefault();
+           e.stopPropagation();
+           console.log('🔙 Volver button clicked!');
+           reset();
+         }} 
+         className="mt-6 text-sm text-violet-400 hover:text-white transition-colors duration-200"
+       >
+         Volver
+       </button>
       <input type="file" ref={fileInputRef} onChange={(e) => handleImageUpload(e, 'single')} accept="image/*" className="hidden" />
     </div>
   );
@@ -854,7 +770,15 @@ const App: React.FC = () => {
         <NeonButton onClick={analyzeFacha} className="w-full sm:w-auto" disabled={!name.trim()}>
           <ZapIcon /> Medir Facha
         </NeonButton>
-        <NeonButton onClick={reset} className="w-full sm:w-auto">
+        <NeonButton 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🔄 Probar de Nuevo clicked!');
+            reset();
+          }} 
+          className="w-full sm:w-auto"
+        >
            <RefreshCwIcon /> Probar de Nuevo
         </NeonButton>
      </div>
@@ -968,7 +892,17 @@ const App: React.FC = () => {
         <AlertTriangleIcon className="mx-auto mb-4" />
         <p className="font-bold text-lg">¡Upa! Algo salió mal</p>
         <p>{error}</p>
-        <NeonButton onClick={reset} className="mt-6"><RefreshCwIcon /> Intentar de nuevo</NeonButton>
+        <NeonButton 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🔄 Intentar de nuevo clicked!');
+            reset();
+          }} 
+          className="mt-6"
+        >
+          <RefreshCwIcon /> Intentar de nuevo
+        </NeonButton>
       </div>
   );
 
@@ -982,28 +916,11 @@ const App: React.FC = () => {
           <span className="text-cyan-400 font-bold"> ¡Spoiler: va a estar re picante!</span>
         </p>
         
-        {/* Advertencia y checkbox */}
-        <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-yellow-500/50 rounded-2xl p-6 mb-8 max-w-2xl mx-auto">
-          <div className="text-4xl mb-4">⚠️</div>
-          <h3 className="text-lg font-bold text-yellow-300 mb-4">Advertencia Importante</h3>
-          <div className="space-y-3 text-left text-sm text-violet-300/90">
-            <p>• <span className="font-bold text-red-300">Prohibido contenido explícito o +18</span></p>
-            <p>• <span className="font-bold text-cyan-300">Las fotos NO se almacenan</span> - se procesan y eliminan inmediatamente</p>
-            <p>• <span className="font-bold text-violet-300">Solo para entretenimiento</span> - no es una medida real de apariencia</p>
-          </div>
-          
-          <div className="mt-4 flex items-center justify-center gap-3">
-            <input
-              type="checkbox"
-              id="ageConfirmationBattle"
-              checked={isAgeConfirmed}
-              onChange={(e) => setIsAgeConfirmed(e.target.checked)}
-              className="w-5 h-5 text-fuchsia-600 bg-slate-700 border-violet-500 rounded focus:ring-fuchsia-500 focus:ring-2"
-            />
-            <label htmlFor="ageConfirmationBattle" className="text-sm text-violet-300 cursor-pointer">
-              Confirmo que tengo <span className="font-bold text-cyan-400">más de 18 años</span> o supervisión adulta, 
-              y que <span className="font-bold text-cyan-400">NO subiré contenido explícito</span>
-            </label>
+        {/* Aviso informativo */}
+        <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-yellow-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
+          <div className="flex items-center justify-center gap-2 text-sm">
+            <span className="text-yellow-400">⚠️</span>
+            <span className="text-yellow-300">Contenido +18 • Fotos no se almacenan • Solo entretenimiento</span>
           </div>
         </div>
         
@@ -1029,15 +946,13 @@ const App: React.FC = () => {
                 <div className="flex gap-3 mt-4">
                     <NeonButton 
                         onClick={() => { setActiveBattleSlot(1); setAppState('capture'); }}
-                        disabled={!isAgeConfirmed}
-                        className={`bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 ${!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className="bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500"
                     >
                         <CameraIcon /> Cámara
                     </NeonButton>
                     <NeonButton 
                         onClick={() => fileInputRef1.current?.click()}
-                        disabled={!isAgeConfirmed}
-                        className={`bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 ${!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className="bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500"
                     >
                         <UploadIcon /> Subir
                     </NeonButton>
@@ -1076,15 +991,13 @@ const App: React.FC = () => {
                 <div className="flex gap-3 mt-4">
                     <NeonButton 
                         onClick={() => { setActiveBattleSlot(2); setAppState('capture'); }}
-                        disabled={!isAgeConfirmed}
-                        className={`bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500 ${!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className="bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500"
                     >
                         <CameraIcon /> Cámara
                     </NeonButton>
                     <NeonButton 
                         onClick={() => fileInputRef2.current?.click()}
-                        disabled={!isAgeConfirmed}
-                        className={`bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 ${!isAgeConfirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className="bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500"
                     >
                         <UploadIcon /> Subir
                     </NeonButton>
@@ -1101,13 +1014,8 @@ const App: React.FC = () => {
                 <ZapIcon /> 🔥 INICIAR BATALLA 🔥
             </NeonButton>
             
-            {!isAgeConfirmed && (
-                <p className="text-yellow-400 text-sm text-center">
-                  ⚠️ Debes confirmar los términos para continuar
-                </p>
-            )}
             
-            {(!imageData1 || !imageData2) && isAgeConfirmed && (
+            {(!imageData1 || !imageData2) && (
                 <p className="text-violet-300/60 text-sm text-center">
                   {!imageData1 && !imageData2 ? 'Subí las dos fotos para comenzar la batalla' : 
                    !imageData1 ? 'Falta la foto del Contendiente 1' : 'Falta la foto del Contendiente 2'}
@@ -1557,7 +1465,15 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <NeonButton onClick={reset} className="bg-gradient-to-br from-purple-500 to-pink-500">
+            <NeonButton 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🏠 Volver al Inicio clicked!');
+                reset();
+              }} 
+              className="bg-gradient-to-br from-purple-500 to-pink-500"
+            >
                 🏠 Volver al Inicio
             </NeonButton>
             <NeonButton onClick={() => setAppState('leaderboard')} className="bg-gradient-to-br from-yellow-400 to-orange-500">
@@ -1669,7 +1585,15 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <NeonButton onClick={reset} className="bg-gradient-to-br from-purple-500 to-pink-500">
+            <NeonButton 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🏠 Volver al Inicio clicked!');
+                reset();
+              }} 
+              className="bg-gradient-to-br from-purple-500 to-pink-500"
+            >
                 🏠 Volver al Inicio
             </NeonButton>
             <NeonButton onClick={() => setAppState('leaderboard')} className="bg-gradient-to-br from-yellow-400 to-orange-500">
@@ -1838,7 +1762,15 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <NeonButton onClick={reset} className="bg-gradient-to-br from-purple-500 to-pink-500">
+            <NeonButton 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🏠 Volver al Inicio clicked!');
+                reset();
+              }} 
+              className="bg-gradient-to-br from-purple-500 to-pink-500"
+            >
                 🏠 Volver al Inicio
             </NeonButton>
             <NeonButton onClick={() => setAppState('about')} className="bg-gradient-to-br from-cyan-400 to-blue-500">
@@ -1849,6 +1781,16 @@ const App: React.FC = () => {
   );
 
   const renderContent = () => {
+    // Debug log only in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎯 Rendering - State:', appState, 'Mode:', appMode);
+      console.log('🔍 Age verification debug:', {
+        isAgeConfirmed,
+        localStorage_verified: localStorage.getItem('onlyFachas_ageVerified'),
+        localStorage_expiry: localStorage.getItem('onlyFachas_ageVerifiedExpiry')
+      });
+    }
+    
     if (isLoading) return <Loader />;
     if (showSettings) return renderSettingsView();
     if (appState === 'leaderboard') return renderLeaderboardView();
@@ -1900,31 +1842,43 @@ const App: React.FC = () => {
       <div className="absolute top-0 left-0 w-full h-full bg-grid-violet-500/20 [mask-image:linear-gradient(to_bottom,white_5%,transparent_90%)]"></div>
       <main className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center justify-center">
         <header className="text-center mb-6 sm:mb-10 mobile-header">
-          {/* Control de Audio Unificado */}
-          <div className="flex justify-center mb-4">
+          {/* Controles de Audio Separados */}
+          <div className="flex justify-center gap-2 mb-4">
+            {/* Control de Música */}
             <button
-              onClick={() => {
-                if (audioEnabled) {
-                  // Si se está desactivando, cortar TODO
-                  setAudioEnabled(false);
-                  stopBackgroundMusic();
-                } else {
-                  // Si se está activando, iniciar TODO
-                  setAudioEnabled(true);
-                  // La música se creará automáticamente en el useEffect
-                }
-              }}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-violet-500/30 rounded-lg text-violet-300 hover:bg-slate-700/50 hover:border-violet-400 transition-all duration-200"
-              title={audioEnabled ? "Desactivar audio y música" : "Activar audio y música"}
+              onClick={() => setMusicEnabled(!musicEnabled)}
+              className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 border border-blue-500/30 rounded-lg text-blue-300 hover:bg-slate-700/50 hover:border-blue-400 transition-all duration-200"
+              title={musicEnabled ? "Desactivar música de fondo" : "Activar música de fondo"}
             >
-              {audioEnabled ? <FiVolume2 className="w-5 h-5" /> : <FiVolumeX className="w-5 h-5" />}
-              <span className="text-sm font-medium">
-                {audioEnabled ? "🔊 Audio + Música ON" : "🔊 Audio + Música OFF"}
+              {musicEnabled ? <FiVolume2 className="w-4 h-4" /> : <FiVolumeX className="w-4 h-4" />}
+              <span className="text-xs font-medium">
+                {musicEnabled ? "🎵 Música ON" : "🎵 Música OFF"}
+              </span>
+            </button>
+            
+            {/* Control de Efectos */}
+            <button
+              onClick={() => setEffectsEnabled(!effectsEnabled)}
+              className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 border border-green-500/30 rounded-lg text-green-300 hover:bg-slate-700/50 hover:border-green-400 transition-all duration-200"
+              title={effectsEnabled ? "Desactivar efectos de voz" : "Activar efectos de voz"}
+            >
+              {effectsEnabled ? <FiVolume2 className="w-4 h-4" /> : <FiVolumeX className="w-4 h-4" />}
+              <span className="text-xs font-medium">
+                {effectsEnabled ? "🎤 Voces ON" : "🎤 Voces OFF"}
               </span>
             </button>
           </div>
           
-          <div className="cursor-pointer" onClick={reset} title="Ir al inicio">
+          <div 
+            className="cursor-pointer" 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('🖱️ Logo clicked!');
+              reset();
+            }} 
+            title="Ir al inicio"
+          >
             <h1 className="neon-text-fuchsia flex items-baseline justify-center gap-x-1 md:gap-x-2 mobile-title">
               <span className="font-montserrat font-thin tracking-wider text-4xl sm:text-6xl md:text-7xl lg:text-8xl">Only</span>
               <span className="font-arizonia text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">Fachas</span>
