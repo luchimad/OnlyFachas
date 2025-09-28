@@ -32,11 +32,11 @@ export const useEmergencyControls = (): EmergencyControls => {
           setIsMaintenanceMode(settings.maintenanceMode === true);
           setMaxRequestsPerHour(parseInt(settings.maxRequestsPerHour || '10', 10));
           setRequestDelay(parseInt(settings.requestDelay || '3', 10) * 1000);
-          console.log('Configuración de emergencia cargada:', settings);
+          // Configuración de emergencia cargada
           return;
         }
       } catch (error) {
-        console.log('No se pudo cargar configuración dinámica, usando valores por defecto');
+        // No se pudo cargar configuración dinámica, usando valores por defecto
       }
 
       // Fallback: usar variables de build time

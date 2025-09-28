@@ -14,6 +14,11 @@ import { useHapticFeedback } from './hooks/useHapticFeedback';
 import { useEmergencyControls } from './hooks/useEmergencyControls';
 import { useAudioControls } from './hooks/useAudioControls';
 import { useAgeVerification } from './hooks/useAgeVerification';
+import useDevMode from './hooks/useDevMode';
+import DevModeMenu from './components/DevModeMenu';
+import { setDevModeSettings, setAnalyticsTracker, setSuccessfulAnalysisTracker, setFailedAnalysisTracker } from '../services/geminiService';
+import { setDevModeTracker, setMockModeToggleTracker, setForcedScoreTracker } from './hooks/useDevMode';
+import useAnalytics from './hooks/useAnalytics';
 import { getScoreColor, getFachaTier } from './utils/fachaUtils';
 import { selectFachaAudio, selectBattleAudio } from './utils/audioUtils';
 import { UploadIcon, CameraIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckCircle2, XCircle, TrophyIcon, SettingsIcon, SparklesIcon, Trash2Icon, InstagramIcon } from '../components/Icons';
@@ -49,19 +54,11 @@ const App: React.FC = () => {
   const [appMode, setAppMode] = useState<AppMode>('single');
   const [appState, setAppState] = useState<AppState>('welcome');
   
-  // Debug: Log state changes
-  useEffect(() => {
-    console.log('📱 App state changed to:', appState);
-  }, [appState]);
+  // Debug: Log state changes (removed for production)
   
-  useEffect(() => {
-    console.log('🎮 App mode changed to:', appMode);
-  }, [appMode]);
+  // Debug: Log mode changes (removed for production)
   
-  // Debug: Log initial state
-  useEffect(() => {
-    console.log('🚀 App initialized - State:', appState, 'Mode:', appMode);
-  }, []);
+  // Debug: Log initial state (removed for production)
   const [aiMode, setAiMode] = useState<AiMode>('rapido');
   const [showSettings, setShowSettings] = useState(false);
 
@@ -80,6 +77,27 @@ const App: React.FC = () => {
   
   // Age verification hook
   const { isAgeConfirmed } = useAgeVerification();
+
+  // Dev mode hook
+  const {
+    devSettings,
+    closeDevMenu,
+    toggleMockData,
+    setForceScore,
+    resetDevSettings
+  } = useDevMode();
+
+  // Analytics hook
+  const {
+    trackApiUsage,
+    trackForcedScore,
+    trackMockModeToggle,
+    trackApiError,
+    trackSuccessfulAnalysis,
+    trackFailedAnalysis,
+    trackDevModeAccess,
+    trackPageView
+  } = useAnalytics();
 
   // API with fallback hook
   const { 
@@ -201,6 +219,24 @@ const App: React.FC = () => {
     }
   }, [isMaintenanceMode, isEmergencyRateLimited, requestDelay]);
 
+  // Sincronizar configuraciones del dev mode con el servicio
+  useEffect(() => {
+    setDevModeSettings({
+      useMockData: devSettings.useMockData,
+      forceScore: devSettings.forceScore
+    });
+  }, [devSettings.useMockData, devSettings.forceScore]);
+
+  // Configurar los trackers de Analytics
+  useEffect(() => {
+    setAnalyticsTracker(trackApiUsage);
+    setSuccessfulAnalysisTracker(trackSuccessfulAnalysis);
+    setFailedAnalysisTracker(trackFailedAnalysis);
+    setDevModeTracker(trackDevModeAccess);
+    setMockModeToggleTracker(trackMockModeToggle);
+    setForcedScoreTracker(trackForcedScore);
+  }, [trackApiUsage, trackSuccessfulAnalysis, trackFailedAnalysis, trackDevModeAccess, trackMockModeToggle, trackForcedScore]);
+
   const runFachaEnhancement = useCallback(async (currentImageData: {base64: string, mimeType: string}) => {
     if (!currentImageData) {
       setError("Necesito una foto para tunear, pibe.");
@@ -239,14 +275,6 @@ const App: React.FC = () => {
       setEnhancedResult(result);
       setAppState('enhanceResult');
 
-      // Mostrar notificación si es un resultado mock
-      if (result.isMock) {
-        showNotificationToast(
-          'info',
-          'Modo de prueba',
-          'El servidor de IA está saturado, te damos un resultado mock de prueba'
-        );
-      }
     } catch (err: any) {
       console.error(err);
       
@@ -419,14 +447,6 @@ const App: React.FC = () => {
       // Reproducir audio según el puntaje
       playFachaAudio(fachaResult.rating);
 
-      // Mostrar notificación si es un resultado mock
-      if (fachaResult.isMock) {
-        showNotificationToast(
-          'info',
-          'Modo de prueba',
-          'El servidor de IA está saturado, te damos un resultado mock de prueba'
-        );
-      }
     } catch (err: any) {
       console.error(err);
       
@@ -483,14 +503,6 @@ const App: React.FC = () => {
         // Reproducir audio de batalla
         playBattleAudio(result.winner, result.score1, result.score2);
 
-        // Mostrar notificación si es un resultado mock
-        if (result.isMock) {
-          showNotificationToast(
-            'info',
-            'Modo de prueba',
-            'El servidor de IA está saturado, te damos un resultado mock de prueba'
-          );
-        }
     } catch (err: any) {
         console.error(err);
         
@@ -507,7 +519,7 @@ const App: React.FC = () => {
 }, [imageData1, imageData2, aiMode, isRateLimited, timeUntilNextRequest, callApi]);
 
   const reset = () => {
-    console.log('🔄 Resetting app state...');
+    // Resetting app state...
     
     try {
       // Common
@@ -540,7 +552,7 @@ const App: React.FC = () => {
       setAppMode('single');
       setAppState('welcome');
       
-      console.log('✅ App state reset completed - Mode: single, State: welcome');
+      // App state reset completed
     } catch (error) {
       console.error('❌ Error during reset:', error);
     }
@@ -729,7 +741,6 @@ const App: React.FC = () => {
       
        <button 
          onClick={() => {
-           console.log('🔙 Volver button clicked!');
            reset();
          }} 
          className="mt-6 text-sm text-violet-400 hover:text-white transition-colors duration-200"
@@ -768,7 +779,6 @@ const App: React.FC = () => {
         </NeonButton>
         <NeonButton 
           onClick={() => {
-            console.log('🔄 Probar de Nuevo clicked!');
             reset();
           }} 
           className="w-full sm:w-auto"
@@ -888,7 +898,6 @@ const App: React.FC = () => {
         <p>{error}</p>
         <NeonButton 
           onClick={() => {
-            console.log('🔄 Intentar de nuevo clicked!');
             reset();
           }} 
           className="mt-6"
@@ -1464,7 +1473,6 @@ const App: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <NeonButton 
               onClick={() => {
-                console.log('🏠 Volver al Inicio clicked!');
                 reset();
               }} 
               className="bg-gradient-to-br from-purple-500 to-pink-500"
@@ -1582,7 +1590,6 @@ const App: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <NeonButton 
               onClick={() => {
-                console.log('🏠 Volver al Inicio clicked!');
                 reset();
               }} 
               className="bg-gradient-to-br from-purple-500 to-pink-500"
@@ -1673,7 +1680,7 @@ const App: React.FC = () => {
                     ¿Qué pasa si la IA falla o está saturada?
                 </h3>
                 <p className="text-violet-300/90 leading-relaxed">
-                    Si la IA de Google no responde usamos un modo de prueba que devuelve resultados de ejemplo para que la experiencia siga siendo divertida.
+                    Si la IA de Google no responde usamos un sistema de respaldo que devuelve resultados de ejemplo para que la experiencia siga siendo divertida.
                 </p>
             </div>
 
@@ -1757,7 +1764,6 @@ const App: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
             <NeonButton 
               onClick={() => {
-                console.log('🏠 Volver al Inicio clicked!');
                 reset();
               }} 
               className="bg-gradient-to-br from-purple-500 to-pink-500"
@@ -1772,15 +1778,6 @@ const App: React.FC = () => {
   );
 
   const renderContent = () => {
-    // Debug log only in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🎯 Rendering - State:', appState, 'Mode:', appMode);
-      console.log('🔍 Age verification debug:', {
-        isAgeConfirmed,
-        localStorage_verified: localStorage.getItem('onlyFachas_ageVerified'),
-        localStorage_expiry: localStorage.getItem('onlyFachas_ageVerifiedExpiry')
-      });
-    }
     
     if (isLoading) return <Loader />;
     if (showSettings) return renderSettingsView();
@@ -1865,7 +1862,6 @@ const App: React.FC = () => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              console.log('🖱️ Logo clicked!');
               reset();
             }} 
             title="Ir al inicio"
@@ -1908,7 +1904,7 @@ const App: React.FC = () => {
             {renderContent()}
         </div>
         <footer className="mt-6 sm:mt-10 text-center text-violet-400/60 text-xs sm:text-sm mobile-footer">
-            <p className="mb-2">Hecho con IA y mucho amor. Los resultados son para joder, no te la creas tanto.</p>
+            <p className="mb-2">Hecho con mucho tiempo libre y mucho amor. Los resultados son para joder, no te la creas tanto.</p>
             <div className="flex justify-center gap-4 text-violet-400/80">
                 <button 
                     onClick={() => setAppState('privacy')}
@@ -1957,6 +1953,17 @@ const App: React.FC = () => {
           onClose={() => setShowRequestDelayBanner(false)} 
         />
       )}
+
+      {/* Dev Mode Menu */}
+      <DevModeMenu
+        isOpen={devSettings.showDevMenu}
+        onClose={closeDevMenu}
+        forceScore={devSettings.forceScore}
+        useMockData={devSettings.useMockData}
+        onToggleMockData={toggleMockData}
+        onSetForceScore={setForceScore}
+        onReset={resetDevSettings}
+      />
     </div>
   );
 };

@@ -1,6 +1,33 @@
 ﻿import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FachaResult, FachaBattleResult, FachaEnhanceResult, AiMode } from '../types';
-import { MOCK_COMMENTS, MOCK_BATTLE_COMMENTS } from '../src/constants/mockData';
+import { generateMockFachaResult, generateMockBattleComment } from '../src/constants/mockData';
+
+// Funciones para trackear Analytics (se inyectan desde el hook)
+let trackApiUsage: ((isMock: boolean, apiType: 'facha' | 'battle' | 'enhance', score?: number) => void) | null = null;
+let trackSuccessfulAnalysis: ((apiType: 'facha' | 'battle' | 'enhance', isMock: boolean, score?: number) => void) | null = null;
+let trackFailedAnalysis: ((apiType: 'facha' | 'battle' | 'enhance', errorType: string) => void) | null = null;
+
+export const setAnalyticsTracker = (tracker: (isMock: boolean, apiType: 'facha' | 'battle' | 'enhance', score?: number) => void) => {
+  trackApiUsage = tracker;
+};
+
+export const setSuccessfulAnalysisTracker = (tracker: (apiType: 'facha' | 'battle' | 'enhance', isMock: boolean, score?: number) => void) => {
+  trackSuccessfulAnalysis = tracker;
+};
+
+export const setFailedAnalysisTracker = (tracker: (apiType: 'facha' | 'battle' | 'enhance', errorType: string) => void) => {
+  trackFailedAnalysis = tracker;
+};
+
+// Variables globales para dev mode (se setean desde el hook)
+let devModeSettings = {
+  useMockData: false,
+  forceScore: null as number | null
+};
+
+export const setDevModeSettings = (settings: { useMockData: boolean; forceScore: number | null }) => {
+  devModeSettings = settings;
+};
 
 const API_KEY = import.meta.env.VITE_API_KEY as string;
 if (!API_KEY) {
@@ -30,9 +57,42 @@ const cleanJsonResponse = (text: string): string => {
 };
 
 export const getFachaScore = async (base64Image: string, mimeType: string, modelMode: AiMode = 'rapido'): Promise<FachaResult> => {
-  if (!genAI) {
-    console.log("Using mock data - API_KEY not configured");
-    return getMockFachaResult();
+  // Verificar si hay puntaje forzado
+  if (devModeSettings.forceScore !== null) {
+    const mockResult = generateMockFachaResult();
+    const result = {
+      ...mockResult,
+      rating: devModeSettings.forceScore
+    };
+    
+    // Trackear uso de puntaje forzado
+    if (trackApiUsage) {
+      trackApiUsage(true, 'facha', devModeSettings.forceScore);
+    }
+
+    // Trackear análisis exitoso (forzado)
+    if (trackSuccessfulAnalysis) {
+      trackSuccessfulAnalysis('facha', true, devModeSettings.forceScore);
+    }
+    
+    return result;
+  }
+
+  // Verificar si se debe usar mock data
+  if (devModeSettings.useMockData || !genAI) {
+    const result = generateMockFachaResult();
+    
+    // Trackear uso de mock data
+    if (trackApiUsage) {
+      trackApiUsage(true, 'facha', result.rating);
+    }
+
+    // Trackear análisis exitoso (mock)
+    if (trackSuccessfulAnalysis) {
+      trackSuccessfulAnalysis('facha', true, result.rating);
+    }
+    
+    return result;
   }
   
   try {
@@ -111,9 +171,25 @@ Responde en formato JSON con:
     const parsedResult = JSON.parse(cleanedText) as FachaResult;
     parsedResult.rating = Math.max(1, Math.min(10, parsedResult.rating));
 
+    // Trackear uso exitoso de API real
+    if (trackApiUsage) {
+      trackApiUsage(false, 'facha', parsedResult.rating);
+    }
+
+    // Trackear análisis exitoso
+    if (trackSuccessfulAnalysis) {
+      trackSuccessfulAnalysis('facha', false, parsedResult.rating);
+    }
+
     return parsedResult;
   } catch (error) {
     console.error("Error getting facha score:", error);
+    
+    // Trackear análisis fallido
+    if (trackFailedAnalysis) {
+      trackFailedAnalysis('facha', 'api_error');
+    }
+    
     throw new Error("Failed to get facha score from Gemini API");
   }
 };
@@ -124,8 +200,19 @@ export const getFachaBattleResult = async (
     modelMode: AiMode = 'rapido'
 ): Promise<FachaBattleResult> => {
     if (!genAI) {
-        console.log("Using mock data - API_KEY not configured");
-        return getMockBattleResult();
+        const mockResult = getMockBattleResult();
+        
+        // Trackear uso de mock data para batalla
+        if (trackApiUsage) {
+          trackApiUsage(true, 'battle', Math.max(mockResult.score1, mockResult.score2));
+        }
+
+        // Trackear análisis exitoso para batalla (mock)
+        if (trackSuccessfulAnalysis) {
+          trackSuccessfulAnalysis('battle', true, Math.max(mockResult.score1, mockResult.score2));
+        }
+        
+        return mockResult;
     }
     
     try {
@@ -195,17 +282,44 @@ Responde en formato JSON con:
             score2: result2.rating,
         };
 
+        // Trackear uso exitoso de API real para batalla
+        if (trackApiUsage) {
+          trackApiUsage(false, 'battle', Math.max(result1.rating, result2.rating));
+        }
+
+        // Trackear análisis exitoso para batalla
+        if (trackSuccessfulAnalysis) {
+          trackSuccessfulAnalysis('battle', false, Math.max(result1.rating, result2.rating));
+        }
+
         return finalResult;
     } catch (error) {
         console.error("Error getting facha battle result:", error);
+        
+        // Trackear análisis fallido para batalla
+        if (trackFailedAnalysis) {
+          trackFailedAnalysis('battle', 'api_error');
+        }
+        
         throw new Error("Failed to get facha battle result from Gemini API");
     }
 };
 
 export const getEnhancedFacha = async (base64Image: string, mimeType: string): Promise<FachaEnhanceResult> => {
     if (!genAI) {
-        console.log("Using mock data - API_KEY not configured");
-        return getMockEnhanceResult();
+        const mockResult = getMockEnhanceResult();
+        
+        // Trackear uso de mock data para mejora
+        if (trackApiUsage) {
+          trackApiUsage(true, 'enhance');
+        }
+
+        // Trackear análisis exitoso para mejora (mock)
+        if (trackSuccessfulAnalysis) {
+          trackSuccessfulAnalysis('enhance', true);
+        }
+        
+        return mockResult;
     }
     
     try {
@@ -237,10 +351,28 @@ export const getEnhancedFacha = async (base64Image: string, mimeType: string): P
 
         // For now, return mock data since image generation is complex
         // In a real implementation, you'd need to handle image generation differently
-        return getMockEnhanceResult();
+        const mockResult = getMockEnhanceResult();
+        
+        // Trackear uso de mock data para mejora (siempre mock por ahora)
+        if (trackApiUsage) {
+          trackApiUsage(true, 'enhance');
+        }
+
+        // Trackear análisis exitoso para mejora (mock)
+        if (trackSuccessfulAnalysis) {
+          trackSuccessfulAnalysis('enhance', true);
+        }
+        
+        return mockResult;
 
     } catch (error) {
         console.error("Error enhancing facha:", error);
+        
+        // Trackear análisis fallido para mejora
+        if (trackFailedAnalysis) {
+          trackFailedAnalysis('enhance', 'api_error');
+        }
+        
         if (error instanceof Error && (error.message.includes('La IA bloqueÃ³') || error.message.includes('La IA devolviÃ³'))) {
             throw error; // Re-throw specific, user-friendly errors
         }
@@ -249,48 +381,26 @@ export const getEnhancedFacha = async (base64Image: string, mimeType: string): P
 };
 
 // Mock data functions for when API_KEY is not available
-const getMockFachaResult = (): FachaResult => {
-    const rating = Math.random() * 5 + 5; // Random score between 5-10
-    const comment = MOCK_COMMENTS[Math.floor(Math.random() * MOCK_COMMENTS.length)];
-    
-    return {
-        rating,
-        comment: `Â¡Modo DEMO! ${comment} (ConfigurÃ¡ tu API key para anÃ¡lisis reales)`,
-        fortalezas: ["Tienes potencial", "Buen estilo", "Actitud positiva"],
-        consejos: ["Configura tu API key", "SubÃ­ una foto real", "DisfrutÃ¡ la experiencia"]
-    };
-};
 
 const getMockBattleResult = (): FachaBattleResult => {
-    const score1 = Math.random() * 5 + 5;
-    const score2 = Math.random() * 5 + 5;
+    const score1 = Math.random() * 9 + 1; // 1-10
+    const score2 = Math.random() * 9 + 1; // 1-10
     const winner = score1 > score2 ? 1 : 2;
-    const difference = Math.abs(score1 - score2);
     
-    let comment = "";
-    if (difference >= 3) {
-        const comments = MOCK_BATTLE_COMMENTS.slice(0, 3);
-        comment = comments[Math.floor(Math.random() * comments.length)].replace('{winner}', winner.toString());
-    } else if (difference >= 1) {
-        const comments = MOCK_BATTLE_COMMENTS.slice(3, 6);
-        comment = comments[Math.floor(Math.random() * comments.length)].replace('{winner}', winner.toString());
-    } else {
-        const comments = MOCK_BATTLE_COMMENTS.slice(6, 9);
-        comment = comments[Math.floor(Math.random() * comments.length)].replace('{winner}', winner.toString());
-    }
+    const comment = generateMockBattleComment(winner);
     
     return {
         winner,
-        comment: `Â¡Modo DEMO! ${comment} (ConfigurÃ¡ tu API key para batallas reales)`,
-        score1,
-        score2
+        comment,
+        score1: Math.round(score1 * 10) / 10,
+        score2: Math.round(score2 * 10) / 10
     };
 };
 
 const getMockEnhanceResult = (): FachaEnhanceResult => ({
     newImageBase64: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", // 1x1 transparent pixel
     newImageMimeType: "image/png",
-    comment: "Â¡Modo DEMO! ConfigurÃ¡ tu API key para mejoras reales."
+    comment: "La IA mejoró tu facha pero no pudo procesar la imagen correctamente."
 });
 
 

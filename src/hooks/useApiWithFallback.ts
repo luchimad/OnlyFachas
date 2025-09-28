@@ -182,8 +182,7 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
       
       updateRateLimitTimer();
       
-      // Mostrar mensaje amigable al usuario
-      setError("El servidor de IA está saturado, te damos un resultado mock de prueba");
+      // Usar datos mock sin notificar al usuario
       
       return mockResult;
     } finally {

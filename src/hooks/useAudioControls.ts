@@ -79,7 +79,7 @@ export const useAudioControls = (): AudioControls => {
       music.preload = 'auto';
       
       music.play().then(() => {
-        console.log('Música de fondo iniciada');
+        // Música de fondo iniciada
       }).catch(error => {
         console.warn('Error al reproducir música de fondo:', error);
       });

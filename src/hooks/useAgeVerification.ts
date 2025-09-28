@@ -63,7 +63,7 @@ export const useAgeVerification = (): AgeVerification => {
       localStorage.setItem(AGE_VERIFICATION_EXPIRY_KEY, expiryDate.toISOString());
       
       setIsAgeConfirmed(true);
-      console.log('Verificación de edad confirmada hasta:', expiryDate.toLocaleDateString());
+      // Verificación de edad confirmada
     } catch (error) {
       console.error('Error al guardar verificación de edad:', error);
       // Aún así confirmar para la sesión actual
@@ -77,7 +77,7 @@ export const useAgeVerification = (): AgeVerification => {
       localStorage.removeItem(AGE_VERIFICATION_KEY);
       localStorage.removeItem(AGE_VERIFICATION_EXPIRY_KEY);
       setIsAgeConfirmed(false);
-      console.log('VerificaciÃ³n de edad reseteada');
+      // Verificación de edad reseteada
     } catch (error) {
       console.error('Error al resetear verificaciÃ³n de edad:', error);
     }
