@@ -59,6 +59,7 @@ const cleanJsonResponse = (text: string): string => {
 export const getFachaScore = async (base64Image: string, mimeType: string, modelMode: AiMode = 'rapido'): Promise<FachaResult> => {
   // Verificar si hay puntaje forzado
   if (devModeSettings.forceScore !== null) {
+    console.log(`🎯 [DEV MODE] Puntaje forzado: ${devModeSettings.forceScore} - Usando mock data`);
     const mockResult = generateMockFachaResult();
     const result = {
       ...mockResult,
@@ -80,6 +81,8 @@ export const getFachaScore = async (base64Image: string, mimeType: string, model
 
   // Verificar si se debe usar mock data
   if (devModeSettings.useMockData || !genAI) {
+    const reason = devModeSettings.useMockData ? 'DEV MODE activado' : 'API_KEY no configurada';
+    console.log(`🎭 [MOCK DATA] Análisis de facha - ${reason} - Puntaje: ${generateMockFachaResult().rating}`);
     const result = generateMockFachaResult();
     
     // Trackear uso de mock data
@@ -96,6 +99,7 @@ export const getFachaScore = async (base64Image: string, mimeType: string, model
   }
   
   try {
+    console.log(`🤖 [GEMINI API] Iniciando análisis de facha con modelo: gemini-2.5-flash-lite (${modelMode})`);
     const model = genAI.getGenerativeModel({ 
       model: "gemini-2.5-flash-lite",
       generationConfig: {
@@ -171,6 +175,8 @@ Responde en formato JSON con:
     const parsedResult = JSON.parse(cleanedText) as FachaResult;
     parsedResult.rating = Math.max(1, Math.min(10, parsedResult.rating));
 
+    console.log(`✅ [GEMINI API] Análisis exitoso - Puntaje: ${parsedResult.rating} - Comentario: "${parsedResult.comment.substring(0, 50)}..."`);
+
     // Trackear uso exitoso de API real
     if (trackApiUsage) {
       trackApiUsage(false, 'facha', parsedResult.rating);
@@ -203,8 +209,9 @@ Responde en formato JSON con:
       throw new Error("Problema de conexión. Verificá tu internet e intentá de nuevo.");
     } else {
       // Fallback a mock data en caso de error desconocido
-      console.warn("API error, falling back to mock data:", error);
+      console.warn("❌ [GEMINI API] Error desconocido, fallback a mock data:", error);
       const mockResult = generateMockFachaResult();
+      console.log(`🎭 [FALLBACK] Usando mock data - Puntaje: ${mockResult.rating} - Comentario: "${mockResult.comment.substring(0, 50)}..."`);
       
       // Trackear uso de mock data como fallback
       if (trackApiUsage) {
@@ -225,7 +232,9 @@ export const getFachaBattleResult = async (
     modelMode: AiMode = 'rapido'
 ): Promise<FachaBattleResult> => {
     if (!genAI) {
+        console.log(`🎭 [MOCK DATA] Batalla de fachas - API_KEY no configurada - Usando mock data`);
         const mockResult = getMockBattleResult();
+        console.log(`🎭 [MOCK DATA] Batalla mock - Puntaje 1: ${mockResult.score1} - Puntaje 2: ${mockResult.score2} - Ganador: ${mockResult.winner}`);
         
         // Trackear uso de mock data para batalla
         if (trackApiUsage) {
@@ -241,6 +250,7 @@ export const getFachaBattleResult = async (
     }
     
     try {
+        console.log(`🤖 [GEMINI API] Iniciando batalla de fachas con modelo: gemini-2.5-flash-lite (${modelMode})`);
         // Step 1 & 2: Evaluate each image individually and in parallel for efficiency
         const [result1, result2] = await Promise.all([
             getFachaScore(image1.base64, image1.mimeType, modelMode),
@@ -249,6 +259,7 @@ export const getFachaBattleResult = async (
 
         // Step 3: Determine winner based on higher rating
         const winner: 1 | 2 = result1.rating > result2.rating ? 1 : 2;
+        console.log(`🤖 [GEMINI API] Análisis individual completado - Fachas: ${result1.rating} vs ${result2.rating} - Ganador: ${winner}`);
 
         // Step 4: Generate a spicy battle comment using Gemini
         const model = genAI.getGenerativeModel({
@@ -307,6 +318,8 @@ Responde en formato JSON con:
             score2: result2.rating,
         };
 
+        console.log(`✅ [GEMINI API] Batalla completada exitosamente - Ganador: ${winner} - Comentario: "${commentResult.comment.substring(0, 50)}..."`);
+
         // Trackear uso exitoso de API real para batalla
         if (trackApiUsage) {
           trackApiUsage(false, 'battle', Math.max(result1.rating, result2.rating));
@@ -327,8 +340,9 @@ Responde en formato JSON con:
         }
         
         // Fallback a mock data en caso de error
-        console.warn("API error in battle, falling back to mock data:", error);
+        console.warn("❌ [GEMINI API] Error en batalla, fallback a mock data:", error);
         const mockResult = getMockBattleResult();
+        console.log(`🎭 [FALLBACK] Batalla mock - Puntaje 1: ${mockResult.score1} - Puntaje 2: ${mockResult.score2} - Ganador: ${mockResult.winner}`);
         
         // Trackear uso de mock data como fallback
         if (trackApiUsage) {
@@ -344,7 +358,9 @@ Responde en formato JSON con:
 
 export const getEnhancedFacha = async (base64Image: string, mimeType: string): Promise<FachaEnhanceResult> => {
     if (!genAI) {
+        console.log(`🎭 [MOCK DATA] Mejora de facha - API_KEY no configurada - Usando mock data`);
         const mockResult = getMockEnhanceResult();
+        console.log(`🎭 [MOCK DATA] Mejora mock - Comentario: "${mockResult.comment.substring(0, 50)}..."`);
         
         // Trackear uso de mock data para mejora
         if (trackApiUsage) {
@@ -360,6 +376,7 @@ export const getEnhancedFacha = async (base64Image: string, mimeType: string): P
     }
     
     try {
+        console.log(`🤖 [GEMINI API] Iniciando mejora de facha con modelo: gemini-2.5-flash-lite`);
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash-lite",
             generationConfig: {
@@ -388,7 +405,9 @@ export const getEnhancedFacha = async (base64Image: string, mimeType: string): P
 
         // For now, return mock data since image generation is complex
         // In a real implementation, you'd need to handle image generation differently
+        console.log(`✅ [GEMINI API] Mejora de facha completada - Usando mock data (generación de imagen no implementada)`);
         const mockResult = getMockEnhanceResult();
+        console.log(`🎭 [MOCK DATA] Mejora mock - Comentario: "${mockResult.comment.substring(0, 50)}..."`);
         
         // Trackear uso de mock data para mejora (siempre mock por ahora)
         if (trackApiUsage) {
@@ -414,8 +433,9 @@ export const getEnhancedFacha = async (base64Image: string, mimeType: string): P
             throw error; // Re-throw specific, user-friendly errors
         }
         // Fallback a mock data en caso de error
-        console.warn("API error in enhance, falling back to mock data:", error);
+        console.warn("❌ [GEMINI API] Error en mejora, fallback a mock data:", error);
         const mockResult = getMockEnhanceResult();
+        console.log(`🎭 [FALLBACK] Mejora mock - Comentario: "${mockResult.comment.substring(0, 50)}..."`);
         
         // Trackear uso de mock data como fallback
         if (trackApiUsage) {
