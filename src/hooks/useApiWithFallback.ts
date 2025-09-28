@@ -150,7 +150,9 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
 
     try {
       // Intentar llamar a la API real
+      console.log('🔄 [API FALLBACK] Llamando a la API real...');
       const result = await apiFunction(...args);
+      console.log('✅ [API FALLBACK] API real exitosa, resultado:', result);
       
       // Si la API funciona, guardar en cache y actualizar rate limit
       localStorage.setItem(RATE_LIMIT_KEY, Date.now().toString());
@@ -163,7 +165,7 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
       return result;
 
     } catch (apiError: any) {
-      console.warn('API Error, using fallback:', apiError);
+      console.warn('❌ [API FALLBACK] API Error, usando fallback:', apiError);
       
       // Determinar el tipo de resultado basado en el número de argumentos
       // Single: 3 args (base64, mimeType, aiMode)
@@ -173,8 +175,10 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
       if (args.length === 5) resultType = 'battle';
       if (args.length === 2) resultType = 'enhance';
 
+      console.log(`🎭 [API FALLBACK] Generando resultado mock para tipo: ${resultType}`);
       // Generar resultado mock
       const mockResult = generateMockResult(resultType);
+      console.log('🎭 [API FALLBACK] Resultado mock generado:', mockResult);
       
       // Guardar mock en cache también
       localStorage.setItem(RATE_LIMIT_KEY, Date.now().toString());

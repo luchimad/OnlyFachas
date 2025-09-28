@@ -434,7 +434,9 @@ const App: React.FC = () => {
       incrementRequestCount();
 
       // Usar el hook con fallback automático
+      console.log('🔄 [APP] Llamando a callApi...');
       const fachaResult = await callApi(getFachaScore, imageData.base64, imageData.mimeType, aiMode);
+      console.log('✅ [APP] callApi completado, resultado:', fachaResult);
       
       // Haptic feedback
       haptic.success();
@@ -472,8 +474,10 @@ const App: React.FC = () => {
         setLeaderboard(limitedLeaderboard);
       }
       
+      console.log('🎯 [APP] Estableciendo resultado y cambiando estado...');
       setResult(fachaResult);
       setAppState('result');
+      console.log('✅ [APP] Estado cambiado a result, resultado establecido');
 
       // Reproducir audio según el puntaje
       playFachaAudio(fachaResult.rating);
