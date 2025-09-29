@@ -26,6 +26,7 @@ import { AudioSettings } from './components/AudioSettings';
 import { FiVolume2, FiVolumeX } from "react-icons/fi";
 import { FiTrendingUp, FiUsers } from "react-icons/fi";
 import { MaintenanceBanner, RateLimitBanner, RequestDelayBanner } from './components/EmergencyBanners';
+import ShareButton from './components/ShareButton';
 
 type AppMode = 'single' | 'battle' | 'enhance';
 type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms' | 'comingSoon' | 'about' | 'faq';
@@ -942,6 +943,13 @@ const App: React.FC = () => {
             ) : (
                 <>
                     <NeonButton onClick={reset}><RefreshCwIcon /> Otra vez</NeonButton>
+                    {currentResult && currentImageSrc && (
+                        <ShareButton
+                            result={currentResult}
+                            imageSrc={currentImageSrc}
+                            className="w-full sm:w-auto"
+                        />
+                    )}
                 </>
             )}
         </div>
