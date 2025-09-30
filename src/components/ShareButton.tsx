@@ -58,9 +58,19 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
       });
       
       if (isMobile()) {
-        // On mobile, open Instagram Stories
-        const instagramUrl = `https://www.instagram.com/stories/create/`;
-        window.open(instagramUrl, '_blank');
+        // On mobile, open Instagram app directly
+        const instagramAppUrl = `instagram://story-camera`;
+        const instagramWebUrl = `https://www.instagram.com/stories/create/`;
+        
+        // Try to open Instagram app first
+        const appLink = document.createElement('a');
+        appLink.href = instagramAppUrl;
+        appLink.click();
+        
+        // Fallback to web version after a short delay
+        setTimeout(() => {
+          window.open(instagramWebUrl, '_blank');
+        }, 1000);
         
         // Also copy image to clipboard if possible
         try {
