@@ -16,6 +16,10 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
   const [isExporting, setIsExporting] = useState(false);
   const fontsLoaded = useFontLoader();
 
+  const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+  };
+
   const handleExport = useCallback(async () => {
     if (!cardRef.current) {
       return;
@@ -53,15 +57,36 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
         backgroundColor: '#000000',
       });
       
-      const tierText = getFachaTier(result.rating);
-      const filename = `onlyfachas-${result.rating.toFixed(1)}-${tierText.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.png`;
-      
-      const link = document.createElement('a');
-      link.download = filename;
-      link.href = dataUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      if (isMobile()) {
+        // On mobile, open Instagram Stories
+        const instagramUrl = `https://www.instagram.com/stories/create/`;
+        window.open(instagramUrl, '_blank');
+        
+        // Also copy image to clipboard if possible
+        try {
+          const response = await fetch(dataUrl);
+          const blob = await response.blob();
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              'image/png': blob
+            })
+          ]);
+          alert('Imagen copiada al portapapeles. Ahora podés pegarla en tu historia de Instagram!');
+        } catch (clipboardError) {
+          console.log('Clipboard not available, opening Instagram only');
+        }
+      } else {
+        // On desktop, download the image
+        const tierText = getFachaTier(result.rating);
+        const filename = `onlyfachas-${result.rating.toFixed(1)}-${tierText.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.png`;
+        
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     } catch (err) {
       console.error('Error exporting image:', err);
       alert('Error al exportar la imagen. Intenta de nuevo.');
@@ -87,12 +112,12 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
             Generando...
           </>
           ) : (
-            <>
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-              </svg>
-              Compartir resultado
-            </>
+                     <>
+                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                       </svg>
+                       {isMobile() ? 'Subir a Instagram' : 'Compartir resultado'}
+                     </>
           )}
         </span>
       </button>
