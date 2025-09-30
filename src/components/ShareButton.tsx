@@ -23,14 +23,29 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
 
     setIsExporting(true);
     try {
+      console.log('Starting export, fonts loaded:', fontsLoaded);
+      
       // Wait for fonts to load completely
       if (!fontsLoaded) {
+        console.log('Waiting for fonts to load...');
         await document.fonts.ready;
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
       
       // Additional wait to ensure fonts are fully rendered
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('Waiting additional time for font rendering...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Final font check
+      const montserratReady = document.fonts.check('16px Montserrat');
+      const arizoniaReady = document.fonts.check('16px Arizonia');
+      const orbitronReady = document.fonts.check('16px Orbitron');
+      
+      console.log('Final font check:', {
+        montserrat: montserratReady,
+        arizonia: arizoniaReady,
+        orbitron: orbitronReady
+      });
       
       const dataUrl = await toPng(cardRef.current, {
         pixelRatio: 2, // Higher pixel ratio for better quality

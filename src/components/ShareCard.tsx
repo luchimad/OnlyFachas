@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import '../fonts.css';
 
 interface ShareCardProps {
   image: string | null;
