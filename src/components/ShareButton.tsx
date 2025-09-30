@@ -3,6 +3,7 @@ import { toPng } from 'html-to-image';
 import { FachaResult } from '../../types';
 import ShareCard from './ShareCard';
 import { getFachaTier } from '../utils/fachaUtils';
+import useFontLoader from '../hooks/useFontLoader';
 
 interface ShareButtonProps {
   result: FachaResult;
@@ -13,6 +14,7 @@ interface ShareButtonProps {
 const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className = '' }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const fontsLoaded = useFontLoader();
 
   const handleExport = useCallback(async () => {
     if (!cardRef.current) {
@@ -21,6 +23,15 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
 
     setIsExporting(true);
     try {
+      // Wait for fonts to load completely
+      if (!fontsLoaded) {
+        await document.fonts.ready;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      // Additional wait to ensure fonts are fully rendered
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       const dataUrl = await toPng(cardRef.current, {
         pixelRatio: 2, // Higher pixel ratio for better quality
         cacheBust: true,

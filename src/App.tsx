@@ -857,24 +857,25 @@ const App: React.FC = () => {
     
     return currentResult && (
     <div ref={resultContainerRef} className="text-center w-full max-w-6xl mx-auto flex flex-col items-center">
-        <div className="w-full flex flex-col md:flex-row items-start gap-8">
-            {/* Left Column: Image */}
-            <div className="w-full md:w-1/3 flex-shrink-0">
-                <h3 className="text-2xl font-bold mb-4 text-violet-300 text-center">
-                    {isFromLeaderboard ? `${selectedLeaderboardResult.name} - Análisis` : 'Tu Foto'}
-                </h3>
-                <img src={currentImageSrc!} alt={isFromLeaderboard ? `Foto de ${selectedLeaderboardResult.name}` : "Tu foto analizada"} className="rounded-lg border-4 border-violet-500 neon-shadow-purple w-full"/>
-                {isFromLeaderboard && (
-                    <div className="mt-4 p-3 bg-slate-800/50 rounded-lg border border-violet-500/30">
-                        <p className="text-sm text-violet-300">
-                            📅 Analizado el {new Date(selectedLeaderboardResult.timestamp).toLocaleDateString()}
-                        </p>
-                    </div>
-                )}
+        {/* Image Section - Centered on desktop, full width on mobile */}
+        <div className="w-full mb-8">
+            <h3 className="text-2xl font-bold mb-4 text-violet-300 text-center">
+                {isFromLeaderboard ? `${selectedLeaderboardResult.name} - Análisis` : 'Tu Foto'}
+            </h3>
+            <div className="flex justify-center">
+                <img src={currentImageSrc!} alt={isFromLeaderboard ? `Foto de ${selectedLeaderboardResult.name}` : "Tu foto analizada"} className="rounded-lg border-4 border-violet-500 neon-shadow-purple w-full max-w-md"/>
             </div>
-            
-            {/* Right Column: Verdict */}
-            <div className="w-full md:w-2/3 flex flex-col items-center">
+            {isFromLeaderboard && (
+                <div className="mt-4 p-3 bg-slate-800/50 rounded-lg border border-violet-500/30 max-w-md mx-auto">
+                    <p className="text-sm text-violet-300">
+                        📅 Analizado el {new Date(selectedLeaderboardResult.timestamp).toLocaleDateString()}
+                    </p>
+                </div>
+            )}
+        </div>
+        
+        {/* Verdict Section - Full width and centered */}
+        <div className="w-full flex flex-col items-center">
                 <h2 className="text-4xl font-bold mb-8 neon-text-fuchsia">VEREDICTO</h2>
                 
                 {/* Score Display - Simple and Clean */}
@@ -898,16 +899,16 @@ const App: React.FC = () => {
                       <p className="text-2xl font-bold text-gray-300 tracking-widest uppercase mt-2">
                         DE FACHA
                       </p>
-                      <div className="mt-6 w-full max-w-md text-center bg-slate-800/60 border-2 rounded-lg p-4"
+                      <div className="mt-6 w-full max-w-lg text-center bg-slate-800/60 border-2 rounded-lg p-6"
                            style={{ 
                              borderColor: getScoreColor(currentResult.rating), 
                              boxShadow: `0 0 15px ${getScoreColor(currentResult.rating)}40` 
                            }}>
-                        <p className="text-sm uppercase tracking-widest text-violet-300/80 mb-2">
+                        <p className="text-base uppercase tracking-widest text-violet-300/80 mb-3">
                           {isFromLeaderboard ? 'Rango de Facha' : 'Tu Rango de Facha'}
                         </p>
                         <p 
-                          className="font-orbitron text-xl font-bold"
+                          className="font-orbitron text-2xl font-bold"
                           style={{ color: getScoreColor(currentResult.rating) }}
                         >
                           {getFachaTier(currentResult.rating)}
@@ -930,7 +931,6 @@ const App: React.FC = () => {
                   size="medium"
                   className="mt-6"
                 />
-            </div>
         </div>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
             {isFromLeaderboard ? (

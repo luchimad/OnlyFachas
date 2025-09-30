@@ -16,11 +16,22 @@ const GlowText: React.FC<{ children: React.ReactNode; className?: string; color:
 
 const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ image, score, rank }, ref) => {
   return (
-    <div ref={ref} className="w-[350px] h-[622px] bg-gradient-to-b from-[#0a0515] via-[#2d1a3a] to-[#0a0515] flex flex-col items-center justify-between p-8 rounded-2xl overflow-hidden">
+    <div 
+      ref={ref} 
+      className="w-[350px] h-[622px] bg-gradient-to-b from-[#0a0515] via-[#2d1a3a] to-[#0a0515] flex flex-col items-center justify-between p-8 rounded-2xl overflow-hidden"
+      style={{
+        fontFamily: 'Montserrat, Arizonia, Orbitron, sans-serif'
+      }}
+    >
       <header className="text-center -mt-2 relative z-10">
          <h1 className="flex items-baseline justify-center gap-1">
-            <GlowText color="pink" className="text-4xl" style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 100 }}>Only</GlowText>
-            <GlowText color="pink" className="text-5xl" style={{ fontFamily: 'Arizonia, cursive' }}>Fachas</GlowText>
+            <GlowText color="pink" className="text-4xl" style={{ 
+              fontFamily: 'Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', 
+              fontWeight: 100
+            }}>Only</GlowText>
+            <GlowText color="pink" className="text-5xl" style={{ 
+              fontFamily: 'Arizonia, "Brush Script MT", cursive, serif'
+            }}>Fachas</GlowText>
          </h1>
       </header>
       
@@ -35,10 +46,14 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ image, score, ra
       </div>
 
       <div className="text-center space-y-2 relative z-10">
-        <h2 className="text-3xl font-light tracking-[0.05em]" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+        <h2 className="text-3xl font-light tracking-[0.05em]" style={{ 
+          fontFamily: 'Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        }}>
             <GlowText color="pink">VEREDICTO</GlowText>
         </h2>
-        <p className="text-6xl font-black" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+        <p className="text-6xl font-black" style={{ 
+          fontFamily: 'Orbitron, "Courier New", monospace, sans-serif'
+        }}>
             <GlowText color="yellow">{score || '0.0'}</GlowText>
         </p>
         <p className="text-xl font-light tracking-[0.1em]">
@@ -48,7 +63,9 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ image, score, ra
 
       <div className="w-full border border-[#533597] shadow-[0_0_20px_#533597] bg-[#15132b] rounded-1xl p-4 text-center relative z-10">
         <p className="text-sm tracking-widest text-purple-300/80 -mb-1">RANGO DE FACHA</p>
-        <p className="text-2xl font-bold break-words" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+        <p className="text-2xl font-bold break-words" style={{ 
+          fontFamily: 'Orbitron, "Courier New", monospace, sans-serif'
+        }}>
             <GlowText color="yellow">{rank || '...'}</GlowText>
         </p>
       </div>
