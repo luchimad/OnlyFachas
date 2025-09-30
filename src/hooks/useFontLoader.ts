@@ -9,29 +9,29 @@ const useFontLoader = () => {
         // Load fonts using FontFace API for better control
         const fontPromises = [];
         
-        // Montserrat Light
+        // Montserrat Thin
         if (!document.fonts.check('100 16px Montserrat')) {
-          const montserratLight = new FontFace('Montserrat', 'url(https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aXpsog.woff2)', {
+          const montserratThin = new FontFace('Montserrat', 'url(/fonts/Montserrat-Thin.ttf)', {
             weight: '100',
             style: 'normal',
             display: 'swap'
           });
-          fontPromises.push(montserratLight.load().then(font => document.fonts.add(font)));
+          fontPromises.push(montserratThin.load().then(font => document.fonts.add(font)));
         }
         
-        // Montserrat Bold
-        if (!document.fonts.check('700 16px Montserrat')) {
-          const montserratBold = new FontFace('Montserrat', 'url(https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aXpsog.woff2)', {
-            weight: '700',
+        // Montserrat Regular
+        if (!document.fonts.check('400 16px Montserrat')) {
+          const montserratRegular = new FontFace('Montserrat', 'url(/fonts/Montserrat-Regular.ttf)', {
+            weight: '400',
             style: 'normal',
             display: 'swap'
           });
-          fontPromises.push(montserratBold.load().then(font => document.fonts.add(font)));
+          fontPromises.push(montserratRegular.load().then(font => document.fonts.add(font)));
         }
         
         // Arizonia
         if (!document.fonts.check('400 16px Arizonia')) {
-          const arizonia = new FontFace('Arizonia', 'url(https://fonts.gstatic.com/s/arizonia/v13/neIIzCemt4A5qa7mv6WGHK06UY30.woff2)', {
+          const arizonia = new FontFace('Arizonia', 'url(/fonts/Arizonia-Regular.ttf)', {
             weight: '400',
             style: 'normal',
             display: 'swap'
@@ -41,7 +41,7 @@ const useFontLoader = () => {
         
         // Orbitron Regular
         if (!document.fonts.check('400 16px Orbitron')) {
-          const orbitron = new FontFace('Orbitron', 'url(https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvQtQY9D4bk0ODTQ.woff2)', {
+          const orbitron = new FontFace('Orbitron', 'url(/fonts/Orbitron-Regular.ttf)', {
             weight: '400',
             style: 'normal',
             display: 'swap'
@@ -49,14 +49,14 @@ const useFontLoader = () => {
           fontPromises.push(orbitron.load().then(font => document.fonts.add(font)));
         }
         
-        // Orbitron Bold
-        if (!document.fonts.check('700 16px Orbitron')) {
-          const orbitronBold = new FontFace('Orbitron', 'url(https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvQtQY9D4bk0ODTQ.woff2)', {
-            weight: '700',
+        // Orbitron Medium
+        if (!document.fonts.check('500 16px Orbitron')) {
+          const orbitronMedium = new FontFace('Orbitron', 'url(/fonts/Orbitron-Medium.ttf)', {
+            weight: '500',
             style: 'normal',
             display: 'swap'
           });
-          fontPromises.push(orbitronBold.load().then(font => document.fonts.add(font)));
+          fontPromises.push(orbitronMedium.load().then(font => document.fonts.add(font)));
         }
 
         if (fontPromises.length > 0) {
