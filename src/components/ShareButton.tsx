@@ -58,32 +58,54 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
       });
       
       if (isMobile()) {
-        // On mobile, open Instagram app directly
-        const instagramAppUrl = `instagram://story-camera`;
+        // On mobile, share to Instagram Stories
+        const instagramStoriesUrl = `instagram-stories://share?source_application=onlyfachas`;
         const instagramWebUrl = `https://www.instagram.com/stories/create/`;
         
-        // Try to open Instagram app first
-        const appLink = document.createElement('a');
-        appLink.href = instagramAppUrl;
-        appLink.click();
-        
-        // Fallback to web version after a short delay
-        setTimeout(() => {
-          window.open(instagramWebUrl, '_blank');
-        }, 1000);
-        
-        // Also copy image to clipboard if possible
         try {
+          // Copy image to clipboard with Instagram-specific format
           const response = await fetch(dataUrl);
           const blob = await response.blob();
+          
+          // Try to copy with Instagram Stories format
           await navigator.clipboard.write([
             new ClipboardItem({
-              'image/png': blob
+              'com.instagram.sharedSticker.backgroundImage': blob,
+              'public.png': blob
             })
           ]);
-          alert('Imagen copiada al portapapeles. Ahora podés pegarla en tu historia de Instagram!');
-        } catch (clipboardError) {
-          console.log('Clipboard not available, opening Instagram only');
+          
+          // Try to open Instagram Stories app
+          const appLink = document.createElement('a');
+          appLink.href = instagramStoriesUrl;
+          appLink.style.display = 'none';
+          document.body.appendChild(appLink);
+          appLink.click();
+          document.body.removeChild(appLink);
+          
+          // Show success message
+          alert('¡Imagen copiada! Se abrió Instagram Stories. Pegá la imagen en tu historia.');
+          
+        } catch (error) {
+          console.log('Instagram app not available or clipboard error:', error);
+          
+          // Fallback: open web version and copy to clipboard normally
+          try {
+            const response = await fetch(dataUrl);
+            const blob = await response.blob();
+            
+            await navigator.clipboard.write([
+              new ClipboardItem({
+                'image/png': blob
+              })
+            ]);
+            alert('Imagen copiada al portapapeles. Abriendo Instagram web...');
+          } catch (clipboardError) {
+            console.log('Clipboard not available');
+          }
+          
+          // Open web version
+          window.open(instagramWebUrl, '_blank');
         }
       } else {
         // On desktop, download the image
