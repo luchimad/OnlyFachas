@@ -46,7 +46,7 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ image, score, ra
         )}
       </div>
 
-      <div className="text-center space-y-2 relative z-10">
+      <div className="text-center space-y-3 relative z-10">
         <h2 className="text-3xl font-light tracking-[0.05em]" style={{ 
           fontFamily: 'Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
         }}>
@@ -62,9 +62,9 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ image, score, ra
         </p>
       </div>
 
-      <div className="w-full border border-[#533597] shadow-[0_0_20px_#533597] bg-[#15132b] rounded-1xl p-4 text-center relative z-10">
-        <p className="text-sm tracking-widest text-purple-300/80 -mb-1">RANGO DE FACHA</p>
-        <p className="text-2xl font-bold break-words" style={{ 
+      <div className="w-4/5 max-w-xs border border-[#533597] shadow-[0_0_20px_#533597] bg-[#15132b] rounded-1xl p-3 text-center relative z-10">
+        <p className="text-sm tracking-widest text-purple-300/80 mb-2">RANGO DE FACHA</p>
+        <p className="text-xl font-bold break-words" style={{ 
           fontFamily: 'Orbitron, "Courier New", monospace, sans-serif'
         }}>
             <GlowText color="yellow">{rank || '...'}</GlowText>
