@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://onlyfachas.netlify.app/sitemap.xml
+
+# OnlyFachas - Medidor de Facha con IA
+# No es OnlyFans, es OnlyFachas
