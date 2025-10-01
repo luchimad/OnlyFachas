@@ -4,6 +4,7 @@ import { FachaResult } from '../../types';
 import ShareCard from './ShareCard';
 import { getFachaTier } from '../utils/fachaUtils';
 import useFontLoader from '../hooks/useFontLoader';
+import useInstagramShare from '../hooks/useInstagramShare';
 
 interface ShareButtonProps {
   result: FachaResult;
@@ -15,6 +16,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
   const cardRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
   const fontsLoaded = useFontLoader();
+  const { isSharing, shareToInstagram } = useInstagramShare();
 
   const isMobile = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
@@ -58,55 +60,19 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
       });
       
       if (isMobile()) {
-        // On mobile, share to Instagram Stories
-        const instagramStoriesUrl = `instagram-stories://share?source_application=onlyfachas`;
-        const instagramWebUrl = `https://www.instagram.com/stories/create/`;
+        // Convert data URL to blob for Instagram sharing
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
         
-        try {
-          // Copy image to clipboard with Instagram-specific format
-          const response = await fetch(dataUrl);
-          const blob = await response.blob();
-          
-          // Try to copy with Instagram Stories format
-          await navigator.clipboard.write([
-            new ClipboardItem({
-              'com.instagram.sharedSticker.backgroundImage': blob,
-              'public.png': blob
-            })
-          ]);
-          
-          // Try to open Instagram Stories app
-          const appLink = document.createElement('a');
-          appLink.href = instagramStoriesUrl;
-          appLink.style.display = 'none';
-          document.body.appendChild(appLink);
-          appLink.click();
-          document.body.removeChild(appLink);
-          
-          // Show success message
-          alert('¡Imagen copiada! Se abrió Instagram Stories. Pegá la imagen en tu historia.');
-          
-        } catch (error) {
-          console.log('Instagram app not available or clipboard error:', error);
-          
-          // Fallback: open web version and copy to clipboard normally
-          try {
-            const response = await fetch(dataUrl);
-            const blob = await response.blob();
-            
-            await navigator.clipboard.write([
-              new ClipboardItem({
-                'image/png': blob
-              })
-            ]);
-            alert('Imagen copiada al portapapeles. Abriendo Instagram web...');
-          } catch (clipboardError) {
-            console.log('Clipboard not available');
-          }
-          
-          // Open web version
-          window.open(instagramWebUrl, '_blank');
-        }
+        // Use the modular Instagram share service
+        const shareResult = await shareToInstagram({
+          imageBlob: blob,
+          fallbackToDownload: true,
+          showUserFeedback: true
+        });
+        
+        console.log('Instagram share result:', shareResult);
+        
       } else {
         // On desktop, download the image
         const tierText = getFachaTier(result.rating);
@@ -125,23 +91,25 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
     } finally {
       setIsExporting(false);
     }
-  }, [result]);
+  }, [result, fontsLoaded, shareToInstagram]);
+
+  const isLoading = isExporting || isSharing;
 
   return (
     <div className={`flex flex-col items-center gap-3 ${className}`}>
       <button
         onClick={handleExport}
-        disabled={isExporting}
-        className={`relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-violet-500 to-purple-600 transition-all duration-300 ${isExporting ? 'opacity-50 cursor-not-allowed' : 'group-hover:from-violet-500 group-hover:to-purple-600 hover:text-white focus:ring-4 focus:outline-none focus:ring-violet-200'}`}
+        disabled={isLoading}
+        className={`relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-violet-500 to-purple-600 transition-all duration-300 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'group-hover:from-violet-500 group-hover:to-purple-600 hover:text-white focus:ring-4 focus:outline-none focus:ring-violet-200'}`}
       >
         <span className="relative w-full px-5 py-2.5 transition-all ease-in duration-75 bg-slate-900/30 backdrop-blur-sm rounded-md group-hover:bg-opacity-0 flex items-center justify-center gap-2 text-white font-bold group-hover:text-white drop-shadow-lg">
-        {isExporting ? (
+        {isLoading ? (
           <>
             <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Generando...
+            {isExporting ? 'Generando...' : 'Compartiendo...'}
           </>
           ) : (
                      <>
