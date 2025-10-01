@@ -1,10 +1,10 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { toPng } from 'html-to-image';
 import { FachaResult } from '../../types';
 import ShareCard from './ShareCard';
 import { getFachaTier } from '../utils/fachaUtils';
 import useFontLoader from '../hooks/useFontLoader';
-import useInstagramShare from '../hooks/useInstagramShare';
+import useSocialShare from '../hooks/useSocialShare';
+import { generateShareableImage, generateFachaFilename } from '../utils/imageGenerator';
 
 interface ShareButtonProps {
   result: FachaResult;
@@ -16,7 +16,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
   const cardRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
   const fontsLoaded = useFontLoader();
-  const { isSharing, shareToInstagram } = useInstagramShare();
+  const { isSharing, shareToInstagram } = useSocialShare();
 
   const isMobile = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
@@ -31,56 +31,47 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
     try {
       console.log('Starting export, fonts loaded:', fontsLoaded);
       
-      // Wait for fonts to load completely
-      if (!fontsLoaded) {
-        console.log('Waiting for fonts to load...');
-        await document.fonts.ready;
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-      
-      // Additional wait to ensure fonts are fully rendered
-      console.log('Waiting additional time for font rendering...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Final font check
-      const montserratReady = document.fonts.check('16px Montserrat');
-      const arizoniaReady = document.fonts.check('16px Arizonia');
-      const orbitronReady = document.fonts.check('16px Orbitron');
-      
-      console.log('Final font check:', {
-        montserrat: montserratReady,
-        arizonia: arizoniaReady,
-        orbitron: orbitronReady
+      // Generate the shareable image using the helper
+      const generatedImage = await generateShareableImage({
+        cardElement: cardRef.current,
+        fontsLoaded,
+        pixelRatio: 2,
+        backgroundColor: '#000000'
       });
-      
-      const dataUrl = await toPng(cardRef.current, {
-        pixelRatio: 2, // Higher pixel ratio for better quality
-        cacheBust: true,
-        backgroundColor: '#000000',
-      });
-      
+
       if (isMobile()) {
-        // Convert data URL to blob for Instagram sharing
-        const response = await fetch(dataUrl);
-        const blob = await response.blob();
-        
-        // Use the modular Instagram share service
+        // Use the social share service for mobile
         const shareResult = await shareToInstagram({
-          imageBlob: blob,
-          fallbackToDownload: true,
-          showUserFeedback: true
+          imageBlob: generatedImage.blob,
+          filename: generatedImage.filename,
+          title: 'OnlyFachas - Mi resultado de facha',
+          text: `¡Mirá mi puntaje de facha! Obtuve ${result.rating.toFixed(1)}/10 - ${getFachaTier(result.rating)}`,
+          url: 'https://onlyfachas.netlify.app/'
         });
         
-        console.log('Instagram share result:', shareResult);
+        console.log('Share result:', shareResult);
+        
+        // Show appropriate message based on result
+        if (shareResult.success) {
+          if (shareResult.method === 'web-share') {
+            // Web Share API handled the sharing
+            console.log('Shared via Web Share API');
+          } else if (shareResult.method === 'deep-link') {
+            // Deep link opened Instagram Stories
+            console.log('Instagram Stories opened via deep link');
+          } else {
+            // Fallback method used
+            console.log('Fallback method used:', shareResult.message);
+          }
+        }
         
       } else {
         // On desktop, download the image
-        const tierText = getFachaTier(result.rating);
-        const filename = `onlyfachas-${result.rating.toFixed(1)}-${tierText.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.png`;
+        const filename = generateFachaFilename(result);
         
         const link = document.createElement('a');
         link.download = filename;
-        link.href = dataUrl;
+        link.href = generatedImage.dataUrl;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
