@@ -1,9 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Página principal - Home -->
   <url>
     <loc>https://onlyfachas.netlify.app/</loc>
     <lastmod>2024-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  
+  <!-- Términos y Condiciones -->
+  <url>
+    <loc>https://onlyfachas.netlify.app/terminos</loc>
+    <lastmod>2024-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Política de Privacidad -->
+  <url>
+    <loc>https://onlyfachas.netlify.app/privacidad</loc>
+    <lastmod>2024-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Sobre Nosotros -->
+  <url>
+    <loc>https://onlyfachas.netlify.app/sobre-nosotros</loc>
+    <lastmod>2024-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Preguntas Frecuentes -->
+  <url>
+    <loc>https://onlyfachas.netlify.app/faq</loc>
+    <lastmod>2024-01-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>

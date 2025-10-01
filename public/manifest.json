@@ -1,0 +1,23 @@
+{
+  "name": "OnlyFachas - Medidor de Facha con IA",
+  "short_name": "OnlyFachas",
+  "description": "La app que mide tu nivel de facha con inteligencia artificial. Medir facha online, test de facha, analizador de facha, que tan facha soy. ¡No es OnlyFans, es OnlyFachas!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0515",
+  "theme_color": "#B900FF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "lifestyle", "utilities"],
+  "lang": "es-AR",
+  "scope": "/",
+  "id": "onlyfachas-app",
+  "keywords": "medir facha online, test de facha, analizador de facha, que tan facha soy, medidor de estilo online, analizador de atractivo con foto, medidor de belleza con IA, facha meter, puntaje de facha, ranking de facha"
+}

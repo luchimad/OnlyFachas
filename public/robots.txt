@@ -1,7 +1,21 @@
 User-agent: *
 Allow: /
 
+# Permitir acceso a recursos estáticos importantes
+Allow: /fonts/
+Allow: /audios/
+Allow: /assets/
+
+# Bloquear archivos innecesarios para SEO
+Disallow: /src/
+Disallow: /node_modules/
+Disallow: /*.json$
+Disallow: /netlify/
+
+# Sitemap principal
 Sitemap: https://onlyfachas.netlify.app/sitemap.xml
 
+# Información del sitio
 # OnlyFachas - Medidor de Facha con IA
 # No es OnlyFans, es OnlyFachas
+# Sitio web: https://onlyfachas.netlify.app/
