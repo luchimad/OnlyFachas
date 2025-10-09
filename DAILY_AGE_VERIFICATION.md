@@ -123,3 +123,7 @@ Día 2 (14:00 PM): Usuario vuelve → No ve cartel (ya confirmado)
 
 
 
+
+
+
+

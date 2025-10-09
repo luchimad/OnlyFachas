@@ -19,17 +19,20 @@ export const selectFachaAudio = (rating: number, lastPlayed: string = ''): strin
   
   // Definir audios disponibles según el rango
   if (rating >= 9) {
-    // Super facha (9-10): 3 variantes super
+    // Super facha (9-10): 4 variantes super
     availableAudios = [
       '/audios/frases/individual/facha_detected_super.mp3',
       '/audios/frases/individual/facha_detected_super2.mp3',
-      '/audios/frases/individual/facha_detected_super3.mp3'
+      '/audios/frases/individual/facha_detected_super3.mp3',
+      '/audios/frases/individual/facha_detected_super4.mp3'
     ];
   } else if (rating >= 7) {
-    // Facha alta (7-8): 2 variantes normales
+    // Facha alta (7-8): 4 variantes normales
     availableAudios = [
       '/audios/frases/individual/facha_detected_1.mp3',
-      '/audios/frases/individual/facha_detected_2.mp3'
+      '/audios/frases/individual/facha_detected_2.mp3',
+      '/audios/frases/individual/facha_detected_3.mp3',
+      '/audios/frases/individual/facha_detected_4.mp3'
     ];
   } else if (rating >= 5) {
     // Facha media (5-6): 2 variantes medias
@@ -58,17 +61,54 @@ export const selectFachaAudio = (rating: number, lastPlayed: string = ''): strin
 };
 
 /**
- * Selecciona un audio de batalla con rotación inteligente
+ * Selecciona un audio de batalla con rotación inteligente basado en el tipo de victoria
+ * @param winner - Ganador de la batalla (1 o 2)
+ * @param score1 - Puntaje del jugador 1
+ * @param score2 - Puntaje del jugador 2
  * @param lastPlayed - Último audio de batalla reproducido
  * @returns Ruta del audio seleccionado
  */
-export const selectBattleAudio = (lastPlayed: string = ''): string => {
-  const availableAudios = [
-    '/audios/frases/facha-vs-facha/1_wins.mp3',
-    '/audios/frases/facha-vs-facha/1_wins_super.mp3',
-    '/audios/frases/facha-vs-facha/2_wins.mp3',
-    '/audios/frases/facha-vs-facha/2_wins_super.mp3'
-  ];
+export const selectBattleAudio = (winner: 1 | 2, score1: number, score2: number, lastPlayed: string = ''): string => {
+  const difference = Math.abs(score1 - score2);
+  let availableAudios: string[] = [];
+  
+  // Determinar el tipo de victoria
+  if (difference === 0) {
+    // Empate: usar audio de empate
+    availableAudios = [
+      '/audios/frases/facha-vs-facha/empate.mp3'
+    ];
+  } else if (difference <= 0.5) {
+    // Victoria cerrada: usar audios de close win
+    availableAudios = [
+      '/audios/frases/facha-vs-facha/close_win.mp3',
+      '/audios/frases/facha-vs-facha/close_win2.mp3'
+    ];
+  } else if (difference >= 3) {
+    // Victoria aplastante: usar audios super
+    if (winner === 1) {
+      availableAudios = [
+        '/audios/frases/facha-vs-facha/1_wins_super.mp3',
+        '/audios/frases/facha-vs-facha/1_wins_super2.mp3'
+      ];
+    } else {
+      availableAudios = [
+        '/audios/frases/facha-vs-facha/2_wins_super.mp3',
+        '/audios/frases/facha-vs-facha/2_wins_super2.mp3'
+      ];
+    }
+  } else {
+    // Victoria normal: usar audios normales
+    if (winner === 1) {
+      availableAudios = [
+        '/audios/frases/facha-vs-facha/1_wins.mp3'
+      ];
+    } else {
+      availableAudios = [
+        '/audios/frases/facha-vs-facha/2_wins.mp3'
+      ];
+    }
+  }
   
   // Filtrar el último audio reproducido
   const filteredAudios = availableAudios.filter(audio => audio !== lastPlayed);

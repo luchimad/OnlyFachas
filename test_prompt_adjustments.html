@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Ajustes en Prompts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #533597;
+            border-radius: 10px;
+            background: #2d1a3a;
+        }
+        .success {
+            background: #10b981;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #f59e0b;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #ef4444;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #3b82f6;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .comparison {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .before, .after {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .before {
+            background: #dc2626;
+            border: 2px solid #ef4444;
+        }
+        .after {
+            background: #059669;
+            border: 2px solid #10b981;
+        }
+        .example {
+            background: #374151;
+            border: 1px solid #6b7280;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .highlight {
+            background: #fbbf24;
+            color: black;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test - Ajustes en Prompts</h1>
+    
+    <div class="test-section">
+        <h2>📋 Cambios Implementados</h2>
+        <div class="success">
+            ✅ <strong>"loquita" → "ay loquitaaaaaa" o "lokitaaaaa"</strong>: Más expresivo y dramático
+        </div>
+        <div class="success">
+            ✅ <strong>"detonar" vs "detonado"</strong>: Clarificación del uso correcto
+        </div>
+        <div class="success">
+            ✅ <strong>Rangos por género</strong>: Identificación de género para adaptar lenguaje
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔥 Cambios en "loquita"</h2>
+        
+        <div class="comparison">
+            <div class="before">
+                <h3>❌ Antes</h3>
+                <div class="example">
+                    "Ayyyy loquitaaa, con esa facha..."
+                </div>
+            </div>
+            <div class="after">
+                <h3>✅ Después</h3>
+                <div class="example">
+                    "Ayyyy <span class="highlight">lokitaaaaa</span>, con esa facha..."
+                </div>
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>Variaciones implementadas:</strong>
+            <ul>
+                <li>"ay loquitaaaaaa" - Más dramático</li>
+                <li>"lokitaaaaa" - Versión más corta pero expresiva</li>
+                <li>Se aplicó en todos los prompts y datos mock</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>💥 Cambios en "detonar" vs "detonado"</h2>
+        
+        <div class="warning">
+            <strong>⚠️ IMPORTANTE:</strong> Clarificación del uso correcto de estas palabras
+        </div>
+
+        <div class="comparison">
+            <div class="before">
+                <h3>❌ Uso Incorrecto</h3>
+                <div class="example">
+                    "Estás <span class="highlight">detonado</span> completamente"<br>
+                    "Te re <span class="highlight">detonaron</span>"<br>
+                    "Su estilo es tan <span class="highlight">detonado</span>"
+                </div>
+                <div class="error">
+                    ❌ "detonado" = estar mal, re mal
+                </div>
+            </div>
+            <div class="after">
+                <h3>✅ Uso Correcto</h3>
+                <div class="example">
+                    "Estás para re <span class="highlight">detonar</span>"<br>
+                    "Vas a <span class="highlight">detonar</span>"<br>
+                    "Su estilo es tan <span class="highlight">detonador</span>"
+                </div>
+                <div class="success">
+                    ✅ "detonar" = levantar/enganchar minusas
+                </div>
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>Reglas implementadas:</strong>
+            <ul>
+                <li><strong>"detonar"</strong> = levantar/enganchar minusas (BUENO)</li>
+                <li><strong>"detonado"</strong> = estar mal, re mal (MALO)</li>
+                <li>Se agregó explicación en todos los prompts</li>
+                <li>Se corrigieron ejemplos en datos mock</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>👥 Rangos por Género</h2>
+        
+        <div class="success">
+            ✅ <strong>Identificación de género:</strong> El modelo ahora identifica si es hombre o mujer para adaptar el lenguaje
+        </div>
+
+        <div class="info">
+            <strong>Mejoras implementadas:</strong>
+            <ul>
+                <li>PASO 1 actualizado: "Primero identifica si es hombre o mujer para adaptar el lenguaje y los rangos de facha"</li>
+                <li>Comentarios adaptados según el género identificado</li>
+                <li>Rangos de facha ajustados según el género</li>
+                <li>Lenguaje más preciso y apropiado</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Archivos Modificados</h2>
+        <div class="info">
+            <strong>Archivos actualizados:</strong>
+            <ul>
+                <li><code>services/geminiService.ts</code> - Todos los prompts actualizados</li>
+                <li><code>src/constants/mockData.ts</code> - Datos mock corregidos</li>
+            </ul>
+        </div>
+
+        <div class="info">
+            <strong>Prompts actualizados:</strong>
+            <ul>
+                <li>Prompt principal de análisis de facha</li>
+                <li>Prompt de batalla facha vs facha</li>
+                <li>Prompt de mejora de facha</li>
+                <li>Datos mock de comentarios</li>
+                <li>Datos mock de explicaciones del ganador</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Instrucciones de Prueba</h2>
+        <ol>
+            <li><strong>Prueba análisis individual:</strong>
+                <ul>
+                    <li>Sube una foto de hombre y verifica el lenguaje</li>
+                    <li>Sube una foto de mujer y verifica el lenguaje</li>
+                    <li>Confirma que usa "lokitaaaaa" en lugar de "loquita"</li>
+                    <li>Verifica que usa "detonar" correctamente</li>
+                </ul>
+            </li>
+            <li><strong>Prueba modo batalla:</strong>
+                <ul>
+                    <li>Haz una batalla facha vs facha</li>
+                    <li>Verifica que el comentario sea más picante</li>
+                    <li>Confirma que las explicaciones usen "detonador" en lugar de "detonado"</li>
+                </ul>
+            </li>
+            <li><strong>Prueba modo mejora:</strong>
+                <ul>
+                    <li>Usa el modo de mejora de facha</li>
+                    <li>Verifica que el prompt incluya las nuevas reglas</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Ejemplos de Cambios</h2>
+        
+        <h3>Comentarios Altos (8-10):</h3>
+        <div class="comparison">
+            <div class="before">
+                <h4>❌ Antes</h4>
+                <div class="example">
+                    "Ayyyy loquitaaa, con esa facha..."<br>
+                    "Estás detonado completamente"
+                </div>
+            </div>
+            <div class="after">
+                <h4>✅ Después</h4>
+                <div class="example">
+                    "Ayyyy lokitaaaaa, con esa facha..."<br>
+                    "Estás para re detonar"
+                </div>
+            </div>
+        </div>
+
+        <h3>Explicaciones del Ganador:</h3>
+        <div class="comparison">
+            <div class="before">
+                <h4>❌ Antes</h4>
+                <div class="example">
+                    "Su estilo es tan detonado que..."
+                </div>
+            </div>
+            <div class="after">
+                <h4>✅ Después</h4>
+                <div class="example">
+                    "Su estilo es tan detonador que..."
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🧪 Test de ajustes en prompts cargado');
+        console.log('📋 Verifica que "loquita" se cambió por "lokitaaaaa"');
+        console.log('📋 Verifica que "detonar" se usa correctamente');
+        console.log('📋 Verifica que "detonado" se evitó');
+    </script>
+</body>
+</html>
+
+
+

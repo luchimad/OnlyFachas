@@ -24,8 +24,8 @@ export const MOCK_COMMENTS_MEDIUM = [
 
 export const MOCK_COMMENTS_HIGH = [
   "Uff, ¿sos real o te escapaste de un póster? Con esa facha estás para romper corazones en serie y coleccionar DNI en la mesita de luz.",
-  "Fa, mi loco, con esa cara de atrevido hasta tu ex te vuelve a escribir y las minitas se pelean por vos. Estás detonado completamente.",
-  "Ayyyy loquitaaa, con esa facha de modelo sos la razón por la que se inventaron los emojis de fueguito. Deberías pagar impuesto por caminar así.",
+  "Fa, mi loco, con esa cara de atrevido hasta tu ex te vuelve a escribir y las minitas se pelean por vos. Estás para re detonar.",
+  "Ayyyy lokitaaaaa, con esa facha de modelo sos la razón por la que se inventaron los emojis de fueguito. Deberías pagar impuesto por caminar así.",
   "Nivel de facha: ilegal. Con esa cara de galán las minitas se vuelven locas y vos sabés que estás para detonar corazones en serie.",
   "Che, con esa percha y esa cara de atrevido estás para descorchar suspiros y dejar un tendal de corazones rotos por donde pases.",
   "Uff, ¿sos real o te caíste de una revista, campeón? Con esa facha estás para hacer desastres entre las minitas sin mover un dedo."
@@ -143,6 +143,37 @@ export const generateMockFachaResult = (): any => {
 export const generateMockBattleComment = (winner: number): string => {
   const comment = MOCK_BATTLE_COMMENTS[Math.floor(Math.random() * MOCK_BATTLE_COMMENTS.length)];
   return comment.replace('{winner}', winner.toString());
+};
+
+// Explicaciones de por qué el ganador detona más
+export const MOCK_WINNER_EXPLANATIONS = [
+  "Tiene esa actitud de galán que hace que las minitas se vuelvan locas y se peleen por su atención sin que tenga que hacer mucho esfuerzo.",
+  "Su estilo es tan detonador que hasta los tipos le piden consejos de moda y las pibas se derriten cuando pasa por la calle.",
+  "Tiene esa confianza que mata y esa mirada que hace que cualquiera se enamore al instante, es un imán natural para las mujeres.",
+  "Su presencia es tan fuerte que cuando entra a un lugar todos se dan vuelta y las minitas se vuelven locas por él/ella sin conocerlo.",
+  "Combiná la ropa con una facilidad que da envidia, cada cosa que se pone le queda pintada y parece que nació para lucirla.",
+  "Tiene esa chispa especial que pocos tienen, esa combinación perfecta de buen físico, estilo impecable y actitud que es irresistible.",
+  "Su sonrisa es dinamita pura, tiene el poder de poner nerviosa a cualquier mina con solo sostenerle la vista un par de segundos.",
+  "Se nota que nació con el don de la facha, cada cosa que se pone le queda perfecta y tiene esa aura que es imposible de ignorar.",
+  "Tiene esa vibra de tipo que sabe lo que vale y eso es lo que más atrae a las mujeres, es confianza pura sin arrogancia.",
+  "Su actitud es su mejor arma, no es arrogancia, es la seguridad de alguien que sabe lo que vale y eso es un imán tremendo.",
+  "Tiene esa combinación perfecta de buen físico, estilo impecable y actitud que hace que las minitas se vuelvan locas sin esfuerzo.",
+  "Su presencia es imposible de ignorar, tiene esa aura de tipo que sabe lo que vale y eso es lo que más atrae a las mujeres."
+];
+
+// Función para generar explicación del ganador mock
+export const generateMockWinnerExplanation = (winner: number): string[] => {
+  const explanations = [...MOCK_WINNER_EXPLANATIONS];
+  const selected = [];
+  
+  // Seleccionar 4 explicaciones únicas
+  for (let i = 0; i < 4; i++) {
+    const randomIndex = Math.floor(Math.random() * explanations.length);
+    selected.push(explanations[randomIndex]);
+    explanations.splice(randomIndex, 1); // Remover para evitar duplicados
+  }
+  
+  return selected;
 };
 
 // Mantener compatibilidad con el código existente

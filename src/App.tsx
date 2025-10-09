@@ -327,7 +327,8 @@ const App: React.FC = () => {
         setError(null);
         const { base64, mimeType } = await fileToBase64(file);
         const newImageData = { base64, mimeType };
-        const newImageSrc = URL.createObjectURL(file);
+        // Usar data URL en lugar de URL.createObjectURL para evitar problemas de CORS en exportación
+        const newImageSrc = `data:${mimeType};base64,${base64}`;
 
         // Simular delay de carga
         setTimeout(() => {
@@ -647,8 +648,8 @@ const App: React.FC = () => {
   };
 
   // Función para reproducir audio de batalla con rotación
-  const playBattleAudio = (_winner: 1 | 2, _score1: number, _score2: number) => {
-    const audioFile = selectBattleAudio(lastPlayedBattleAudio);
+  const playBattleAudio = (winner: 1 | 2, score1: number, score2: number) => {
+    const audioFile = selectBattleAudio(winner, score1, score2, lastPlayedBattleAudio);
     setLastPlayedBattleAudio(audioFile);
     playEffect(audioFile);
   };
@@ -1181,6 +1182,33 @@ const App: React.FC = () => {
                 </div>
             </div>
         </div>
+
+        {/* Winner Explanation */}
+        {battleResult.winnerExplanation && battleResult.winnerExplanation.length > 0 && (
+            <div className="w-full max-w-4xl mb-8">
+                <div className="bg-gradient-to-r from-yellow-800/60 to-orange-800/60 border-2 border-yellow-500/50 rounded-2xl p-6 backdrop-blur-sm">
+                    <div className="text-4xl mb-4">🔥</div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-yellow-300 mb-6">
+                        ¿Por qué la Persona {battleResult.winner} detona más?
+                    </h3>
+                    <div className="space-y-4">
+                        {battleResult.winnerExplanation.map((explanation, index) => (
+                            <div key={index} className="flex items-start gap-3">
+                                <div className="flex-shrink-0 w-8 h-8 bg-yellow-400 text-black rounded-full flex items-center justify-center font-bold text-sm">
+                                    {index + 1}
+                                </div>
+                                <p className="text-lg text-yellow-200 leading-relaxed">
+                                    {explanation}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="text-yellow-400/60 text-sm mt-4">
+                      - Análisis detallado de la IA sobre por qué ganó
+                    </div>
+                </div>
+            </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mt-8">

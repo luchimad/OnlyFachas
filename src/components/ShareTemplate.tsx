@@ -54,8 +54,13 @@ const ShareTemplate: React.FC<ShareTemplateProps> = ({
           <img 
             src={imageSrc} 
             alt="Foto del usuario" 
-            className="w-full h-full object-cover rounded-xl"
+            className="w-full h-full object-contain rounded-xl"
             crossOrigin="anonymous"
+            onError={(e) => {
+              // Fallback si hay problemas de CORS
+              const target = e.target as HTMLImageElement;
+              target.removeAttribute('crossorigin');
+            }}
           />
         </div>
       </div>

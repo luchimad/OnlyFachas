@@ -1,6 +1,6 @@
 ﻿import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FachaResult, FachaBattleResult, FachaEnhanceResult, AiMode } from '../types';
-import { generateMockFachaResult, generateMockBattleComment } from '../src/constants/mockData';
+import { generateMockFachaResult, generateMockBattleComment, generateMockWinnerExplanation } from '../src/constants/mockData';
 
 // Funciones para trackear Analytics (se inyectan desde el hook)
 let trackApiUsage: ((isMock: boolean, apiType: 'facha' | 'battle' | 'enhance', score?: number) => void) | null = null;
@@ -111,13 +111,18 @@ export const getFachaScore = async (base64Image: string, mimeType: string, model
     // InstrucciÃ³n especial optimista para Gemini 2.5
     const prompt = `Tu tarea es analizar la 'facha' (estilo, apariencia, actitud) de la persona en la imagen y darle un puntaje del 1 al 10. 
 
-PASO 1: Primero identifica si es hombre o mujer para adaptar el lenguaje.
+PASO 1: Primero identifica si es hombre o mujer para adaptar el lenguaje y los rangos de facha. IMPORTANTE: Puedes usar "lokitaaa" para ambos géneros, pero adapta otros términos según el género (para mujeres: "reina", "diosa", "piba", etc. Para hombres: "papi", "rey", "crack", etc.).
 
 PASO 2: SÃ© optimista y generoso con las notas, pero no regales. Busca lo positivo en cada persona. Si alguien tiene buena actitud, estilo interesante, o algo que lo destaque, dale una nota alta (7.0-9.9). Solo da notas bajas (1.0-4.9) si realmente hay problemas serios de presentaciÃ³n. La mayorÃ­a de personas deberÃ­an estar entre 6.0-8.9.
 
 IMPORTANTE: Usa nÃºmeros especÃ­ficos con decimales (ej: 7.1, 7.3, 7.7, 8.2, 8.6, etc.) en lugar de nÃºmeros redondos (7.0, 7.5, 8.0). Esto hace que los puntajes sean mÃ¡s Ãºnicos y precisos.
 
-PASO 3: Para el comentario, usa jerga argentina y sÃ© MUY picante y subido de tono. InspÃ­rate en estos ejemplos segÃºn el puntaje:
+PASO 3: Para el comentario, usa jerga argentina y sÃ© MUY picante y subido de tono. IMPORTANTE sobre el uso de palabras:
+- "detonar" = levantar/enganchar minusas (BUENO: "estÃ¡s para re detonar", "vas a detonar")
+- "detonado" = estar mal, re mal (MALO: "estÃ¡s re detonado", "te re detonaron")
+- "loquita" = "ay loquitaaaaaa" o "lokitaaaaa" (mÃ¡s expresivo)
+
+InspÃ­rate en estos ejemplos segÃºn el puntaje:
 
 FACHAS BAJAS (1-4):
 - "Che, con esa facha de velorio no levantÃ¡s ni la tapa del inodoro, papÃ¡. Hay que empezar de cero y con ganas de detonar."
@@ -132,8 +137,8 @@ FACHAS PROMEDIO (5-7):
 
 FACHAS ALTAS (8-10):
 - "Uff, Â¿sos real o te escapaste de un pÃ³ster? Con esa facha estÃ¡s para romper corazones en serie y coleccionar DNI en la mesita de luz."
-- "Fa, mi loco, con esa cara de atrevido hasta tu ex te vuelve a escribir y las minitas se pelean por vos. EstÃ¡s detonado completamente."
-- "Ayyyy loquitaaa, con esa facha de modelo sos la razÃ³n por la que se inventaron los emojis de fueguito. DeberÃ­as pagar impuesto por caminar asÃ­."
+- "Fa, mi loco, con esa cara de atrevido hasta tu ex te vuelve a escribir y las minitas se pelean por vos. EstÃ¡s para re detonar."
+- "Ayyyy lokitaaaaa, con esa facha de modelo sos la razÃ³n por la que se inventaron los emojis de fueguito. DeberÃ­as pagar impuesto por caminar asÃ­."
 - "Nivel de facha: ilegal. Con esa cara de galÃ¡n las minitas se vuelven locas y vos sabÃ©s que estÃ¡s para detonar corazones en serie."
 
 PASO 4: Para fortalezas y consejos, cada uno debe tener MÃNIMO 15 palabras y ser bien bardero:
@@ -270,15 +275,17 @@ export const getFachaBattleResult = async (
             }
         });
 
-        const prompt = `Genera un comentario MUY picante y subido de tono en lunfardo argentino sobre esta batalla de facha. Persona 1 sacÃ³ ${result1.rating.toFixed(1)} y Persona 2 sacÃ³ ${result2.rating.toFixed(1)}. El ganador es la Persona ${winner}.
+        const prompt = `Genera un comentario MUY picante y bardero en lunfardo argentino sobre esta batalla de facha. Persona 1 sacÃ³ ${result1.rating.toFixed(1)} y Persona 2 sacÃ³ ${result2.rating.toFixed(1)}. El ganador es la Persona ${winner}.
 
 IMPORTANTE: 
 - Primero identifica el gÃ©nero de ambas personas para adaptar el lenguaje
-- SÃ© MUY bardero y subido de tono, pero AMISTOSO, no hiriente
-- Usa jerga argentina picante (detonar, papi, minusas, papÃ¡, loquita, levantar, etc.)
+- SÃ© MUY bardero, picante y subido de tono, pero AMISTOSO, no hiriente
+- Usa jerga argentina picante (detonar, papi, minusas, papÃ¡, ay lokitaaa, levantar, etc.)
+- IMPORTANTE: "detonar" = levantar/enganchar minusas (BUENO), "detonado" = estar mal (MALO)
+- Puedes usar "lokitaaa" para ambos gÃ©neros, pero adapta otros tÃ©rminos segÃºn corresponda
 - Haz que el perdedor se rÃ­a, no que se sienta mal
-- MantÃ©n el tono de joda entre amigos pero con mÃ¡s actitud
-- MÃ¡ximo 2-3 oraciones pero bien picantes
+- MantÃ©n el tono de joda entre amigos pero con MÃS actitud y picante
+- MÃ¡ximo 2-3 oraciones pero bien picantes y barderas
 - InspÃ­rate en estos estilos segÃºn la diferencia de puntaje:
 
 DIFERENCIA GRANDE (3+ puntos):
@@ -291,13 +298,18 @@ DIFERENCIA MEDIA (1-2 puntos):
 - "Estuvo reÃ±ido hasta el final y la cosa estuvo caliente, pero la Persona ${winner} se llevÃ³ la victoria por un pelo. No aflojes que estÃ¡s cerca de detonar."
 - "ReÃ±ido hasta el final y bien picante, pero la Persona ${winner} te sacÃ³ ventaja por poquito. SeguÃ­ asÃ­ que vas bien y casi la rompÃ©s."
 
-DIFERENCIA PEQUEÃ‘A (0.5 puntos):
+DIFERENCIA PEQUEÃ'A (0.5 puntos):
 - "Uff, quÃ© batalla Ã©pica! La Persona ${winner} te ganÃ³ por poquito pero estuvo re picante la cosa. Estuviste a la altura y casi la rompÃ©s, crack."
 - "Re parejo todo y bien caliente, pero la Persona ${winner} se llevÃ³ el triunfo por detalles mÃ­nimos. Bien jugado y seguÃ­ asÃ­ que vas a detonar."
 - "Casi empate total y estuvo reÃ±ido hasta el final, pero la Persona ${winner} se impuso por un pelo. La prÃ³xima seguro la ganÃ¡s y levantÃ¡s en serio."
 
 Responde en formato JSON con:
-- comment: comentario MUY picante y subido de tono pero amistoso sobre quiÃ©n ganÃ³ la batalla`;
+- comment: comentario MUY picante y bardero pero amistoso sobre quiÃ©n ganÃ³ la batalla
+- winnerExplanation: array de exactamente 4 frases explicando por quÃ© la Persona ${winner} detona mÃ¡s que la otra. Cada frase debe ser picante, bardera y explicar una razÃ³n diferente (estilo, actitud, presencia, etc.). Usa jerga argentina y sÃ© creativo. Ejemplos de estilo:
+  * "La Persona ${winner} tiene esa actitud de galÃ¡n que hace que las minitas se vuelvan locas y se peleen por su atenciÃ³n."
+  * "Su estilo es tan detonador que hasta los tipos le piden consejos de moda y las pibas se derriten cuando pasa."
+  * "Tiene esa confianza que mata y esa mirada que hace que cualquiera se enamore al instante."
+  * "Su presencia es tan fuerte que cuando entra a un lugar todos se dan vuelta y las minitas se vuelven locas por Ã©l/ella."`;
 
         const result = await model.generateContent([prompt]);
         const response = await result.response;
@@ -308,7 +320,7 @@ Responde en formato JSON con:
         }
         
         const cleanedText = cleanJsonResponse(text);
-        const commentResult = JSON.parse(cleanedText) as { comment: string };
+        const commentResult = JSON.parse(cleanedText) as { comment: string; winnerExplanation: string[] };
 
         // Step 5: Assemble the final battle result object
         const finalResult: FachaBattleResult = {
@@ -316,6 +328,7 @@ Responde en formato JSON con:
             comment: commentResult.comment,
             score1: result1.rating,
             score2: result2.rating,
+            winnerExplanation: commentResult.winnerExplanation || [],
         };
 
         console.log(`✅ [GEMINI API] Batalla completada exitosamente - Ganador: ${winner} - Comentario: "${commentResult.comment.substring(0, 50)}..."`);
@@ -384,7 +397,7 @@ export const getEnhancedFacha = async (base64Image: string, mimeType: string): P
             }
         });
 
-        const prompt = `Tu tarea es editar la imagen proporcionada para mejorar la 'facha' de la persona, convirtiÃ©ndola en una versiÃ³n 'gigachad'. Realiza ediciones estÃ©ticas excesivas como definir muchisimo la mandÃ­bula, mejorar el pelo, y dar una expresiÃ³n mÃ¡s confiada, pero manteniendo ligeramente el parecido con la persona original. Tu respuesta DEBE contener DOS partes: 1. La IMAGEN EDITADA. 2. Un TEXTO con un comentario corto, picante, bien pero bien subido de tono y en jerga argentina sobre la transformaciÃ³n. Usa palabras como: Detonar, Papi, Minusas, etc. Ejemplo de comentario, no uses el mismo, solo una idea: "MirÃ¡ lo que sos ahora, papÃ¡. Dejaste de ser un simple mortal para convertirte en el especimen que todas las minitas quieren detonar. EstÃ¡s para romper corazones y lo sabÃ©s. AndÃ¡ y detonala toda."`;
+        const prompt = `Tu tarea es editar la imagen proporcionada para mejorar la 'facha' de la persona, convirtiÃ©ndola en una versiÃ³n 'gigachad'. Realiza ediciones estÃ©ticas excesivas como definir muchisimo la mandÃ­bula, mejorar el pelo, y dar una expresiÃ³n mÃ¡s confiada, pero manteniendo ligeramente el parecido con la persona original. Tu respuesta DEBE contener DOS partes: 1. La IMAGEN EDITADA. 2. Un TEXTO con un comentario corto, picante, bien pero bien subido de tono y en jerga argentina sobre la transformaciÃ³n. IMPORTANTE: "detonar" = levantar/enganchar minusas (BUENO), "detonado" = estar mal (MALO). Usa palabras como: Detonar, Papi, Minusas, ay loquitaaaaaa/lokitaaaaa, etc. Ejemplo de comentario, no uses el mismo, solo una idea: "MirÃ¡ lo que sos ahora, papÃ¡. Dejaste de ser un simple mortal para convertirte en el especimen que todas las minitas quieren detonar. EstÃ¡s para romper corazones y lo sabÃ©s. AndÃ¡ y detonala toda."`;
 
         const result = await model.generateContent([
             prompt,
@@ -457,12 +470,14 @@ const getMockBattleResult = (): FachaBattleResult => {
     const winner = score1 > score2 ? 1 : 2;
     
     const comment = generateMockBattleComment(winner);
+    const winnerExplanation = generateMockWinnerExplanation(winner);
     
     return {
         winner,
         comment,
         score1: Math.round(score1 * 10) / 10,
-        score2: Math.round(score2 * 10) / 10
+        score2: Math.round(score2 * 10) / 10,
+        winnerExplanation
     };
 };
 

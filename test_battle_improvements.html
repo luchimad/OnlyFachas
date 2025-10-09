@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Mejoras en Facha vs Facha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #533597;
+            border-radius: 10px;
+            background: #2d1a3a;
+        }
+        .success {
+            background: #10b981;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #3b82f6;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #f59e0b;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .image-comparison {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .image-container {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #533597;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #15132b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
+        }
+        .old-height {
+            height: 256px; /* h-64 */
+        }
+        .new-height {
+            height: 192px; /* h-48 */
+        }
+        .object-contain {
+            object-fit: contain;
+        }
+        .object-cover {
+            object-fit: cover;
+        }
+        .battle-example {
+            background: #2d1a3a;
+            border: 2px solid #533597;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .winner-section {
+            background: linear-gradient(to right, #92400e80, #c2410c80);
+            border: 2px solid #f59e0b80;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .explanation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .explanation-number {
+            width: 32px;
+            height: 32px;
+            background: #f59e0b;
+            color: black;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test - Mejoras en Facha vs Facha</h1>
+    
+    <div class="test-section">
+        <h2>📋 Cambios Implementados</h2>
+        <div class="success">
+            ✅ <strong>Altura de imágenes reducida:</strong> De h-64 (256px) a h-48 (192px) para evitar que se apriete el texto
+        </div>
+        <div class="success">
+            ✅ <strong>Prompt más picante:</strong> Comentarios más barderos y subidos de tono en el modo facha vs facha
+        </div>
+        <div class="success">
+            ✅ <strong>Nueva sección explicativa:</strong> "¿Por qué la Persona X detona más?" con 4 frases detalladas
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🖼️ Comparación de Altura de Imágenes</h2>
+        
+        <h3>Antes (h-64 - 256px):</h3>
+        <div class="image-container old-height">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzNzNkYyIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2VuIDMgOjIgKGFzcGVjdG8pPC90ZXh0Pgo8L3N2Zz4K" alt="Imagen 3:2" class="object-contain">
+        </div>
+        <div class="warning">
+            ⚠️ Más alta, puede apretar el texto en la tarjeta de exportación
+        </div>
+
+        <h3>Después (h-48 - 192px):</h3>
+        <div class="image-container new-height">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzNzNkYyIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2VuIDMgOjIgKGFzcGVjdG8pPC90ZXh0Pgo8L3N2Zz4K" alt="Imagen 3:2" class="object-contain">
+        </div>
+        <div class="success">
+            ✅ Más compacta, deja más espacio para el texto sin comprometer la proporción
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔥 Nuevo Modo Facha vs Facha Mejorado</h2>
+        
+        <div class="battle-example">
+            <h3>💬 Comentario Más Picante y Bardero:</h3>
+            <p style="font-style: italic; color: #60a5fa; font-size: 18px;">
+                "Papi, la Persona 1 te pasó por arriba como un tren y te dejó en el molde. Pero tranqui, que con esa sonrisa seguro que levantás igual y las minitas se vuelven locas por vos."
+            </p>
+            <div class="info">
+                <strong>Cambios:</strong> Más bardero, más picante, más actitud, pero manteniendo el tono amistoso
+            </div>
+        </div>
+
+        <div class="winner-section">
+            <h3>🔥 ¿Por qué la Persona 1 detona más?</h3>
+            <div class="explanation-item">
+                <div class="explanation-number">1</div>
+                <p>Tiene esa actitud de galán que hace que las minitas se vuelvan locas y se peleen por su atención sin que tenga que hacer mucho esfuerzo.</p>
+            </div>
+            <div class="explanation-item">
+                <div class="explanation-number">2</div>
+                <p>Su estilo es tan detonado que hasta los tipos le piden consejos de moda y las pibas se derriten cuando pasa por la calle.</p>
+            </div>
+            <div class="explanation-item">
+                <div class="explanation-number">3</div>
+                <p>Tiene esa confianza que mata y esa mirada que hace que cualquiera se enamore al instante, es un imán natural para las mujeres.</p>
+            </div>
+            <div class="explanation-item">
+                <div class="explanation-number">4</div>
+                <p>Su presencia es tan fuerte que cuando entra a un lugar todos se dan vuelta y las minitas se vuelven locas por él/ella sin conocerlo.</p>
+            </div>
+            <div class="info">
+                <strong>Nueva funcionalidad:</strong> 4 frases explicativas detalladas sobre por qué el ganador es superior
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Instrucciones de Prueba</h2>
+        <ol>
+            <li><strong>Prueba la altura de imágenes:</strong>
+                <ul>
+                    <li>Haz una foto o importa una imagen</li>
+                    <li>Verifica que la imagen se vea bien proporcionada en la tarjeta de exportación</li>
+                    <li>Confirma que el texto no se apriete</li>
+                </ul>
+            </li>
+            <li><strong>Prueba el modo facha vs facha:</strong>
+                <ul>
+                    <li>Ve al modo "Facha vs Facha"</li>
+                    <li>Sube dos imágenes diferentes</li>
+                    <li>Verifica que el comentario sea más picante y bardero</li>
+                    <li>Confirma que aparezca la nueva sección "¿Por qué la Persona X detona más?"</li>
+                    <li>Verifica que tenga exactamente 4 frases explicativas</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Notas Técnicas</h2>
+        <div class="info">
+            <strong>Archivos modificados:</strong>
+            <ul>
+                <li><code>src/components/ShareCard.tsx</code>: Altura reducida de h-64 a h-48</li>
+                <li><code>types.ts</code>: Agregado campo <code>winnerExplanation: string[]</code></li>
+                <li><code>services/geminiService.ts</code>: Prompt más picante y nueva funcionalidad</li>
+                <li><code>src/constants/mockData.ts</code>: Datos mock para la nueva funcionalidad</li>
+                <li><code>src/App.tsx</code>: Nueva sección en la UI de resultados de batalla</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        console.log('🧪 Test de mejoras en facha vs facha cargado');
+        console.log('📋 Verifica que las imágenes tengan mejor proporción');
+        console.log('📋 Verifica que el modo batalla sea más picante y tenga explicaciones');
+    </script>
+</body>
+</html>
+
+
+

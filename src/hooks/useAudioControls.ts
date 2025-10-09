@@ -20,13 +20,19 @@ interface AudioControls {
  * - Efectos de voz: control independiente con volumen ajustable
  */
 export const useAudioControls = (): AudioControls => {
-  // Estados para música de fondo
-  const [musicEnabled, setMusicEnabled] = useState<boolean>(false);
-  const [musicVolume, setMusicVolume] = useState<number>(0.3);
-  const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement | null>(null);
+  // Lista de todas las canciones disponibles
+  const musicTracks = [
+    '/audios/musica/Deep_Close.mp3',
+    '/audios/musica/Outerlens.mp3',
+    '/audios/musica/Countach - Karl Casey.mp3',
+    '/audios/musica/Miami Sky - Karl Casey.mp3'
+  ];
+
+  // Estado para la canción actual
+  const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
   
   // Estados para efectos de voz
-  const [effectsEnabled, setEffectsEnabled] = useState<boolean>(false);
+  const [effectsEnabled, setEffectsEnabled] = useState<boolean>(true);
   const [effectsVolume, setEffectsVolume] = useState<number>(0.7);
   
   // Referencias para efectos de audio
@@ -73,10 +79,28 @@ export const useAudioControls = (): AudioControls => {
   // Manejo de música de fondo
   useEffect(() => {
     if (musicEnabled && !backgroundMusic) {
-      const music = new Audio('/audios/musica/Deep_Close.mp3');
-      music.loop = true;
+      // Seleccionar canción aleatoria inicial
+      const randomIndex = Math.floor(Math.random() * musicTracks.length);
+      setCurrentTrackIndex(randomIndex);
+      
+      const music = new Audio(musicTracks[randomIndex]);
+      music.loop = false; // No loop, queremos cambiar de canción
       music.volume = musicVolume;
       music.preload = 'auto';
+      
+      // Función para cambiar a la siguiente canción
+      const playNextTrack = () => {
+        const nextIndex = Math.floor(Math.random() * musicTracks.length);
+        setCurrentTrackIndex(nextIndex);
+        music.src = musicTracks[nextIndex];
+        music.currentTime = 0;
+        music.play().catch(error => {
+          console.warn('Error al reproducir siguiente canción:', error);
+        });
+      };
+      
+      // Event listener para cuando termine la canción
+      music.addEventListener('ended', playNextTrack);
       
       music.play().then(() => {
         // Música de fondo iniciada

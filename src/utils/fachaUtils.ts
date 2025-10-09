@@ -15,7 +15,7 @@ export const getFachaTier = (s: number): string => {
     average: ["Estás en el promedio", "Metele un poco más de onda", "Zafás, pero hasta ahí"],
     approved: ["Aprobado, pero con lo justo", "Tenés tu mística", "Vas por buen camino"],
     good: ["Tenés tu onda, se nota", "Fachero, la verdad", "Titular indiscutido"],
-    god: ["Fachero Nivel Dios", "Nivel Leyenda", "Estás detonado mal"],
+    god: ["Fachero Nivel Dios", "Nivel Leyenda", "Estás para re detonar"],
     legend: ["Rompiste el Fachómetro", "La reencarnación de la facha", "El verdadero King"]
   };
 

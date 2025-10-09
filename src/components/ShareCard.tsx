@@ -36,9 +36,19 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ image, score, ra
          </h1>
       </header>
       
-      <div className="w-56 h-64 bg-[#15132b] rounded-2xl border border-[#533597] shadow-[0_0_20px_#533597] p-2 flex items-center justify-center relative z-10">
+      <div className="w-56 h-48 bg-[#15132b] rounded-2xl border border-[#533597] shadow-[0_0_20px_#533597] p-2 flex items-center justify-center relative z-10">
         {image ? (
-          <img src={image} alt="User upload" className="w-full h-full object-cover rounded-xl" />
+          <img 
+            src={image} 
+            alt="User upload" 
+            className="w-full h-full object-contain rounded-xl" 
+            crossOrigin="anonymous"
+            onError={(e) => {
+              // Fallback si hay problemas de CORS
+              const target = e.target as HTMLImageElement;
+              target.removeAttribute('crossorigin');
+            }}
+          />
         ) : (
           <div className="text-center text-purple-300/70 flex flex-col items-center gap-2">
             <span className="text-sm">Sin imagen</span>

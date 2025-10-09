@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Exportación de Imágenes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #533597;
+            border-radius: 10px;
+            background: #2d1a3a;
+        }
+        .image-container {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #533597;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+            background: #15132b;
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
+        }
+        .object-cover {
+            object-fit: cover;
+        }
+        .object-contain {
+            object-fit: contain;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #10b981;
+            color: white;
+        }
+        .error {
+            background: #ef4444;
+            color: white;
+        }
+        .info {
+            background: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test de Exportación de Imágenes</h1>
+    
+    <div class="test-section">
+        <h2>📋 Cambios Implementados</h2>
+        <ul>
+            <li>✅ Cambiado <code>object-cover</code> a <code>object-contain</code> en ShareCard</li>
+            <li>✅ Cambiado <code>object-cover</code> a <code>object-contain</code> en ShareTemplate</li>
+            <li>✅ Agregado <code>crossOrigin="anonymous"</code> para evitar problemas de CORS</li>
+            <li>✅ Cambiado <code>URL.createObjectURL()</code> por data URLs en imágenes importadas</li>
+            <li>✅ Agregado manejo de errores con fallback para crossOrigin</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>🖼️ Comparación de Comportamiento</h2>
+        
+        <h3>Antes (object-cover):</h3>
+        <div class="image-container">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzNzNkYyIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2VuIDMgOjIgKGFzcGVjdG8pPC90ZXh0Pgo8L3N2Zz4K" alt="Imagen 3:2" class="object-cover">
+        </div>
+        <div class="test-result error">
+            ❌ Recorta la imagen para llenar el contenedor cuadrado
+        </div>
+
+        <h3>Después (object-contain):</h3>
+        <div class="image-container">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzMzNzNkYyIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2VuIDMgOjIgKGFzcGVjdG8pPC90ZXh0Pgo8L3N2Zz4K" alt="Imagen 3:2" class="object-contain">
+        </div>
+        <div class="test-result success">
+            ✅ Muestra la imagen completa sin recortar
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Instrucciones de Prueba</h2>
+        <ol>
+            <li><strong>Prueba con imagen de webcam:</strong>
+                <ul>
+                    <li>Usa la cámara para tomar una foto</li>
+                    <li>Verifica que la exportación funcione correctamente</li>
+                </ul>
+            </li>
+            <li><strong>Prueba con imagen importada:</strong>
+                <ul>
+                    <li>Importa una imagen desde tu dispositivo</li>
+                    <li>Verifica que NO se recorte a 1:1</li>
+                    <li>Verifica que la exportación funcione correctamente</li>
+                </ul>
+            </li>
+            <li><strong>Prueba con diferentes aspectos:</strong>
+                <ul>
+                    <li>Imagen horizontal (16:9)</li>
+                    <li>Imagen vertical (9:16)</li>
+                    <li>Imagen cuadrada (1:1)</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Notas Técnicas</h2>
+        <div class="test-result info">
+            <strong>Cambios principales:</strong>
+            <ul>
+                <li><code>object-cover</code> → <code>object-contain</code>: Evita el recorte automático</li>
+                <li><code>URL.createObjectURL()</code> → <code>data:image/...;base64,...</code>: Evita problemas de CORS</li>
+                <li>Agregado <code>crossOrigin="anonymous"</code>: Mejora compatibilidad con html-to-image</li>
+                <li>Manejo de errores: Fallback automático si hay problemas de CORS</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        console.log('🧪 Test de exportación de imágenes cargado');
+        console.log('📋 Verifica que las imágenes importadas ya no se recorten a 1:1');
+        console.log('📋 Verifica que la exportación funcione con ambos tipos de imagen');
+    </script>
+</body>
+</html>
+
+
+

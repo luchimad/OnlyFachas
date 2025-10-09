@@ -12,6 +12,7 @@ export interface FachaBattleResult {
   comment: string;
   score1: number;
   score2: number;
+  winnerExplanation: string[];
 }
 
 export interface FachaEnhanceResult {
