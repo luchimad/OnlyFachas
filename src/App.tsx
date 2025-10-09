@@ -203,8 +203,8 @@ const App: React.FC = () => {
             const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
             const cleanedData = parsedData.filter(entry => entry.timestamp > thirtyDaysAgo);
             
-            // Limitar a 50 entradas máximo
-            const limitedData = cleanedData.slice(0, 50);
+            // Limitar a 5 entradas máximo (top 5)
+            const limitedData = cleanedData.slice(0, 5);
             
             setLeaderboard(limitedData);
             
@@ -452,9 +452,27 @@ const App: React.FC = () => {
           ...fachaResult
       };
 
-      const updatedLeaderboard = [...leaderboard, newEntry]
-          .sort((a, b) => b.rating - a.rating)
-          .slice(0, 50); // Limitar a 50 entradas máximo
+      // Verificar si el nuevo puntaje merece estar en el top 5
+      let updatedLeaderboard = [...leaderboard];
+      
+      if (leaderboard.length < 5) {
+        // Si hay menos de 5 entradas, agregar directamente
+        updatedLeaderboard.push(newEntry);
+      } else {
+        // Si ya hay 5 entradas, verificar si el nuevo puntaje es mejor que el último
+        const sortedLeaderboard = [...leaderboard].sort((a, b) => b.rating - a.rating);
+        const lowestScore = sortedLeaderboard[4].rating; // El último (5to lugar)
+        
+        if (fachaResult.rating > lowestScore) {
+          // El nuevo puntaje es mejor que el último, reemplazar
+          updatedLeaderboard = sortedLeaderboard.slice(0, 4); // Tomar los primeros 4
+          updatedLeaderboard.push(newEntry); // Agregar el nuevo
+        }
+        // Si no es mejor, no hacer nada (no se guarda)
+      }
+      
+      // Ordenar por puntaje descendente
+      updatedLeaderboard = updatedLeaderboard.sort((a, b) => b.rating - a.rating);
       
       setLeaderboard(updatedLeaderboard);
       
@@ -470,8 +488,8 @@ const App: React.FC = () => {
         localStorage.removeItem('onlyFachas_cache');
         localStorage.removeItem('onlyFachas_rateLimit');
         
-        // Guardar solo las últimas 20 entradas
-        const limitedLeaderboard = updatedLeaderboard.slice(0, 20);
+        // Guardar solo las últimas 5 entradas (top 5)
+        const limitedLeaderboard = updatedLeaderboard.slice(0, 5);
         localStorage.setItem('onlyFachasLeaderboard', JSON.stringify(limitedLeaderboard));
         setLeaderboard(limitedLeaderboard);
       }
