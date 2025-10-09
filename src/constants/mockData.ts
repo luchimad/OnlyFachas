@@ -162,7 +162,7 @@ export const MOCK_WINNER_EXPLANATIONS = [
 ];
 
 // Función para generar explicación del ganador mock
-export const generateMockWinnerExplanation = (winner: number): string[] => {
+export const generateMockWinnerExplanation = (_winner: number): string[] => {
   const explanations = [...MOCK_WINNER_EXPLANATIONS];
   const selected = [];
   

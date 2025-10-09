@@ -58,6 +58,7 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
         score2: rating2,
         winner: rating > rating2 ? 1 : 2,
         comment,
+        winnerExplanation: [],
         isMock: true,
         timestamp: Date.now()
       } as FachaBattleResult;

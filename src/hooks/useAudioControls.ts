@@ -28,8 +28,10 @@ export const useAudioControls = (): AudioControls => {
     '/audios/musica/Miami Sky - Karl Casey.mp3'
   ];
 
-  // Estado para la canción actual
-  const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
+  // Estados para música de fondo
+  const [musicEnabled, setMusicEnabled] = useState<boolean>(false);
+  const [musicVolume, setMusicVolume] = useState<number>(0.3);
+  const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement | null>(null);
   
   // Estados para efectos de voz
   const [effectsEnabled, setEffectsEnabled] = useState<boolean>(true);
@@ -81,7 +83,6 @@ export const useAudioControls = (): AudioControls => {
     if (musicEnabled && !backgroundMusic) {
       // Seleccionar canción aleatoria inicial
       const randomIndex = Math.floor(Math.random() * musicTracks.length);
-      setCurrentTrackIndex(randomIndex);
       
       const music = new Audio(musicTracks[randomIndex]);
       music.loop = false; // No loop, queremos cambiar de canción
@@ -91,7 +92,6 @@ export const useAudioControls = (): AudioControls => {
       // Función para cambiar a la siguiente canción
       const playNextTrack = () => {
         const nextIndex = Math.floor(Math.random() * musicTracks.length);
-        setCurrentTrackIndex(nextIndex);
         music.src = musicTracks[nextIndex];
         music.currentTime = 0;
         music.play().catch(error => {
@@ -193,7 +193,7 @@ export const useAudioControls = (): AudioControls => {
   // Función para iniciar música
   const startMusic = useCallback(() => {
     if (backgroundMusic && musicEnabled) {
-      backgroundMusic.play().catch(error => {
+      backgroundMusic.play().catch((error: any) => {
         console.warn('Error al iniciar música:', error);
       });
     }
