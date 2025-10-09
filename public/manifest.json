@@ -1,7 +1,7 @@
 {
-  "name": "OnlyFachas - Medidor de Facha con IA",
+  "name": "OnlyFachas - Análisis de Facha Online Gratis",
   "short_name": "OnlyFachas",
-  "description": "La app que mide tu nivel de facha con inteligencia artificial. Medir facha online, test de facha, analizador de facha, que tan facha soy. ¡No es OnlyFans, es OnlyFachas!",
+  "description": "🔥 ANÁLISIS DE FACHA ONLINE GRATIS con IA. Test de facha, medidor de belleza, analizador de atractivo. Descubre tu puntaje de facha del 1-10. ¡Solo en OnlyFachas!",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0515",
@@ -21,9 +21,31 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["entertainment", "lifestyle", "utilities"],
+  "categories": ["entertainment", "lifestyle", "utilities", "beauty", "fashion"],
   "lang": "es-AR",
   "scope": "/",
   "id": "onlyfachas-app",
-  "keywords": "medir facha online, test de facha, analizador de facha, que tan facha soy, medidor de estilo online, analizador de atractivo con foto, medidor de belleza con IA, facha meter, puntaje de facha, ranking de facha"
+  "keywords": "análisis de facha online, test de facha, medidor de facha online, IA para medir facha, app para saber mi facha, puntaje de facha gratis, analizador de facha, onlyfachas, test de belleza online, medidor de atractivo con IA, test de facha argentino, analizador de belleza online, medidor de estilo personal, test de atractivo gratis, análisis de facha con foto, medidor de facha argentina, test de belleza argentino, analizador de facha online gratis",
+  "screenshots": [
+    {
+      "src": "/onlyfachas_icon.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Análisis de Facha",
+      "short_name": "Test Facha",
+      "description": "Hacer análisis de facha online",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/onlyfachas_icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
 }

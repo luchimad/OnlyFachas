@@ -5,17 +5,27 @@ Allow: /
 Allow: /fonts/
 Allow: /audios/
 Allow: /assets/
+Allow: /onlyfachas_icon.png
 
 # Bloquear archivos innecesarios para SEO
 Disallow: /src/
 Disallow: /node_modules/
 Disallow: /*.json$
 Disallow: /netlify/
+Disallow: /scripts/
+Disallow: /temp_*
+Disallow: /test_*
+Disallow: /clear_*
+Disallow: /fix_*
+Disallow: /update_*
 
 # Sitemap principal
 Sitemap: https://onlyfachas.netlify.app/sitemap.xml
 
 # Información del sitio
-# OnlyFachas - Medidor de Facha con IA
-# No es OnlyFans, es OnlyFachas
+# OnlyFachas - Análisis de Facha Online Gratis
+# Test de facha, medidor de belleza, analizador de atractivo con IA
 # Sitio web: https://onlyfachas.netlify.app/
+
+# Crawl-delay para evitar sobrecarga
+Crawl-delay: 1
