@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Página principal - Home -->
   <url>
     <loc>https://onlyfachas.netlify.app/</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <image:image>
-      <image:loc>https://onlyfachas.netlify.app/onlyfachas_icon.png</image:loc>
-      <image:title>OnlyFachas - Análisis de Facha Online</image:title>
-      <image:caption>Test de facha, medidor de belleza, analizador de atractivo con IA</image:caption>
-    </image:image>
   </url>
   
   <!-- Páginas SEO adicionales -->
