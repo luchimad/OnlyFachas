@@ -20,12 +20,12 @@ Disallow: /fix_*
 Disallow: /update_*
 
 # Sitemap principal
-Sitemap: https://onlyfachas.netlify.app/sitemap.xml
+Sitemap: https://onlyfachas.fun/sitemap.xml
 
 # Información del sitio
 # OnlyFachas - Análisis de Facha Online Gratis
 # Test de facha, medidor de belleza, analizador de atractivo con IA
-# Sitio web: https://onlyfachas.netlify.app/
+# Sitio web: https://onlyfachas.fun/
 
 # Crawl-delay para evitar sobrecarga
 Crawl-delay: 1

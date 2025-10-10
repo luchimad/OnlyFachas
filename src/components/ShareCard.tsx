@@ -82,7 +82,7 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ image, score, ra
       </div>
 
       <footer className="text-center relative z-10">
-        <p className="text-sm text-gray-400/50">onlyfachas.netlify.app</p>
+        <p className="text-sm text-gray-400/50">onlyfachas.fun</p>
       </footer>
     </div>
   );

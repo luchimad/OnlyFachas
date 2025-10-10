@@ -58,7 +58,7 @@ const PreviewCard = forwardRef<HTMLDivElement, PreviewCardProps>(({ image, score
       </div>
 
       <footer className="text-center">
-        <p className="text-sm text-gray-400/50">onlyfachas.netlify.app</p>
+        <p className="text-sm text-gray-400/50">onlyfachas.fun</p>
       </footer>
     </div>
   );

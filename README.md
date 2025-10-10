@@ -12,7 +12,7 @@ Una aplicación web que usa IA para medir tu nivel de "facha" y darte consejos p
 
 ## 🚀 Demo
 
-[Ver en vivo](https://onlyfachas.netlify.app) (próximamente)
+[Ver en vivo](https://onlyfachas.fun) (próximamente)
 
 ## 🛠️ Tecnologías
 

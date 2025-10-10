@@ -81,7 +81,7 @@ class SocialShareService {
       const shareData: any = {
         title: options.title || 'OnlyFachas - Mi resultado de facha',
         text: options.text || '¡Mirá mi puntaje de facha!',
-        url: options.url || 'https://onlyfachas.netlify.app/'
+        url: options.url || 'https://onlyfachas.fun/'
       };
 
       // Add files if supported (some browsers support sharing files)

@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Página principal - Home -->
   <url>
-    <loc>https://onlyfachas.netlify.app/</loc>
+    <loc>https://onlyfachas.fun/</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -10,28 +10,28 @@
   
   <!-- Páginas SEO adicionales -->
   <url>
-    <loc>https://onlyfachas.netlify.app/test-facha-gratis</loc>
+    <loc>https://onlyfachas.fun/test-facha-gratis</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://onlyfachas.netlify.app/medidor-facha-online</loc>
+    <loc>https://onlyfachas.fun/medidor-facha-online</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://onlyfachas.netlify.app/analizador-facha-ia</loc>
+    <loc>https://onlyfachas.fun/analizador-facha-ia</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://onlyfachas.netlify.app/test-belleza-online</loc>
+    <loc>https://onlyfachas.fun/test-belleza-online</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -39,14 +39,14 @@
   
   <!-- Páginas legales -->
   <url>
-    <loc>https://onlyfachas.netlify.app/terminos</loc>
+    <loc>https://onlyfachas.fun/terminos</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://onlyfachas.netlify.app/privacidad</loc>
+    <loc>https://onlyfachas.fun/privacidad</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -54,14 +54,14 @@
   
   <!-- Páginas informativas -->
   <url>
-    <loc>https://onlyfachas.netlify.app/como-funciona</loc>
+    <loc>https://onlyfachas.fun/como-funciona</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
-    <loc>https://onlyfachas.netlify.app/faq</loc>
+    <loc>https://onlyfachas.fun/faq</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
