@@ -5,6 +5,14 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Redirect permanente del dominio viejo al nuevo (301)
+[[redirects]]
+  from = "https://onlyfachas.netlify.app/*"
+  to = "https://onlyfachas.fun/:splat"
+  status = 301
+  force = true
+
+# SPA fallback (debe estar después del redirect de dominio)
 [[redirects]]
   from = "/*"
   to = "/index.html"
