@@ -736,6 +736,13 @@ const App: React.FC = () => {
         </button>
       </div>
       
+      {/* Anuncio en página principal */}
+      <AdBanner 
+        slot="7301683867" 
+        size="medium"
+        className="mt-8 mb-4"
+      />
+      
        <button 
         onClick={() => setShowSettings(true)}
         className="mt-6 text-sm text-violet-400 hover:text-white flex items-center gap-2"
