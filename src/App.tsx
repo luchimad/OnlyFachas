@@ -1313,12 +1313,14 @@ const App: React.FC = () => {
             </p>
         )}
         
-        {/* Anuncio en el leaderboard */}
-        <AdBanner 
-          slot="6322234604" 
-          size="medium"
-          className="my-6"
-        />
+        {/* Anuncio en el leaderboard - Solo mostrar si hay contenido */}
+        {leaderboard.length > 0 && (
+          <AdBanner 
+            slot="6322234604" 
+            size="medium"
+            className="my-6"
+          />
+        )}
         
         <div className="mt-8 flex items-center gap-6">
             <NeonButton onClick={reset}>
