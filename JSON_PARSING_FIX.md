@@ -125,3 +125,9 @@ const parsedResult = JSON.parse(cleanedText) as FachaResult;
 
 
 
+
+
+
+
+
+
