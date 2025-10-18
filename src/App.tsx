@@ -779,7 +779,7 @@ const App: React.FC = () => {
             </div>
             <p className="text-violet-300/90 leading-relaxed text-sm">
               Subí una foto y obtené tu puntaje personal de facha del 1 al 10. 
-              La IA te va a dar comentarios picantes, fortalezas y consejos para mejorar tu estilo.
+              La IA te va a dar comentarios en joda, fortalezas y consejos para mejorar tu estilo.
             </p>
             <p className="text-violet-300/90 leading-relaxed text-sm mt-2">
               <span className="text-fuchsia-400 font-bold">Perfecto para:</span> Autoconocimiento, comparar con amigos, o simplemente pasar el rato.
@@ -794,7 +794,7 @@ const App: React.FC = () => {
             </div>
             <p className="text-violet-300/90 leading-relaxed text-sm">
               La batalla más épica. Subí dos fotos y que la IA decida quién la rompe más. 
-              Comentarios barderos, explicaciones del ganador y mucha joda.
+              Comentarios en joda, explicaciones del ganador y mucha diversión.
             </p>
             <p className="text-violet-300/90 leading-relaxed text-sm mt-2">
               <span className="text-red-400 font-bold">Perfecto para:</span> Competir con amigos, resolver debates, o ver quién tiene más onda.
