@@ -951,12 +951,6 @@ const App: React.FC = () => {
                 </div>
                 <FachaStats rating={currentResult.rating} />
                 
-                {/* Anuncio sutil después de estadísticas */}
-                <AdBanner 
-                  slot="9595760046" 
-                  size="medium"
-                  className="mt-6"
-                />
         </div>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
             {isFromLeaderboard ? (
@@ -1318,15 +1312,6 @@ const App: React.FC = () => {
             <p className="text-violet-300 text-lg text-center mt-8">
                 Todavía no hay nadie en el top. ¡Sé el primero en medir tu facha!
             </p>
-        )}
-        
-        {/* Anuncio en el leaderboard - Solo mostrar si hay contenido */}
-        {leaderboard.length > 0 && (
-          <AdBanner 
-            slot="6322234604" 
-            size="medium"
-            className="my-6"
-          />
         )}
         
         <div className="mt-8 flex items-center gap-6">
