@@ -29,7 +29,7 @@ import { RiSwordLine } from 'react-icons/ri';
 import { FiCoffee } from 'react-icons/fi';
 import { AudioSettings } from './components/AudioSettings';
 import { FiVolume2, FiVolumeX } from "react-icons/fi";
-import { FiTrendingUp, FiUsers } from "react-icons/fi";
+import { FiTrendingUp } from "react-icons/fi";
 import { MaintenanceBanner, RateLimitBanner, RequestDelayBanner } from './components/EmergencyBanners';
 import ShareButton from './components/ShareButton';
 
