@@ -807,7 +807,7 @@ const App: React.FC = () => {
       <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-yellow-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
         <div className="flex items-center justify-center gap-2 text-sm text-center">
           <span className="text-yellow-400">⚠️</span>
-          <span className="text-yellow-300">Al continuar confirmo que no subiré imágenes explícitas y que tengo 18 años o más. OnlyFachas es solo para diversión: las fotos se procesan en el momento y no se guardan.</span>
+          <span className="text-yellow-300">Al continuar confirmo que tengo 18 años o más y que no subiré contenido inapropiado. OnlyFachas es una aplicación de entretenimiento: las imágenes se procesan automáticamente y no se almacenan.</span>
         </div>
       </div>
 
@@ -1008,7 +1008,7 @@ const App: React.FC = () => {
         <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-yellow-500/30 rounded-lg p-4 mb-6 max-w-lg mx-auto">
           <div className="flex items-center justify-center gap-2 text-sm text-center">
             <span className="text-yellow-400">⚠️</span>
-            <span className="text-yellow-300">Al continuar confirmo que no subiré imágenes explícitas y que tengo 18 años o más. OnlyFachas es solo para diversión: las fotos se procesan en el momento y no se guardan.</span>
+            <span className="text-yellow-300">Al continuar confirmo que tengo 18 años o más y que no subiré contenido inapropiado. OnlyFachas es una aplicación de entretenimiento: las imágenes se procesan automáticamente y no se almacenan.</span>
           </div>
         </div>
         
