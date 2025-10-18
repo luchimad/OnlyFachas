@@ -749,6 +749,76 @@ const App: React.FC = () => {
       >
         <SettingsIcon className="w-4 h-4" /> Configurar IA
       </button>
+      
+      {/* Descripción de la app */}
+      <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-violet-500/30 rounded-lg p-6 mt-6 max-w-2xl mx-auto">
+        <div className="text-center">
+          <div className="text-4xl mb-4">🎭</div>
+          <h3 className="text-xl font-bold text-violet-200 mb-4">¿Qué es OnlyFachas?</h3>
+          <p className="text-violet-300/90 leading-relaxed mb-4">
+            OnlyFachas es una aplicación web que usa inteligencia artificial para analizar tu estilo y darte un puntaje de "facha" del 1 al 10.
+          </p>
+          <p className="text-violet-300/90 leading-relaxed mb-4">
+            Es un juego para divertirse entre amigos, no un análisis serio ni una medida real de belleza o atractivo.
+          </p>
+          <p className="text-violet-300/90 leading-relaxed mb-4">
+            <span className="text-cyan-400 font-bold">La verdadera facha está en la actitud, no en un número.</span>
+          </p>
+        </div>
+      </div>
+      
+      {/* Descripción de modos */}
+      <div className="mt-6 max-w-4xl mx-auto">
+        <h4 className="text-lg font-bold text-violet-200 mb-4 text-center">Modos de Juego</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Análisis Común */}
+          <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-fuchsia-500/50 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="text-2xl">⚡</div>
+              <h5 className="text-lg font-bold text-fuchsia-300">Análisis de Facha</h5>
+            </div>
+            <p className="text-violet-300/90 leading-relaxed text-sm">
+              Subí una foto y obtené tu puntaje personal de facha del 1 al 10. 
+              La IA te va a dar comentarios picantes, fortalezas y consejos para mejorar tu estilo.
+            </p>
+            <p className="text-violet-300/90 leading-relaxed text-sm mt-2">
+              <span className="text-fuchsia-400 font-bold">Perfecto para:</span> Autoconocimiento, comparar con amigos, o simplemente pasar el rato.
+            </p>
+          </div>
+          
+          {/* Facha vs Facha */}
+          <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-2 border-red-500/50 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="text-2xl">⚔️</div>
+              <h5 className="text-lg font-bold text-red-300">Facha vs Facha</h5>
+            </div>
+            <p className="text-violet-300/90 leading-relaxed text-sm">
+              La batalla más épica. Subí dos fotos y que la IA decida quién la rompe más. 
+              Comentarios barderos, explicaciones del ganador y mucha joda.
+            </p>
+            <p className="text-violet-300/90 leading-relaxed text-sm mt-2">
+              <span className="text-red-400 font-bold">Perfecto para:</span> Competir con amigos, resolver debates, o ver quién tiene más onda.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Enlaces adicionales */}
+      <div className="flex justify-center gap-4 mt-6">
+        <button 
+          onClick={() => setAppState('faq')}
+          className="text-sm text-violet-400 hover:text-violet-300 underline"
+        >
+          Ver Preguntas Frecuentes
+        </button>
+        <span className="text-violet-400/40">•</span>
+        <button 
+          onClick={() => setAppState('about')}
+          className="text-sm text-violet-400 hover:text-violet-300 underline"
+        >
+          Conocer Más
+        </button>
+      </div>
     </div>
   );
 
