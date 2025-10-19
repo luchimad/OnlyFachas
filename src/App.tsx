@@ -688,17 +688,6 @@ const App: React.FC = () => {
     setShowNotification(false);
   };
 
-  const NeonButton: React.FC<{onClick?: () => void, children: React.ReactNode, className?: string, disabled?: boolean}> = ({ onClick, children, className = '', disabled = false }) => (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 transition-all duration-300 ${disabled ? 'opacity-50 cursor-not-allowed' : 'group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-purple-200'} ${className}`}
-    >
-      <span className="relative w-full px-5 py-2.5 transition-all ease-in duration-75 bg-slate-900/30 backdrop-blur-sm rounded-md group-hover:bg-opacity-0 flex items-center justify-center gap-2 text-white font-bold group-hover:text-white drop-shadow-lg">
-        {children}
-      </span>
-    </button>
-  );
 
 
 
@@ -717,7 +706,7 @@ const App: React.FC = () => {
         
         <button 
           onClick={() => { setAppMode('battle'); setAppState('battleSelect'); }}
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600/80 to-red-800/80 hover:from-red-500/90 hover:to-red-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-red-500/25 border-2 border-red-400 border-opacity-60 w-full justify-center text-base sm:text-lg"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600/80 to-red-950/80 hover:from-red-500/90 hover:to-red-900/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-red-500/25 border-2 border-red-400 border-opacity-60 w-full justify-center text-base sm:text-lg"
         >
           <RiSwordLine className="w-4 h-4 text-white" />
           Facha vs Facha
@@ -739,7 +728,7 @@ const App: React.FC = () => {
           className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600/80 to-gray-800/80 hover:from-gray-500/90 hover:to-gray-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-gray-500/25 border-2 border-gray-400 border-opacity-60 w-full sm:w-1/2 justify-center text-base sm:text-lg"
         >
           <SparklesIcon className="w-4 h-4 text-white" />
-          Aumentá tu facha
+          Mejorar Facha
         </button>
       </div>
       
@@ -1031,9 +1020,12 @@ const App: React.FC = () => {
           </div>
         </div>
         
-        <NeonButton onClick={() => setShowSettings(false)} className="mt-8">
-            Volver
-        </NeonButton>
+        <button 
+          onClick={() => setShowSettings(false)} 
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600/80 to-gray-800/80 hover:from-gray-500/90 hover:to-gray-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-gray-500/25 border-2 border-gray-400 border-opacity-60 mt-8"
+        >
+          Volver
+        </button>
     </div>
 );
 
@@ -1208,14 +1200,30 @@ const App: React.FC = () => {
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
             {isFromLeaderboard ? (
                 <>
-                    <NeonButton onClick={() => { setSelectedLeaderboardResult(null); setAppState('leaderboard'); }}>
-                        <TrophyIcon /> Volver al Top
-                    </NeonButton>
-                    <NeonButton onClick={reset}><RefreshCwIcon /> Nuevo Análisis</NeonButton>
+                    <button 
+                      onClick={() => { setSelectedLeaderboardResult(null); setAppState('leaderboard'); }}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500/80 to-orange-700/80 hover:from-yellow-400/90 hover:to-orange-600/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/25 border-2 border-yellow-400 border-opacity-60"
+                    >
+                      <TrophyIcon className="w-4 h-4 text-white" />
+                      Volver al Top
+                    </button>
+                    <button 
+                      onClick={reset}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-600/80 to-purple-800/80 hover:from-fuchsia-500/90 hover:to-purple-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-fuchsia-500/25 border-2 border-fuchsia-400 border-opacity-60"
+                    >
+                      <RefreshCwIcon className="w-4 h-4 text-white" />
+                      Nuevo Análisis
+                    </button>
                 </>
             ) : (
                 <>
-                    <NeonButton onClick={reset}><RefreshCwIcon /> Otra vez</NeonButton>
+                    <button 
+                      onClick={reset}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-600/80 to-purple-800/80 hover:from-fuchsia-500/90 hover:to-purple-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-fuchsia-500/25 border-2 border-fuchsia-400 border-opacity-60"
+                    >
+                      <RefreshCwIcon className="w-4 h-4 text-white" />
+                      Otra vez
+                    </button>
                     {currentResult && currentImageSrc && (
                         <ShareButton
                             result={currentResult}
@@ -1236,14 +1244,15 @@ const App: React.FC = () => {
         <AlertTriangleIcon className="mx-auto mb-4" />
         <p className="font-bold text-lg">¡Upa! Algo salió mal</p>
         <p>{error}</p>
-        <NeonButton 
+        <button 
           onClick={() => {
             reset();
           }} 
-          className="mt-6"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600/80 to-gray-800/80 hover:from-gray-500/90 hover:to-gray-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-gray-500/25 border-2 border-gray-400 border-opacity-60 mt-6"
         >
-          <RefreshCwIcon /> Intentar de nuevo
-        </NeonButton>
+          <RefreshCwIcon className="w-4 h-4 text-white" />
+          Intentar de nuevo
+        </button>
       </div>
   );
 
@@ -1285,18 +1294,20 @@ const App: React.FC = () => {
                     )}
                 </div>
                 <div className="flex gap-3 mt-4">
-                    <NeonButton 
+                    <button 
                         onClick={() => { setActiveBattleSlot(1); setAppState('capture'); }}
-                        className="bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500"
+                        className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600/80 to-blue-800/80 hover:from-cyan-500/90 hover:to-blue-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25 border-2 border-cyan-400 border-opacity-60"
                     >
-                        <CameraIcon /> Cámara
-                    </NeonButton>
-                    <NeonButton 
+                        <CameraIcon className="w-4 h-4 text-white" />
+                        Cámara
+                    </button>
+                    <button 
                         onClick={() => fileInputRef1.current?.click()}
-                        className="bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500"
+                        className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/80 to-pink-800/80 hover:from-purple-500/90 hover:to-pink-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25 border-2 border-purple-400 border-opacity-60"
                     >
-                        <UploadIcon /> Subir
-                    </NeonButton>
+                        <UploadIcon className="w-4 h-4 text-white" />
+                        Subir
+                    </button>
                 </div>
             </div>
 
@@ -1330,30 +1341,33 @@ const App: React.FC = () => {
                     )}
                 </div>
                 <div className="flex gap-3 mt-4">
-                    <NeonButton 
+                    <button 
                         onClick={() => { setActiveBattleSlot(2); setAppState('capture'); }}
-                        className="bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:from-cyan-400 group-hover:to-blue-500"
+                        className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600/80 to-blue-800/80 hover:from-cyan-500/90 hover:to-blue-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25 border-2 border-cyan-400 border-opacity-60"
                     >
-                        <CameraIcon /> Cámara
-                    </NeonButton>
-                    <NeonButton 
+                        <CameraIcon className="w-4 h-4 text-white" />
+                        Cámara
+                    </button>
+                    <button 
                         onClick={() => fileInputRef2.current?.click()}
-                        className="bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500"
+                        className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/80 to-pink-800/80 hover:from-purple-500/90 hover:to-pink-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25 border-2 border-purple-400 border-opacity-60"
                     >
-                        <UploadIcon /> Subir
-                    </NeonButton>
+                        <UploadIcon className="w-4 h-4 text-white" />
+                        Subir
+                    </button>
                 </div>
             </div>
         </div>
 
         <div className="flex flex-col items-center gap-4">
-            <NeonButton 
+            <button 
                 onClick={analyzeFachaBattle} 
                 disabled={!imageData1 || !imageData2}
-                className="text-xl px-8 py-4 bg-gradient-to-br from-red-500 to-pink-500 group-hover:from-red-500 group-hover:to-pink-500 hover:scale-105 transition-transform"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600/80 to-red-950/80 hover:from-red-500/90 hover:to-red-900/90 disabled:from-gray-500/80 disabled:to-gray-700/80 disabled:cursor-not-allowed text-white font-bold py-4 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-red-500/25 border-2 border-red-400 border-opacity-60 text-xl"
             >
-                <ZapIcon /> 🔥 INICIAR BATALLA 🔥
-            </NeonButton>
+                <ZapIcon className="w-5 h-5 text-white" />
+                🔥 INICIAR BATALLA 🔥
+            </button>
             
             
             {(!imageData1 || !imageData2) && (
@@ -1484,18 +1498,19 @@ const App: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mt-8">
-            <NeonButton 
+            <button 
                 onClick={() => { setBattleResult(null); setImageData1(null); setImageSrc1(null); setImageData2(null); setImageSrc2(null); setAppState('battleSelect'); }}
-                className="bg-gradient-to-br from-orange-500 to-red-500 group-hover:from-orange-500 group-hover:to-red-500 text-lg px-6 py-3"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-600/80 to-red-800/80 hover:from-orange-500/90 hover:to-red-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-orange-500/25 border-2 border-orange-400 border-opacity-60 text-lg"
             >
-                <RefreshCwIcon /> 🔥 Otra Batalla 🔥
-            </NeonButton>
-            <NeonButton 
+                <RefreshCwIcon className="w-4 h-4 text-white" />
+                🔥 Otra Batalla 🔥
+            </button>
+            <button 
                 onClick={reset}
-                className="bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 text-lg px-6 py-3"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/80 to-pink-800/80 hover:from-purple-500/90 hover:to-pink-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25 border-2 border-purple-400 border-opacity-60 text-lg"
             >
                 🏠 Menú Principal
-            </NeonButton>
+            </button>
         </div>
     </div>
   );
@@ -1521,10 +1536,19 @@ const App: React.FC = () => {
             "{enhancedResult.comment}"
         </p>
         <div className="flex gap-4 mt-8">
-            <NeonButton onClick={() => { setEnhancedResult(null); setImageData(null); setImageSrc(null); setAppState('select'); }}>
-                <RefreshCwIcon /> Probar con otra
-            </NeonButton>
-            <NeonButton onClick={reset}>Menú Principal</NeonButton>
+            <button 
+              onClick={() => { setEnhancedResult(null); setImageData(null); setImageSrc(null); setAppState('select'); }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-fuchsia-600/80 to-purple-800/80 hover:from-fuchsia-500/90 hover:to-purple-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-fuchsia-500/25 border-2 border-fuchsia-400 border-opacity-60"
+            >
+                <RefreshCwIcon className="w-4 h-4 text-white" />
+                Probar con otra
+            </button>
+            <button 
+              onClick={reset}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600/80 to-gray-800/80 hover:from-gray-500/90 hover:to-gray-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-gray-500/25 border-2 border-gray-400 border-opacity-60"
+            >
+              Menú Principal
+            </button>
         </div>
     </div>
   );
@@ -1568,9 +1592,12 @@ const App: React.FC = () => {
         )}
         
         <div className="mt-8 flex items-center gap-6">
-            <NeonButton onClick={reset}>
+            <button 
+              onClick={reset}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600/80 to-gray-800/80 hover:from-gray-500/90 hover:to-gray-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-gray-500/25 border-2 border-gray-400 border-opacity-60"
+            >
                 Menú Principal
-            </NeonButton>
+            </button>
             {leaderboard.length > 0 && (
                  <button
                     onClick={clearLeaderboard}
@@ -1679,9 +1706,12 @@ const App: React.FC = () => {
         </div>
 
         <div className="mt-8 flex justify-center">
-            <NeonButton onClick={reset}>
+            <button 
+              onClick={reset}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600/80 to-gray-800/80 hover:from-gray-500/90 hover:to-gray-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-gray-500/25 border-2 border-gray-400 border-opacity-60"
+            >
                 Volver al Inicio
-            </NeonButton>
+            </button>
         </div>
     </div>
   );
@@ -1772,9 +1802,12 @@ const App: React.FC = () => {
         </div>
 
         <div className="mt-8 flex justify-center">
-            <NeonButton onClick={reset}>
+            <button 
+              onClick={reset}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600/80 to-gray-800/80 hover:from-gray-500/90 hover:to-gray-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-gray-500/25 border-2 border-gray-400 border-opacity-60"
+            >
                 Volver al Inicio
-            </NeonButton>
+            </button>
         </div>
     </div>
   );
@@ -1838,17 +1871,21 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <NeonButton 
+            <button 
               onClick={() => {
                 reset();
               }} 
-              className="bg-gradient-to-br from-purple-500 to-pink-500"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/80 to-pink-800/80 hover:from-purple-500/90 hover:to-pink-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25 border-2 border-purple-400 border-opacity-60"
             >
                 🏠 Volver al Inicio
-            </NeonButton>
-            <NeonButton onClick={() => setAppState('leaderboard')} className="bg-gradient-to-br from-yellow-400 to-orange-500">
-                <FiTrendingUp className="w-5 h-5" /> Ver Top Fachas
-            </NeonButton>
+            </button>
+            <button 
+              onClick={() => setAppState('leaderboard')} 
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500/80 to-orange-700/80 hover:from-yellow-400/90 hover:to-orange-600/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/25 border-2 border-yellow-400 border-opacity-60"
+            >
+                <FiTrendingUp className="w-4 h-4 text-white" />
+                Ver Top Fachas
+            </button>
         </div>
     </div>
   );
@@ -1955,17 +1992,21 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <NeonButton 
+            <button 
               onClick={() => {
                 reset();
               }} 
-              className="bg-gradient-to-br from-purple-500 to-pink-500"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/80 to-pink-800/80 hover:from-purple-500/90 hover:to-pink-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25 border-2 border-purple-400 border-opacity-60"
             >
                 🏠 Volver al Inicio
-            </NeonButton>
-            <NeonButton onClick={() => setAppState('leaderboard')} className="bg-gradient-to-br from-yellow-400 to-orange-500">
-                <FiTrendingUp className="w-5 h-5" /> Ver Top Fachas
-            </NeonButton>
+            </button>
+            <button 
+              onClick={() => setAppState('leaderboard')} 
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500/80 to-orange-700/80 hover:from-yellow-400/90 hover:to-orange-600/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/25 border-2 border-yellow-400 border-opacity-60"
+            >
+                <FiTrendingUp className="w-4 h-4 text-white" />
+                Ver Top Fachas
+            </button>
         </div>
     </div>
   );
@@ -2129,17 +2170,20 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <NeonButton 
+            <button 
               onClick={() => {
                 reset();
               }} 
-              className="bg-gradient-to-br from-purple-500 to-pink-500"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/80 to-pink-800/80 hover:from-purple-500/90 hover:to-pink-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25 border-2 border-purple-400 border-opacity-60"
             >
                 🏠 Volver al Inicio
-            </NeonButton>
-            <NeonButton onClick={() => setAppState('about')} className="bg-gradient-to-br from-cyan-400 to-blue-500">
+            </button>
+            <button 
+              onClick={() => setAppState('about')} 
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-600/80 to-blue-800/80 hover:from-cyan-500/90 hover:to-blue-700/90 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25 border-2 border-cyan-400 border-opacity-60"
+            >
                 📖 Sobre Nosotros
-            </NeonButton>
+            </button>
         </div>
     </div>
   );

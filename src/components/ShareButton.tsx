@@ -56,12 +56,11 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
       <button
         onClick={handleExport}
         disabled={isExporting}
-        className={`relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-violet-500 to-purple-600 transition-all duration-300 ${isExporting ? 'opacity-50 cursor-not-allowed' : 'group-hover:from-violet-500 group-hover:to-purple-600 hover:text-white focus:ring-4 focus:outline-none focus:ring-violet-200'}`}
+        className={`inline-flex items-center gap-2 bg-gradient-to-r from-violet-600/80 to-purple-800/80 hover:from-violet-500/90 hover:to-purple-700/90 disabled:from-gray-500/80 disabled:to-gray-700/80 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-violet-500/25 border-2 border-violet-400 border-opacity-60 ${isExporting ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
-        <span className="relative w-full px-5 py-2.5 transition-all ease-in duration-75 bg-slate-900/30 backdrop-blur-sm rounded-md group-hover:bg-opacity-0 flex items-center justify-center gap-2 text-white font-bold group-hover:text-white drop-shadow-lg">
         {isExporting ? (
           <>
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -69,13 +68,12 @@ const ShareButton: React.FC<ShareButtonProps> = ({ result, imageSrc, className =
           </>
           ) : (
                      <>
-                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                        </svg>
                        Compartir resultado
                      </>
           )}
-        </span>
       </button>
 
       {/* Hidden card for export - invisible but accessible to html-to-image */}
