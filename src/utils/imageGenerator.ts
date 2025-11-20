@@ -4,7 +4,7 @@
  */
 
 import { toPng } from 'html-to-image';
-import { FachaResult } from '../../types';
+import { FachaResult } from '../types';
 import { getFachaTier } from './fachaUtils';
 
 export interface ImageGenerationOptions {
@@ -29,16 +29,16 @@ export const waitForFonts = async (fontsLoaded: boolean): Promise<void> => {
     await document.fonts.ready;
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
-  
+
   // Additional wait to ensure fonts are fully rendered
   console.log('Waiting additional time for font rendering...');
   await new Promise(resolve => setTimeout(resolve, 1000));
-  
+
   // Final font check
   const montserratReady = document.fonts.check('16px Montserrat');
   const arizoniaReady = document.fonts.check('16px Arizonia');
   const orbitronReady = document.fonts.check('16px Orbitron');
-  
+
   console.log('Final font check:', {
     montserrat: montserratReady,
     arizonia: arizoniaReady,

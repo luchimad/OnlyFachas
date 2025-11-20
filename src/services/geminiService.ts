@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FachaResult, FachaBattleResult, FachaEnhanceResult, AiMode } from '../types';
-import { generateMockFachaResult, generateMockBattleComment, generateMockWinnerExplanation } from '../src/constants/mockData';
+import { generateMockFachaResult, generateMockBattleComment, generateMockWinnerExplanation } from '../constants/mockData';
 
 // Funciones para trackear Analytics (se inyectan desde el hook)
 let trackApiUsage: ((isMock: boolean, apiType: 'facha' | 'battle' | 'enhance', score?: number) => void) | null = null;

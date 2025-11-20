@@ -27,3 +27,6 @@ export interface StoredFachaResult extends FachaResult {
   imageSrc: string;
   timestamp: number;
 }
+
+export type AppMode = 'single' | 'battle' | 'enhance';
+export type AppState = 'welcome' | 'select' | 'capture' | 'analyze' | 'result' | 'error' | 'battleSelect' | 'battleResult' | 'enhancing' | 'enhanceResult' | 'leaderboard' | 'privacy' | 'terms' | 'comingSoon' | 'about' | 'faq';

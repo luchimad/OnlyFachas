@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { FachaResult, FachaBattleResult, FachaEnhanceResult } from '../../types';
+import { FachaResult, FachaBattleResult, FachaEnhanceResult } from '../types';
 import { MOCK_COMMENTS, MOCK_STRENGTHS, MOCK_ADVICE } from '../constants/mockData';
 
 // Rate limiting configuration
@@ -28,7 +28,7 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
   const [error, setError] = useState<string | null>(null);
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [timeUntilNextRequest, setTimeUntilNextRequest] = useState(0);
-  
+
   const rateLimitTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
@@ -87,7 +87,7 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
 
     const timeSinceLastRequest = Date.now() - parseInt(lastRequest);
     const remainingTime = RATE_LIMIT_MS - timeSinceLastRequest;
-    
+
     if (remainingTime > 0) {
       setIsRateLimited(true);
       setTimeUntilNextRequest(Math.ceil(remainingTime / 1000));
@@ -120,7 +120,7 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
 
       const timeSinceLastRequest = Date.now() - parseInt(lastRequest);
       const remainingTime = RATE_LIMIT_MS - timeSinceLastRequest;
-      
+
       if (remainingTime <= 0) {
         setIsRateLimited(false);
         setTimeUntilNextRequest(0);
@@ -138,7 +138,7 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
    * Maneja rate limiting, errores y cache
    */
   const callApi = useCallback(async (
-    apiFunction: (...args: any[]) => Promise<any>, 
+    apiFunction: (...args: any[]) => Promise<any>,
     ...args: any[]
   ): Promise<any> => {
     // Verificar rate limiting
@@ -154,20 +154,20 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
       console.log('🔄 [API FALLBACK] Llamando a la API real...');
       const result = await apiFunction(...args);
       console.log('✅ [API FALLBACK] API real exitosa, resultado:', result);
-      
+
       // Si la API funciona, guardar en cache y actualizar rate limit
       localStorage.setItem(RATE_LIMIT_KEY, Date.now().toString());
       localStorage.setItem(CACHE_KEY, JSON.stringify({
         ...result,
         timestamp: Date.now()
       }));
-      
+
       updateRateLimitTimer();
       return result;
 
     } catch (apiError: any) {
       console.warn('❌ [API FALLBACK] API Error, usando fallback:', apiError);
-      
+
       // Determinar el tipo de resultado basado en el número de argumentos
       // Single: 3 args (base64, mimeType, aiMode)
       // Battle: 5 args (base64_1, mimeType_1, base64_2, mimeType_2, aiMode)  
@@ -180,15 +180,15 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
       // Generar resultado mock
       const mockResult = generateMockResult(resultType);
       console.log('🎭 [API FALLBACK] Resultado mock generado:', mockResult);
-      
+
       // Guardar mock en cache también
       localStorage.setItem(RATE_LIMIT_KEY, Date.now().toString());
       localStorage.setItem(CACHE_KEY, JSON.stringify(mockResult));
-      
+
       updateRateLimitTimer();
-      
+
       // Usar datos mock sin notificar al usuario
-      
+
       return mockResult;
     } finally {
       setIsLoading(false);
@@ -202,16 +202,16 @@ export const useApiWithFallback = (): UseApiWithFallbackReturn => {
     try {
       const cached = localStorage.getItem(CACHE_KEY);
       if (!cached) return null;
-      
+
       const result = JSON.parse(cached);
-      
+
       // Verificar que el cache no sea muy viejo (24 horas)
       const maxAge = 24 * 60 * 60 * 1000; // 24 horas en ms
       if (Date.now() - result.timestamp > maxAge) {
         localStorage.removeItem(CACHE_KEY);
         return null;
       }
-      
+
       return result;
     } catch (error) {
       console.error('Error reading cache:', error);
