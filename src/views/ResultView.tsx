@@ -92,6 +92,13 @@ const ResultView: React.FC<ResultViewProps> = ({
 
                 {result && (
                     <>
+                        {result.isMock && (
+                            <div className="w-full mt-6 px-4 py-2 bg-yellow-900/30 border border-yellow-500/40 rounded-lg text-center">
+                                <p className="text-xs text-yellow-400">
+                                    ⚡ Resultado generado localmente (la IA no pudo responder a tiempo)
+                                </p>
+                            </div>
+                        )}
                         <p className="text-lg md:text-xl text-cyan-300 mt-8 p-4 bg-slate-800/50 border border-yellow-500/30 rounded-lg italic w-full">"{result.comment}"</p>
                         <div className="mt-8 w-full flex flex-col md:flex-row gap-6 text-left">
                             <div className="flex-1 bg-slate-800/50 p-4 rounded-lg border border-green-500/30"><h3 className="font-bold text-lg text-green-400 mb-3 flex items-center gap-2"><CheckCircle2 /> {isFromLeaderboard ? 'Puntos fuertes' : 'Tus puntos fuertes'}</h3><ul className="space-y-2 text-green-300/90">{result.fortalezas.map((item, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1">✅</span>{item}</li>)}</ul></div>

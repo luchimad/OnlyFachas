@@ -5,6 +5,7 @@ export interface FachaResult {
   comment: string;
   fortalezas: string[];
   consejos: string[];
+  isMock?: boolean;
 }
 
 export interface FachaBattleResult {
@@ -19,6 +20,8 @@ export interface FachaEnhanceResult {
   newImageBase64: string;
   newImageMimeType: string;
   comment: string;
+  recommendations?: string[];
+  gigachadScore?: number;
 }
 
 export interface StoredFachaResult extends FachaResult {

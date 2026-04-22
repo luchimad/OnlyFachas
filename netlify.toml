@@ -5,6 +5,10 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 # Redirect permanente del dominio viejo al nuevo (301)
 [[redirects]]
   from = "https://onlyfachas.netlify.app/*"
