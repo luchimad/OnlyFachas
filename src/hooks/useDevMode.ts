@@ -24,6 +24,9 @@ interface DevModeSettings {
   showDevMenu: boolean;
 }
 
+// Dev mode is only available in development builds
+const IS_DEV = import.meta.env.DEV;
+
 const useDevMode = () => {
   const [devSettings, setDevSettings] = useState<DevModeSettings>({
     isDevMode: false,
@@ -36,6 +39,9 @@ const useDevMode = () => {
 
   // Función para manejar la secuencia de teclas DEV MODE
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    // Only active in development builds
+    if (!IS_DEV) return;
+
     const key = event.key.toLowerCase();
     
     setKeySequence(prev => {

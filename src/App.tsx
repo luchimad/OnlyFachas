@@ -12,6 +12,7 @@ import { useEmergencyControls } from './hooks/useEmergencyControls';
 
 import { useAgeVerification } from './hooks/useAgeVerification';
 import useDevMode from './hooks/useDevMode';
+import { validateImageFile } from './utils/imageValidation';
 
 import { setDevModeSettings, setAnalyticsTracker, setSuccessfulAnalysisTracker, setFailedAnalysisTracker } from './services/geminiService';
 import { setDevModeTracker, setMockModeToggleTracker, setForcedScoreTracker } from './hooks/useDevMode';
@@ -307,6 +308,14 @@ const AppContent: React.FC = () => {
     const file = event.target.files?.[0];
     if (file) {
       try {
+        // Validate image before processing
+        const validationError = validateImageFile(file);
+        if (validationError) {
+          showNotificationToast('error', 'Foto inválida', validationError.message);
+          event.target.value = "";
+          return;
+        }
+
         // Verificar rate limiting antes de procesar
         if (isRateLimited) {
           showNotificationToast(
